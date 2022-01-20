@@ -1,0 +1,12 @@
+{
+    "website": {
+        "support": "https://discord.gg/BuACxn4XUw",
+        "domain" : ""
+    },
+    "config": {
+        "port": 80,
+        "callback": "",
+        "clientID": "",
+        "secret": ""
+    }
+}

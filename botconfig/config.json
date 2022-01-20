@@ -1,0 +1,55 @@
+{
+   "token": "",
+   "TOKEN": {
+      "MAIN": "",
+      "TEST": ""
+   },
+   "prefix": "?",
+   "ownerIDS": [
+      "377636455016824834"
+   ],
+   "channel": {
+      "Logs": "913487463031382126",
+      "Report": "912506133569208360",
+      "Error": "922913623737782303"
+   },
+   "status": {
+      "text": "kucluck.com | {prefix}help",
+      "text2": "kucluck.com | {prefix}help",
+      "type": "PLAYING",
+      "url": "https://twitch.tv/#"
+   },
+
+   "mainNodes": {
+      "host": "node04.lavalink.eu",
+      "port": 2333,
+      "password": "Raccoon"
+   },
+   "testNodes": {
+      "host": "localhost",
+      "port": 80,
+      "password": "kokomilan111"
+   },
+   "clientsettings": {
+      "nodes": [
+         {
+            "host": "node04.lavalink.eu",
+            "port": 2333,
+            "password": "Raccoon"
+         }
+      ]
+   },
+   "spotify": {
+      "clientID": "2427144d336945e889229274f3bdb27b",
+      "clientSecret": "a747cddcb7d84ce892f9c4a732e5889a"
+   },
+   "settings": {
+      "selfDeaf": true
+   },
+   "mongodb": {
+      "data": "novbot/Data",
+      "connect": "mongodb+srv://kucluck:kokomilan01@novbot.e8f8j.mongodb.net/Data2",
+      "mainconnect": "mongodb+srv://kucluck:kokomilan01@novbot.e8f8j.mongodb.net/Data",
+      "testconnect": "mongodb://localhost:27017/Data"
+   }
+}

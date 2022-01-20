@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid" style="max-width: 1800px;">
+    <a class="navbar-brand" href="/">
+      <img src="https://media.discordapp.net/attachments/901446802711142460/931714294654042162/newlkuclucklogok.png" alt="Logo" class="d-inline-block align-center" style="max-width: 100px;"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-link" href="/commands"><i class="fab fa-rocketchat"></i> Commands</a>
+        <a class="nav-link" href="https://kucluck.com/Pages/documentation" target="_blank"><i class="far fa-file-alt"></i> Docs</a>
+        <a class="nav-link" href="https://discord.gg/BuACxn4XUw" target="_blank"><i class="fab fa-discord"></i> Discord Server</a>
+        <a class="nav-link" href="https://discord.com/api/oauth2/authorize?client_id=<%=bot.user.id%>&permissions=8&scope=bot%20applications.commands"><i class="fas fa-user-plus"></i> Invite</a>
+        <a class="nav-link" href="/dashboard"><i class="fas fa-sliders-h"></i> Dashboard</a>
+        <a class="nav-link" href="/#upgrade"><i class="fas fa-gem"></i> Upgrade</a>
+      </div>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <% if(user && user.id) { %>
+          <a class="nav-item dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><%=user.username%>#<%=user.discriminator%></a>
+          <ul class="dropdown-menu">
+            <div class="col-xs-2" style="margin: auto; text-align: center;">
+              <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user"><br>
+              <p>Hallo, <%=user.username%></p>
+            </div>
+            <li><a class="dropdown-item nav-link" href="/dashboard">Dashboard</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item nav-link" href="/logout">Logout <span class="ms-auto" style="float: right;"><i class="fas fa-sign-out-alt"></i></span></a></li>
+          </ul>
+          <!-- <a class="nav-item" href="/logout"><i class="fas fa-sign-out-alt" ></i> <%=user.username%>#<%=user.discriminator%></a> -->
+        <% }else { %>
+          <a class="nav-item" href="/login"><i class="fas fa-sign-out-alt"></i> Login</a>
+        <% }%>
+      </div>
+    </div>
+  </div>
+</nav>
