@@ -107,7 +107,7 @@ module.exports = (client) => {
             premiumSchema.findOne({ GuildId : player.guild}, async(err, data) => {
               if (data) {
                 if(data.BotAFK == true ) {
-                  client.logger(`Autoresume`.brightCyan + ` - Player not destroyed in ${String(guild.name).brightBlue}, because afk enable.`);
+                  client.logger(`Autoconnect`.brightCyan + ` - Player in ${String(guild.name).brightBlue}, AFK enable.`);
                 }
                 if(data.BotAFK == false) {
                   player.destroy();

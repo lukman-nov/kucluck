@@ -1,13 +1,6 @@
-const Discord = require ('discord.js')
-const Settings = require("../settings.json");
+const Discord = require('discord.js')
 const {
-  check_if_dj,
-  autoplay,
-  escapeRegex,
   formatNonSeconds,
-  duration,
-  createBar,
-  delay,
   musicSystem,
   databasing,
 } = require("../../handlers/functions");
@@ -16,6 +9,7 @@ const {
 } = require('../../handlers/erela_events/musicsystem');
 const greetingmsgSchema = require('../../databases/greetingmsg');
 const autoresume = require('../../databases/autoresume');
+const config = require('../../botconfig/config.json');
 module.exports = (client, app, checkAuth) => {
   app.get("/dashboard", async (req, res) => {
     if (!req.isAuthenticated() || !req.user)
@@ -27,12 +21,14 @@ module.exports = (client, app, checkAuth) => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
-      statsGlobal: await client.statsGlobal.findOne({ BotId: client.user.id }),
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      statsGlobal: await client.statsGlobal.findOne({
+        BotId: client.user.id
+      }),
       stats: await client.stats.find({}),
     })
-  })
+  });
   app.get("/dashboard/:guildID", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
     if (!guild) return res.redirect("/dashboard")
@@ -54,20 +50,36 @@ module.exports = (client, app, checkAuth) => {
       guild: guild,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
       format: formatNonSeconds,
-      settingsSchema: await client.Settings.findOne({ GuildId: guild.id }),
-      premium: await client.Premium.findOne({ GuildId: guild.id }),
-      leveling: await client.leveling.findOne({ GuildId: guild.id }),
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      leveling: await client.leveling.findOne({
+        GuildId: guild.id
+      }),
       player: client.manager.players.get(guild.id),
-      greetingmsg: await client.Greetingmsg.findOne({ GuildId: guild.id }),
-      musicsettings: await client.Musicsettings.findOne({ guildId: guild.id }),
-      stats: await client.stats.findOne({ GuildId: guild.id }),
-      autorole: await client.Autorolesettings.findOne({ GuildId: guild.id }),
-      reactionRoles: await client.reactrole.findOne({ GuildId: guild.id }),
+      greetingmsg: await client.Greetingmsg.findOne({
+        GuildId: guild.id
+      }),
+      musicsettings: await client.Musicsettings.findOne({
+        guildId: guild.id
+      }),
+      stats: await client.stats.findOne({
+        GuildId: guild.id
+      }),
+      autorole: await client.Autorolesettings.findOne({
+        GuildId: guild.id
+      }),
+      reactionRoles: await client.reactrole.findOne({
+        GuildId: guild.id
+      }),
     })
-  })
+  });
   app.post("/dashboard/:guildID", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
     if (!guild) return res.redirect("/dashboard")
@@ -82,23 +94,39 @@ module.exports = (client, app, checkAuth) => {
     if (!member) return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
     if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
 
-    var autorole = await client.Autorolesettings.findOne({ GuildId: guild.id });
-    var greetingmsg = await client.Greetingmsg.findOne({ GuildId: guild.id });
-    var premium = await client.Premium.findOne({ GuildId: guild.id });
-    var reactionRoles = await client.reactrole.findOne({ GuildId: guild.id });
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
-    var musicsettings = await client.Musicsettings.findOne({ guildId: guild.id });
-    var leveling = await client.leveling.findOne({ GuildId: guild.id });
+    var autorole = await client.Autorolesettings.findOne({
+      GuildId: guild.id
+    });
+    var greetingmsg = await client.Greetingmsg.findOne({
+      GuildId: guild.id
+    });
+    var premium = await client.Premium.findOne({
+      GuildId: guild.id
+    });
+    var reactionRoles = await client.reactrole.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+    var musicsettings = await client.Musicsettings.findOne({
+      guildId: guild.id
+    });
+    var leveling = await client.leveling.findOne({
+      GuildId: guild.id
+    });
     let player = client.manager.players.get(guild.id)
-    var autoResume = await autoresume.findOne({ guild : player.guild })
+    var autoResume = await autoresume.findOne({
+      guild: player.guild
+    })
     res.render("settings", {
       req: req,
       user: req.isAuthenticated() ? req.user : null,
       guild: guild,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
       settingsSchema: ss,
       premium: premium,
       leveling: leveling,
@@ -112,11 +140,11 @@ module.exports = (client, app, checkAuth) => {
       autorole: autorole,
       reactionRoles: reactionRoles,
     })
-    
+
     let channel = guild.channels.cache.get(musicsettings.channelId)
     let message = channel.messages.cache.get(musicsettings.messageId);
     var data = generateQueueEmbed(client, guild.id, ss.Embed, ss.Language, ss.DjRoles, false)
-    
+
     if (req.body.pause) {
       player.pause(true);
       return message.edit(data).catch((e) => {})
@@ -130,7 +158,9 @@ module.exports = (client, app, checkAuth) => {
       if (player.get(`autoplay`)) {
         return player.destroy();
       } else {
-        if (autoResume) await autoresume.findOneAndDelete({ guild : guild.id })
+        if (autoResume) await autoresume.findOneAndDelete({
+          guild: guild.id
+        })
         await player.queue.clear();
         return player.stop();
       }
@@ -142,11 +172,15 @@ module.exports = (client, app, checkAuth) => {
       message.edit(data).catch((e) => {})
       return;
     }
-  })
+  });
   app.post('/bassicSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
-    var leveling = await client.leveling.findOne({ GuildId: guild.id });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+    var leveling = await client.leveling.findOne({
+      GuildId: guild.id
+    });
     if (req.body.prefix) ss.Prefix = req.body.prefix;
     if (req.body.language) ss.Language = req.body.language;
     if (req.body.roles) {
@@ -156,8 +190,13 @@ module.exports = (client, app, checkAuth) => {
     }
     if (req.body.botchannel) {
       guild.channels.cache.filter(c => c.name === req.body.botchannel).forEach((channel, i) => {
-        ss.BotChannel = channel.id;
+        ss.BotChannel.push(channel.id)
       });
+      for (const botch of ss.BotChannel.map(c => c)) {
+        let channel = guild.channels.cache.get(botch);
+        if (!channel)
+          ss.BotChannel.remove(botch);
+      }
     }
     if (req.body.unkowncmdmessage) {
       ss.Unkowncmdmessage = true;
@@ -168,11 +207,15 @@ module.exports = (client, app, checkAuth) => {
     await ss.save();
     await leveling.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
+  });
   app.post('/autoroleSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    var autorole = await client.Autorolesettings.findOne({ GuildId: guild.id });
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
+    var autorole = await client.Autorolesettings.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
     if (req.body.autoroleId && req.body.autorolecheck) {
       guild.roles.cache.filter(r => r.name === req.body.autoroleId).forEach((role, i) => {
         autorole.RoleId = role.id;
@@ -183,11 +226,15 @@ module.exports = (client, app, checkAuth) => {
     await ss.save();
     await autorole.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
-  app.post('/greetingmsgSucces', async (req,res) => {
+  });
+  app.post('/greetingmsgSucces', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    var greetingmsg = await client.Greetingmsg.findOne({ GuildId: guild.id });
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
+    var greetingmsg = await client.Greetingmsg.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
 
     if (req.body.greetingmsg && req.body.GreetingChannels && req.body.greetingbtn) {
       guild.channels.cache.filter(c => c.name === req.body.GreetingChannels).forEach((channel, i) => {
@@ -207,29 +254,45 @@ module.exports = (client, app, checkAuth) => {
     await greetingmsg.save();
     await ss.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
-  app.post('/musicsettingsSuccess', async(req,res) => {
+  });
+  app.post('/musicsettingsSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    var premium = await client.Premium.findOne({ GuildId: guild.id });
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
     let player = await client.manager.players.get(guild.id);
-
     if (req.body.pruning) {
       ss.Pruning = true;
     } else ss.Pruning = false;
     if (req.body.autoresume) {
       ss.Autoresume = true;
     } else ss.Autoresume = false;
-    if (req.body.defaultautoplay) {
-      ss.AutoPlay = true;
-      await player.set(`autoplay`, !player.get(`autoplay`))
-    } else ss.AutoPlay = false;
+    if (req.body.musicsetup) {
+      guild.channels.cache.filter(c => c.name === req.body.musicsetup).forEach((channel, i) => {
+        musicSystem(client, guild.id, channel.id)
+      });
+    }
+    await ss.save();
+    await res.redirect(`/dashboard/${req.body.guildID}`)
+  });
+  app.post('/musicsettingsSuccessPremium', async (req, res) => {
+    const guild = client.guilds.cache.get(req.body.guildID)
+    var premium = await client.Premium.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+    let player = await client.manager.players.get(guild.id);
     if (premium) {
       if (req.body.afk) {
         premium.BotAFK = true;
         await player.set(`afk`, !player.get(`afk`));
       } else premium.BotAFK = false;
-
+      if (req.body.defaultautoplay) {
+        ss.AutoPlay = true;
+        await player.set(`autoplay`, !player.get(`autoplay`))
+      } else ss.AutoPlay = false;
       if (req.body.volume) {
         if (req.body.volume != player.volume) {
           ss.Volume = req.body.volume;
@@ -413,28 +476,45 @@ module.exports = (client, app, checkAuth) => {
       }
       await premium.save();
     }
-    if (req.body.musicsetup) {
-      guild.channels.cache.filter(c => c.name === req.body.musicsetup).forEach((channel, i) => {
-        musicSystem(client, guild.id, channel.id)
-      });
-    }
     await ss.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
+  });
   app.post('/resetSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
     const member = guild.members.cache.get(req.user.id);
-    var autorole = await client.Autorolesettings.findOne({ GuildId: guild.id });
-    var embed = await client.Embedsettings.findOne({ guildId: guild.id });
-    var greetingmsg = await client.Greetingmsg.findOne({ GuildId: guild.id });
-    var membercount = await client.Membercount.findOne({ GuildId: guild.id });
-    var mute = await client.Mutesettings.findOne({ GuildId: guild.id });
-    var premium = await client.Premium.findOne({ GuildId: guild.id });
-    var reactionRoles = await client.reactrole.findOne({ GuildId: guild.id });
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
-    var stats = await client.stats.findOne({ GuildId: guild.id });
-    var musicsettings = await client.Musicsettings.findOne({ guildId: guild.id });
-    var leveling = await client.leveling.findOne({ GuildId: guild.id });
+    var autorole = await client.Autorolesettings.findOne({
+      GuildId: guild.id
+    });
+    var embed = await client.Embedsettings.findOne({
+      guildId: guild.id
+    });
+    var greetingmsg = await client.Greetingmsg.findOne({
+      GuildId: guild.id
+    });
+    var membercount = await client.Membercount.findOne({
+      GuildId: guild.id
+    });
+    var mute = await client.Mutesettings.findOne({
+      GuildId: guild.id
+    });
+    var premium = await client.Premium.findOne({
+      GuildId: guild.id
+    });
+    var reactionRoles = await client.reactrole.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+    var stats = await client.stats.findOne({
+      GuildId: guild.id
+    });
+    var musicsettings = await client.Musicsettings.findOne({
+      guildId: guild.id
+    });
+    var leveling = await client.leveling.findOne({
+      GuildId: guild.id
+    });
 
     if (req.body.resetPrefix) ss.Prefix = BotConfig.prefix;
     if (req.body.resetDjrole) ss.DjRoles = "";
@@ -478,10 +558,12 @@ module.exports = (client, app, checkAuth) => {
     }
     await ss.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
-  app.post('/setupEmbedSuccess', async (req, res) =>  {
+  });
+  app.post('/setupEmbedSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    var ss = await client.Settings.findOne({ GuildId: guild.id });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
     if (req.body.colorEmbed) {
       ss.Embed = {
         color: req.body.colorEmbed ? req.body.colorEmbed : ss.Embed.color,
@@ -531,8 +613,8 @@ module.exports = (client, app, checkAuth) => {
         footericon: req.body.imgEmbed ? req.body.imgEmbed : ss.Embed.footericon,
       }
     }
-    
+
     await ss.save();
     await res.redirect(`/dashboard/${req.body.guildID}`)
-  })
+  });
 }

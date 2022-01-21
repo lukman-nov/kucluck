@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const Settings = require("../settings.json");
+const config = require('../../botconfig/config.json');
 const Swal = require('sweetalert2');
 
 module.exports = (client, app, checkAuth) => {
@@ -9,10 +9,8 @@ module.exports = (client, app, checkAuth) => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
     })
   })
 }
-
-  

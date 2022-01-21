@@ -1,57 +1,34 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="keywords" content="bot discord, kucluck, kucluck bot, lukman nov, kucluck musik, kucluck radio">
-    <meta name="description" content="Bot Discord all in one Indonesia">
-    <meta name="author" content="Lukman Novawiyadi">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <!-- OUT CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- My CSS -->
-    <link rel="stylesheet" href="/header.css">
-    <link rel="stylesheet" href="/dashboard.css">
-    <link rel="stylesheet" href="/footer.css">
-    <link rel="stylesheet" href="/premium.css">
 
-    <title>Dashboard | <%= bot.user.username %></title>
-    <link rel="icon" type="image/png" href="<%= bot.user.displayAvatarURL({size: 128}) %>">
-  </head>
+<head>
+  <%- include('./element/head'); -%>
+  <!-- My CSS -->
+  <link rel="stylesheet" href="/header.css">
+  <link rel="stylesheet" href="/footer.css">
+  <link rel="stylesheet" href="/premium.css">
+
+  <title>Premium | <%= bot.user.username %></title>
+  <link rel="icon" type="image/png" href="<%= bot.user.displayAvatarURL({size: 128}) %>">
+</head>
 
 <body>
   <%- include('./element/header'); -%>
   <!-- SCRIPT -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
-  <script src="https://kit.fontawesome.com/9746709e58.js" crossorigin="anonymous"></script>
-  <script>
-    Swal.fire({
-      position: 'top-end',
-      icon: 'success',
-      title: 'Your work has been saved',
-      showConfirmButton: false,
-      timer: 1500
-    })
-  </script>
-  <section>
+  <section class="pb-5">
     <!--Head-->
     <div class="premium-head">
       <h1 class="head-text">Kucluck Premium</h1>
-      <h5 style="text-align: center;">Satisfy all your discord members with Kucluck's premium features!</h5>
+      <h5 class="text-white" style="text-align: center;">Satisfy all your discord members with Kucluck's premium
+        features!</h5>
     </div>
-  
     <div class="container">
       <div class="col card-premium">
         <div class="col">
           <div class="card-premium-img">
-            <img class="img-premium" src="https://media.discordapp.net/attachments/904821764146745404/913898040350347264/newlkuclucklogononbg.png" alt="logo">
+            <img class="img-premium"
+              src="https://media.discordapp.net/attachments/904821764146745404/913898040350347264/newlkuclucklogononbg.png"
+              alt="logo">
           </div>
           <div class="card-premium-star">
             <i class="fas fa-star"></i>
@@ -62,7 +39,7 @@
           </div>
         </div>
         <div class="col">
-          <div class="card-premium-title">
+          <div class="card-premium-title text-white">
             <i class="fas fa-gem fa-2x" style="color: #ddc3ff; float: right;"></i>
             <h1>Kucluck Premium</h1>
             <p>If you subscribe, you will get more awesome features for all members on your discord server.</p>
@@ -70,82 +47,20 @@
             </p>
             <p>Subscription starting from IDR 25k/month or $3.00/month can already enjoy premium features.</p>
             <div class="card-premium-btn">
-              <a href="#ceklist" class="fitur-btn">Premium Fitur</a>
+              <a href="/#checklist" class="fitur-btn">Premium Fitur</a>
               <a href="#payment" class="fitur-btn">Subcribe Now</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!--Ceklist-->
-    <!-- <div class="ceklist" id="ceklist">
-      <div class="container">
-        <div class="col-md-12">
-          <table class="box-ceklist">
-            <th> </th>
-            <th>Kucluck Standard</th>
-            <th>Kucluck Premium</th>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">24/7 Stay Voice Channel</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">All Button Active</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Audio Filter</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Audio Equalizer</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Auto Play Songs</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Lyrics</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Save Queue</td>
-              <td><i class="fas fa-times" style="color: rgb(253, 130, 130);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Music System</td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Prefix Costume</td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-            <tr style="border-bottom: 3px solid rgba(255, 255, 255, 0.356);">
-              <td style="text-align: left;">Settings Costume</td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-              <td><i class="fas fa-check" style="color: rgb(132, 255, 132);"></i></td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div> -->
-  
-    <div class="container pt-5" id="payment">
+    <div class="container pt-5 text-white" id="payment">
       <div class="row">
         <div class="col-md-4 payment">
           <h1>Pay with IDR</h1>
           <div class="img-free">
-            <img src="https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png" width="60%"></i>
+            <img src="https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png"
+              width="60%"></i>
           </div>
           <h2>IDR 25k<span style="font-size: 12px;">/month</span></h2>
           <hr>
@@ -158,13 +73,15 @@
           <div class="img-bayar">
             <h1>Pay with USD</h1>
             <form class="img-free">
-              <img src="https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png" width="60%"></i>
+              <img
+                src="https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png"
+                width="60%"></i>
             </form>
             <h2>$3.00<span style="font-size: 12px;">/month</span></h2>
             <hr>
             <div class="btn-bayar">
               <a href="https://www.patreon.com/join/kucluck/checkout?rid=7913328&cadence=1" class="btn-pay"
-                target="_blank" rel="unfollow" title="Bayar">Pay</a>
+                target="_blank" rel="unfollow" title="Pay">Pay</a>
             </div>
             <hr>
           </div>
@@ -172,8 +89,7 @@
       </div>
     </div>
   </section>
+  <%- include('./element/footer'); -%>
 </body>
 
 </html>
-
-<%- include('./element/footer'); -%>

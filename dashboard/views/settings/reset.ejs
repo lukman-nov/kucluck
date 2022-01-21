@@ -2,18 +2,21 @@
   <h3><i class="fas fa-trash-restore fa-2x pb"></i> Reset Settings</h3>
   <hr>
   <div class="row">
-    <p class="text-muted">Resets of the Setups here! <br>If the checkbox can't be clicked, it means you haven't set it up.</p>
+    <p class="text-muted">Resets of the Setups here! <br>If the checkbox can't be clicked, it means you haven't set it
+      up.</p>
     <form method="POST" action="/resetSuccess">
       <input type="text" value="<%= guild.id%>" name="guildID" hidden>
       <div class="col">
         <template id='allsettings'>
           <swal-title>All Settings</swal-title>
-          <swal-html>Restore all settings to default like a new bot entering the server, except Leveling System!</swal-html>
+          <swal-html>Restore all settings to default like a new bot entering the server, except Leveling System!
+          </swal-html>
         </template>
         <div class="form-check" style="padding-left: 30px;">
           <input class="form-check-input" type="checkbox" id="resetAllSettings" name="resetAllSettings">
-          <label class="form-check-label" for="resetAllSettings">All Settings 
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#allsettings' type="button">
+          <label class="form-check-label" for="resetAllSettings">All Settings
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#allsettings'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -30,8 +33,9 @@
           <% } else { %>
           <input class="form-check-input" type="checkbox" id="resetPrefix" name="resetPrefix" disabled>
           <% } %>
-          <label class="form-check-label" for="resetPrefix">Prefix 
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#Prefix' type="button">
+          <label class="form-check-label" for="resetPrefix">Prefix
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#Prefix'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -49,7 +53,8 @@
           <input class="form-check-input" type="checkbox" id="resetDjrole" name="resetDjrole" disabled>
           <% } %>
           <label class="form-check-label" for="resetDjrole">Dj Role
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#DjRole' type="button">
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#DjRole'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -67,7 +72,8 @@
           <input class="form-check-input" type="checkbox" id="resetMusicSetup" name="resetMusicSetup" disabled>
           <% } %>
           <label class="form-check-label" for="resetMusicSetup">Music Setup
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#MusicSetup' type="button">
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#MusicSetup'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -79,13 +85,14 @@
           <swal-html>Reset the Bot Channel Chat</swal-html>
         </template>
         <div class="form-check" style="padding-left: 30px;">
-          <% if(settingsSchema.BotChannel.length > 5 ) { %>
-            <input class="form-check-input" type="checkbox" id="resetBotChannelChat" name="resetBotChannelChat">
+          <% if(settingsSchema.BotChannel.toString() !== "" ) { %>
+          <input class="form-check-input" type="checkbox" id="resetBotChannelChat" name="resetBotChannelChat">
           <% } else {%>
-            <input class="form-check-input" type="checkbox" id="resetBotChannelChat" name="resetBotChannelChat" disabled>
+          <input class="form-check-input" type="checkbox" id="resetBotChannelChat" name="resetBotChannelChat" disabled>
           <% } %>
           <label class="form-check-label" for="resetBotChannelChat">Bot Channel Chat
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#BotChannelChat' type="button">
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#BotChannelChat'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -98,12 +105,13 @@
         </template>
         <div class="form-check" style="padding-left: 30px;">
           <% if (autorole.RoleId.length > 5 ) { %>
-            <input class="form-check-input" type="checkbox" id="resetAutorole" name="resetAutorole">
+          <input class="form-check-input" type="checkbox" id="resetAutorole" name="resetAutorole">
           <% } else { %>
-            <input class="form-check-input" type="checkbox" id="resetAutorole" name="resetAutorole" disabled>
+          <input class="form-check-input" type="checkbox" id="resetAutorole" name="resetAutorole" disabled>
           <% } %>
           <label class="form-check-label" for="resetAutorole">Autorole
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#Autorole' type="button">
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#Autorole'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -116,12 +124,14 @@
         </template>
         <div class="form-check" style="padding-left: 30px;">
           <% if(greetingmsg.ChannelId.length > 5) { %>
-            <input class="form-check-input" type="checkbox" id="resetGreetingMessage" name="resetGreetingMessage">
+          <input class="form-check-input" type="checkbox" id="resetGreetingMessage" name="resetGreetingMessage">
           <% } else { %>
-            <input class="form-check-input" type="checkbox" id="resetGreetingMessage" name="resetGreetingMessage" disabled>
+          <input class="form-check-input" type="checkbox" id="resetGreetingMessage" name="resetGreetingMessage"
+            disabled>
           <% } %>
           <label class="form-check-label" for="resetGreetingMessage">Greeting Message
-            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#GreetingMessage' type="button">
+            <button class='show-example-btn btn btn-link text-white p-0' data-swal-toast-template='#GreetingMessage'
+              type="button">
               <i class="fas fa-info-circle"></i>
             </button>
           </label>
@@ -130,14 +140,15 @@
       <div class="p-2 flex-grow-1"></div>
       <div class="col ms-auto" style="float: right;">
         <button type="reset" class="btn text-white" style="font-size: 20px;" id="btn-cancel-reset">Cancel </button>
-        <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-reset"><i class="fas fa-save"></i> Save</button>
+        <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-reset"><i
+            class="fas fa-save"></i> Save</button>
       </div>
     </form>
     <script>
       Swal.bindClickHandler()
-        Swal.mixin({
-          toast: true,
-        }).bindClickHandler('data-swal-toast-template')
+      Swal.mixin({
+        toast: true,
+      }).bindClickHandler('data-swal-toast-template')
     </script>
     <script>
       $('#btn-submit-reset').on('click', function (e) {

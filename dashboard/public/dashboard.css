@@ -1,33 +1,37 @@
 * {
-    font-size: 18px;
-    color: #eee;
-    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #eee;
+  font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 section {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
 }
-.guild-selection {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-color: #26292e;
+hr {
+  margin: auto;
+  width: 30%;
+  border-radius: 10px;
+  border: 2px solid #e668ff;
 }
-a.btn-dash {
-    margin-top: 10px;
-    border-radius: 10px;
-    padding: 5px;
-    background-color: #f45353;
-    text-decoration: none;
-    color: #eee;
+.btn-dash-upgrade {
+  padding: 5px;
+  background-color: #ec8cff;
+  text-decoration: none;
+  color: #eee;
 }
-a.btn-dash-invite {
-    margin-top: 10px;
-    border-radius: 10px;
-    padding: 5px;
-    background-color: #8b53f4;
-    text-decoration: none;
-    color: #eee;
+.btn-dash-edit {
+  padding: 5px;
+  background-color: #f45353;
+  text-decoration: none;
+  color: #eee;
+}
+.btn-dash-invite {
+  padding: 5px;
+  background-color: #8b53f4;
+  text-decoration: none;
+  color: #eee;
+}
+.img {
+  max-width: 80px;
 }
 @media screen and (max-width: 967px) {
-    
 }

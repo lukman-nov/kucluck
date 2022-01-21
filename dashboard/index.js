@@ -6,8 +6,7 @@ const ejs = require("ejs");
 const passort = require("passport");
 const bodyParser = require("body-parser");
 const Strategy = require("passport-discord").Strategy;
-const BotConfig = require("../botconfig/config.json");
-const Settings = require("./settings.json");
+const config = require("../botconfig/config.json");
 const passport = require("passport");
 const Swal = require('sweetalert2')
 
@@ -16,14 +15,15 @@ module.exports = client => {
   const app = express();
   const session = require("express-session");
   const MemoryStore = require("memorystore")(session);
+  const botsettings = config.websiteSettings;
 
   //Initalize the Discord Login
   passport.serializeUser((user, done) => done(null, user))
   passport.deserializeUser((obj, done) => done(null, obj))
   passport.use(new Strategy({
-      clientID: Settings.config.clientID,
-      clientSecret: process.env.secret || Settings.config.secret,
-      callbackURL: Settings.config.callback,
+      clientID: config.websiteSettings.clientID || client.user.id,
+      clientSecret: process.env.secret || config.websiteSettings.secret,
+      callbackURL: config.websiteSettings.callback,
       scope: ["identify", "guilds", "guilds.join"]
     },
     (accessToken, refreshToken, profile, done) => {
@@ -73,7 +73,7 @@ module.exports = client => {
         req.session.backURL = parsed.path
       }
     } else {
-      req.session.backURL = "/"
+      req.session.backURL = "/dashboard"
     }
     next();
   }, passport.authenticate("discord", {
@@ -110,8 +110,8 @@ module.exports = client => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
     })
   })
 
@@ -121,8 +121,8 @@ module.exports = client => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: botsettings,
+      callback: botsettings.callback,
     })
   })
 
@@ -132,8 +132,8 @@ module.exports = client => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: botsettings,
+      callback: botsettings.callback,
     })
   })
 
@@ -143,25 +143,23 @@ module.exports = client => {
       user: req.isAuthenticated() ? req.user : null,
       bot: client,
       Permissions: Discord.Permissions,
-      botconfig: Settings.website,
-      callback: Settings.config.callback,
+      botconfig: botsettings,
+      callback: botsettings.callback,
     })
   })
 
-
-  Array(
-    "premium", "dashboard", "commands", "payment"
-  ).forEach(handler => {
+  Array("premium", "dashboard", "commands", "payment", "terms").forEach(handler => {
     try {
       require(`./structure/${handler}`)(client, app, checkAuth);
     } catch (e) {
       console.log(e.stack ? String(e.stack).grey : String(e).grey)
     }
   });
-  const port = process.env.PORT || Settings.config.port
+
+  const port = process.env.PORT || config.websiteSettings.port;
   const http = require("http").createServer(app);
   http.listen(port, () => {
-    client.logger(`Website connected :: ${String(Settings.website.domain).brightBlue.underline}`);
+    client.logger(`Website connected :: ${String(config.websiteSettings.domain).brightBlue.underline}`);
   });
 
 }
