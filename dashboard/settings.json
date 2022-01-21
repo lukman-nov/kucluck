@@ -1,12 +1,12 @@
 {
     "website": {
         "support": "https://discord.gg/BuACxn4XUw",
-        "domain" : ""
+        "domain" : "https://kucluck.lukman-nov.repl.co"
     },
     "config": {
         "port": 80,
-        "callback": "",
-        "clientID": "",
+        "callback": "https://kucluck.lukman-nov.repl.co/callback",
+        "clientID": "917011814938738708",
         "secret": ""
     }
 }

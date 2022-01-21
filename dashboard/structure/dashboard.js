@@ -115,7 +115,7 @@ module.exports = (client, app, checkAuth) => {
     
     let channel = guild.channels.cache.get(musicsettings.channelId)
     let message = channel.messages.cache.get(musicsettings.messageId);
-    var data = generateQueueEmbed(client, guild.id)
+    var data = generateQueueEmbed(client, guild.id, ss.Embed, ss.Language, ss.DjRoles, false)
     
     if (req.body.pause) {
       player.pause(true);
