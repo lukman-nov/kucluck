@@ -28,6 +28,7 @@
     "@discordjs/voice": "^0.7.5",
     "@reconlx/discord.js": "^1.1.101",
     "axios": "^0.24.0",
+    "body-parser": "^1.19.1",
     "canvacord": "^5.2.3",
     "canvas": "^2.8.0",
     "colors": "^1.4.0",

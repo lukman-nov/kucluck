@@ -22,7 +22,7 @@ module.exports = client => {
   passport.deserializeUser((obj, done) => done(null, obj))
   passport.use(new Strategy({
       clientID: config.websiteSettings.clientID || client.user.id,
-      clientSecret: process.env.secret || config.websiteSettings.secret,
+      clientSecret: process.env['secret'] || config.websiteSettings.secret,
       callbackURL: config.websiteSettings.callback,
       scope: ["identify", "guilds", "guilds.join"]
     },

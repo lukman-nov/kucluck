@@ -14,10 +14,10 @@
 
   "websiteSettings": {
     "support": "https://discord.gg/BuACxn4XUw",
-    "domain": "",
-    "port": 8000,
-    "callback": "",
-    "clientID": "",
+    "domain": "https://kucluck.lukman-nov.repl.co/",
+    "port": 80,
+    "callback": "https://kucluck.lukman-nov.repl.co/callback",
+    "clientID": "898991673068113971",
     "secret": ""
   },
   "status": {
@@ -55,8 +55,6 @@
   },
   "mongodb": {
     "data": "novbot/Data",
-    "connect": "mongodb+srv://kucluck:kokomilan01@novbot.e8f8j.mongodb.net/Data",
-    "mainconnect": "mongodb+srv://kucluck:kokomilan01@novbot.e8f8j.mongodb.net/Data",
-    "testconnect": "mongodb://localhost:27017/Data"
+    "connect": ""
   }
 }

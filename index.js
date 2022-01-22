@@ -50,5 +50,4 @@ Array("extraevents", "loaddb", "clientvariables", "command", "events", "erelahan
 client.on("ready", () => {
   require("./dashboard/index.js")(client);
 })
-
-client.login(process.env.token || config.token);
+client.login(process.env['token']);
