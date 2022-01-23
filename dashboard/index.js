@@ -47,7 +47,6 @@ module.exports = client => {
   app.set("view engine", "ejs");
   app.set("views", path.join(__dirname, "./views"));
 
-
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({
     extended: true
@@ -115,28 +114,6 @@ module.exports = client => {
     })
   })
 
-  app.get("/errorlogin", (req, res) => {
-    res.render("errorlogin", {
-      req: req,
-      user: req.isAuthenticated() ? req.user : null,
-      bot: client,
-      Permissions: Discord.Permissions,
-      botconfig: botsettings,
-      callback: botsettings.callback,
-    })
-  })
-
-  app.get("/errorNotInGuild", (req, res) => {
-    res.render("errorNotInGuild", {
-      req: req,
-      user: req.isAuthenticated() ? req.user : null,
-      bot: client,
-      Permissions: Discord.Permissions,
-      botconfig: botsettings,
-      callback: botsettings.callback,
-    })
-  })
-
   app.get("/welcome", (req, res) => {
     res.render("welcome", {
       req: req,
@@ -148,7 +125,7 @@ module.exports = client => {
     })
   })
 
-  Array("premium", "dashboard", "commands", "payment", "terms").forEach(handler => {
+  Array("premium", "dashboard", "commands", "payment", "terms", "error", "docs").forEach(handler => {
     try {
       require(`./structure/${handler}`)(client, app, checkAuth);
     } catch (e) {

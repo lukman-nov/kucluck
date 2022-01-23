@@ -4,7 +4,7 @@
   <div class="row">
     <p class="text-muted">Resets of the Setups here! <br>If the checkbox can't be clicked, it means you haven't set it
       up.</p>
-    <form method="POST" action="/resetSuccess">
+    <form id="form" method="POST" action="/resetSuccess">
       <input type="text" value="<%= guild.id%>" name="guildID" hidden>
       <div class="col">
         <template id='allsettings'>

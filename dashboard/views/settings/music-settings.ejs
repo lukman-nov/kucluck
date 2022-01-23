@@ -1,131 +1,135 @@
-<div class="container-lg p-3">
+<div class="col-md-12">
   <h3>
-    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-music-player-fill"
-      viewBox="0 0 16 16">
-      <path d="M8 12a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-      <path
-        d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm1 2h6a1 1 0 0 1 1 1v2.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm3 12a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
-    </svg>
-    Music Settings
+    <i class="bi bi-music-player-fill fa-2x pb"></i> Music Settings
   </h3>
   <hr>
-  <div class="row">
-    <form method="POST" action="/musicsettingsSuccess">
-      <input type="text" value="<%= guild.id%>" name="guildID" hidden>
-      <div class="col-md" style="margin-bottom: 20px;">
-        <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-compact-disc"></i> Music
-          System Setup </h5>
-        <div class="col d-flex" style="margin-top: 10px; margin-bottom: 10px;">
-          <img src="https://media.discordapp.net/attachments/901446802711142460/925841557339381770/kucluck_queue.png"
-            alt="kucluck_queue" style="margin: auto; border-radius: 10px;">
-        </div>
-        <p class="text-muted">Start Listening to Music, by connecting to a Voice Channel and sending either the SONG
-          LINK or
-          SONG NAME in Your Channel!</p>
-        <% if (musicsettings.channelId.length > 5) { %>
-        <% let channel = guild.channels.cache.get(musicsettings.channelId) %>
-        <p class="text-muted">Your Music System setuped in : <a
-            href="https://discord.com/channels/<%= guild.id%>/<%= channel.id%>/<%= musicsettings.messageId%>"
-            target="_blank" style="text-decoration: none;">#<%= channel.name %></a>
-        </p>
-        <% } else { %>
-        <select oninput="showBassic()" class="form-select" data-live-search="true" aria-label="musicsetup"
-          name="musicsetup" autocomplete="off" required>
-          <option selected disabled>Choose channel here for setup Music System...</option>
-          <% guild.channels.cache.filter(c=> c.type === "GUILD_TEXT" ).sort((a, b) => b.rawPosition - a.rawPosition).forEach((channel, i) => { %>
-          <option value="<%= channel.name%>">#<%= channel.name%></option>
-          <% }) %>
-        </select>
-        <% } %>
-        <div class="row mt-4">
-          <!-- AUTO PLAY -->
-          <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;" name="Pruning-Message">
-            <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-envelope-open-text"></i>
-              Pruning Message: </h5>
-            <p class="text-muted">Toggles playmessage (same as pruning...). If its true a message of playing a new track
-              will be sent, even if your afk. If false it wont send any message if a new Track plays!
-            </p>
-            <div class="form-check form-switch">
-              <label class="form-check-label switch" for="pruning">
-                <input class="form-check-input" type="checkbox" data-live-search="true" name="pruning" id="pruning"
-                  style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
-                  <%= settingsSchema.Pruning ? "checked" : "" %>>
-                <span class="slider round"></span>
-              </label>
-            </div>
-          </div>
-          <!-- AUTO RESUME -->
-          <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;" name="Auto-Resume">
-            <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-retweet"></i> Auto
-              Resume: </h5>
-            <p class="text-muted">Toggle to enable or disable the Auto Resume feature of songs if the bot restarts.</p>
-            <div class="flex-grow" style="height: 39px; margin-bottom: 10px;"></div>
-            <div class="form-check form-switch">
-              <label class="form-check-label switch" for="autoresume">
-                <input class="form-check-input" type="checkbox" data-live-search="true" name="autoresume"
-                  id="autoresume" style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
-                  <%= settingsSchema.Autoresume ? "checked" : "" %>>
-                <span class="slider round"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="p-2 flex-grow-1"></div>
-        <div class="col ms-auto" style="float: right;">
-          <button type="reset" class="btn text-white" style="font-size: 20px;" onclick="closeBassic()"
-            id="btn-cancel-ms1">Cancel </button>
-          <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-ms1"><i
-              class="fas fa-save"></i> Save</button>
-        </div>
-        <script>
-          $('#btn-submit-ms1').on('click', function (e) {
-            e.preventDefault();
-            var form = $(this).parents('form');
-            var cancelbtn = $('#btn-cancel-ms1')
-            Swal.fire({
-              title: 'Do you want to save the changes?',
-              showDenyButton: true,
-              denyButtonColor: '#444444',
-              showCancelButton: false,
-              allowOutsideClick: false,
-              confirmButtonText: '<i class="fas fa-save"></i> Yes Save it!',
-              denyButtonText: `Don't save`,
-            }).then((result) => {
-              /* Read more about isConfirmed, isDenied below */
-              if (result.isConfirmed) {
-                Swal.fire({
-                  title: 'Saved!',
-                  text: '',
-                  icon: 'success',
-                  showConfirmButton: false,
-                  timer: 1500,
-                })
-                form.submit()
-              } else if (result.isDenied) {
-                Swal.fire({
-                  title: 'Changes are not saved',
-                  text: '',
-                  icon: 'info',
-                  showConfirmButton: false,
-                  timer: 1500
-                })
-                cancelbtn.click();
-              }
-            })
-          });
-        </script>
+</div>
+<div class="row m-auto pb-2">
+  <form id="form" method="POST" action="/musicsettingsSuccess">
+    <input type="text" value="<%= guild.id%>" name="guildID" hidden>
+    <!-- Music System Setup -->
+    <div class="col-md-12" style="margin-bottom: 20px;">
+      <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-compact-disc"></i> Music
+        System Setup </h5>
+      <div class="col d-flex" style="margin-top: 10px; margin-bottom: 10px;">
+        <img src="https://media.discordapp.net/attachments/901446802711142460/925841557339381770/kucluck_queue.png"
+          alt="kucluck_queue" style="margin: auto; border-radius: 10px;">
       </div>
-    </form>
-  </div>
+      <p class="text-muted">Start Listening to Music, by connecting to a Voice Channel and sending either the SONG
+        LINK or
+        SONG NAME in Your Channel!</p>
+      <% if (musicsettings.channelId.length > 5) { %>
+      <% let channel = guild.channels.cache.get(musicsettings.channelId) %>
+      <p class="text-muted">Your Music System setuped in : <a
+          href="https://discord.com/channels/<%= guild.id%>/<%= channel.id%>/<%= musicsettings.messageId%>"
+          target="_blank" style="text-decoration: none;">#<%= channel.name %></a>
+      </p>
+      <% } else { %>
+      <select oninput="showBassic()" class="form-select" data-live-search="true" aria-label="musicsetup"
+        name="musicsetup" autocomplete="off" required>
+        <option selected disabled>Choose channel here for setup Music System...</option>
+        <% guild.channels.cache.filter(c=> c.type === "GUILD_TEXT" ).sort((a, b) => b.rawPosition - a.rawPosition).forEach((channel, i) => { %>
+        <option value="<%= channel.name%>">#<%= channel.name%></option>
+        <% }) %>
+      </select>
+      <% } %>
+    </div>
+    <!-- PRUNING & AUTORESUME -->
+    <div class="row mt-4">
+      <!-- Pruning Message -->
+      <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;" name="Pruning-Message">
+        <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-envelope-open-text"></i>
+          Pruning Message: </h5>
+        <p class="text-muted">Toggles playmessage (same as pruning...). If its true a message of playing a new track
+          will be sent, even if your afk. If false it wont send any message if a new Track plays!
+        </p>
+        <div class="form-check form-switch">
+          <label class="form-check-label switch" for="pruning">
+            <input class="form-check-input" type="checkbox" data-live-search="true" name="pruning" id="pruning"
+              style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+              <%= settingsSchema.Pruning ? "checked" : "" %>>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+      <!-- AUTO RESUME -->
+      <div class="col-md-6 col-sm-12" style="margin-bottom: 20px;" name="Auto-Resume">
+        <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-retweet"></i> Auto
+          Resume: </h5>
+        <p class="text-muted">Toggle to enable or disable the Auto Resume feature of songs if the bot restarts.</p>
+        <div class="flex-grow" style="height: 39px; margin-bottom: 10px;"></div>
+        <div class="form-check form-switch">
+          <label class="form-check-label switch" for="autoresume">
+            <input class="form-check-input" type="checkbox" data-live-search="true" name="autoresume" id="autoresume"
+              style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+              <%= settingsSchema.Autoresume ? "checked" : "" %>>
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <!-- FLEX GROW -->
+    <div class="p-2 flex-grow-1"></div>
+    <!-- BUTTONS -->
+    <div class="col pb-4 ms-auto" style="float: right;">
+      <button type="reset" class="btn text-white" style="font-size: 20px;" onclick="closeBassic()"
+        id="btn-cancel-ms1">Cancel </button>
+      <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-ms1"><i
+          class="fas fa-save"></i> Save</button>
+    </div>
+    <script>
+      $('#btn-submit-ms1').on('click', function (e) {
+        e.preventDefault();
+        var form = $(this).parents('form');
+        var cancelbtn = $('#btn-cancel-ms1')
+        Swal.fire({
+          title: 'Do you want to save the changes?',
+          showDenyButton: true,
+          denyButtonColor: '#444444',
+          showCancelButton: false,
+          allowOutsideClick: false,
+          confirmButtonText: '<i class="fas fa-save"></i> Yes Save it!',
+          denyButtonText: `Don't save`,
+        }).then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: 'Saved!',
+              text: '',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            })
+            form.submit()
+          } else if (result.isDenied) {
+            Swal.fire({
+              title: 'Changes are not saved',
+              text: '',
+              icon: 'info',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            cancelbtn.click();
+          }
+        })
+      });
+    </script>
+  </form>
   <hr>
 </div>
 <% if (!player || !player.queue || !player.queue.current) { %>
-<div class="blok-player" id="notplayer">
-  <h3 style="text-align: center;">Kucluck not playing a song right now...</h3>
+<div class="col-md-12">
+  <div class="blok-player" id="notplayer">
+    <h3 style="text-align: center;">Kucluck not playing a song at the moment...</h3>
+    <div class="img pt-3"><img
+        src="https://images-ext-2.discordapp.net/external/Cuuff6h3aIHzZjT3zhUlqqut2zrKr-NfKKmK5KGG26Q/https/media.discordapp.net/attachments/904821764146745404/916261377511944212/kucluck_play.gif"
+        alt="music-system" style="border-radius: 10px;" class="rounded mx-auto d-block"></div>
+  </div>
 </div>
 <% } else { %>
-<div class="container-lg p-3" style="border-radius: 10px; border: 2px solid #f0a3ff;">
-  <form method="POST" action="/musicsettingsSuccessPremium">
+<div class="row m-auto">
+  <form id="form" method="POST" action="/musicsettingsSuccessPremium"
+    style="border-radius: 10px; border: 2px solid #f0a3ff;">
     <input type="text" value="<%= guild.id%>" name="guildID" hidden>
     <div class="row pt-4">
       <!-- AUTO PLAY -->

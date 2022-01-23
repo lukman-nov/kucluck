@@ -31,7 +31,7 @@ module.exports = (client, app, checkAuth) => {
   });
   app.get("/dashboard/:guildID", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
-    if (!guild) return res.redirect("/dashboard")
+    if (!guild) return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);
     if (!member) {
       try {
@@ -82,7 +82,7 @@ module.exports = (client, app, checkAuth) => {
   });
   app.post("/dashboard/:guildID", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
-    if (!guild) return res.redirect("/dashboard")
+    if (!guild) return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);
     if (!member) {
       try {
@@ -206,7 +206,10 @@ module.exports = (client, app, checkAuth) => {
     } else leveling.status = false;
     await ss.save();
     await leveling.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/autoroleSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -225,7 +228,9 @@ module.exports = (client, app, checkAuth) => {
     } else ss.AutoRole = false;
     await ss.save();
     await autorole.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/greetingmsgSucces', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -253,7 +258,10 @@ module.exports = (client, app, checkAuth) => {
     } else ss.Greeting = false;
     await greetingmsg.save();
     await ss.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/musicsettingsSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -273,7 +281,9 @@ module.exports = (client, app, checkAuth) => {
       });
     }
     await ss.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/musicsettingsSuccessPremium', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -477,7 +487,9 @@ module.exports = (client, app, checkAuth) => {
       await premium.save();
     }
     await ss.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/resetSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -557,7 +569,9 @@ module.exports = (client, app, checkAuth) => {
       await databasing(client, guild.id, member.id)
     }
     await ss.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
   app.post('/setupEmbedSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
@@ -615,6 +629,8 @@ module.exports = (client, app, checkAuth) => {
     }
 
     await ss.save();
-    await res.redirect(`/dashboard/${req.body.guildID}`)
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}`)
+    }, 3000);
   });
 }

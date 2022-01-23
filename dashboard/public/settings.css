@@ -182,7 +182,23 @@
 .progress-bar {
   background-color: #828cff;
 }
+#warning {
+  background: #111;
+  animation: fadein 0.5s;
+}
+@keyframes fadein {
+  0% {
+    opacity: 0%;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
 @media screen and (max-width: 967px) {
+  img {
+    width: auto;
+    max-width: 300px;
+  }
   #settings {
     display: block;
   }

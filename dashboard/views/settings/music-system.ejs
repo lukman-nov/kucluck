@@ -1,26 +1,18 @@
-<div class="row pt-2">
-  <h3>
-    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-music-note-list"
-      viewBox="0 0 16 16">
-      <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2z" />
-      <path fill-rule="evenodd" d="M12 3v10h-1V3h1z" />
-      <path d="M11 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 16 2.22V4l-5 1V2.82z" />
-      <path fill-rule="evenodd"
-        d="M0 11.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 7H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 3H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z" />
-    </svg>
-    Music System
-  </h3>
+<div class="col-md-12">
+  <h3><i class="bi bi-music-note-list fa-2x pb"></i> Music System </h3>
+  <hr>
 </div>
-<hr>
 <% if (!player || !player.queue || !player.queue.current) { %>
-<div class="blok-player" id="notplayer">
-  <h3 style="text-align: center;">Kucluck not playing a song at the moment...</h3>
-  <div class="img pt-3"><img
-      src="https://images-ext-2.discordapp.net/external/Cuuff6h3aIHzZjT3zhUlqqut2zrKr-NfKKmK5KGG26Q/https/media.discordapp.net/attachments/904821764146745404/916261377511944212/kucluck_play.gif"
-      alt="music-system" style="border-radius: 10px;" class="rounded mx-auto d-block"></div>
+<div class="col-md-12">
+  <div class="blok-player" id="notplayer">
+    <h3 style="text-align: center;">Kucluck not playing a song at the moment...</h3>
+    <div class="img pt-3"><img
+        src="https://images-ext-2.discordapp.net/external/Cuuff6h3aIHzZjT3zhUlqqut2zrKr-NfKKmK5KGG26Q/https/media.discordapp.net/attachments/904821764146745404/916261377511944212/kucluck_play.gif"
+        alt="music-system" style="border-radius: 10px;" class="rounded mx-auto d-block"></div>
+  </div>
 </div>
 <% } else { %>
-<div class="row" id="player">
+<div class="row m-auto" id="player">
   <div class="col-md-8" data-live-search="true" id="nowplaying">
     <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff">
       <img src="https://cdn.discordapp.com/emojis/927445485843791882.gif?size=96" style="max-width: 50px;" alt="disk">
@@ -140,9 +132,9 @@
       })
     </script>
   </div>
+  <hr>
 </div>
-<hr>
-<div class="row justify-content-md-center">
+<div class="row m-auto justify-content-md-center">
   <div class="d-flex" style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff;" id="queueTitle">
     <img src="https://c.tenor.com/ykQ5HijpTrEAAAAi/headphones-music.gif"
       style="max-width: 50px; max-height: 50px; margin-right: 10px;" alt="disk">

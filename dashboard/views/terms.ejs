@@ -102,18 +102,18 @@
           <div class="row mb-3 justify-content-center">
             <div class="col-md">
               <div class="d-flex justify-content-start bd-highlight">
-                <button class="btn" onclick="location.href='/dashboard'"><i
+                <button class="btn" onclick="location.href='/'" title="Home"><i
                     class="fas fa-angle-double-left fa-2x"></i></button>
                 <div class="col-md">
                   <div class="d-flex justify-content-end bd-highlight">
-                    <button class="btn align-items-end"
+                    <button class="btn align-items-end" title="Invite"
                       onclick="window.open('https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands', '_blank,')"><img
                         src="https://media.discordapp.net/attachments/901446802711142460/931714385708220487/newlkuclucklogononbg_2.png"
                         alt="LN_Logo" width="45px"></button>
-                    <button class="btn align-items-end"
+                    <button class="btn align-items-end" title="Lukman Novawiyadi"
                       onclick="window.open('https://web.facebook.com/lukman.now', '_blank,')"><img
                         src="<%= owner.displayAvatarURL()%>" alt="LN_Logo" width="40px"></button>
-                    <button class="btn align-items-end"
+                    <button class="btn align-items-end" title="Support Server"
                       onclick="window.open('https://discord.gg/BuACxn4XUw', '_blank,')"><i
                         class="fab fa-discord fa-2x"></i></button>
                   </div>

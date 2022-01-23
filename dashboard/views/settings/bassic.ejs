@@ -1,8 +1,8 @@
-<div class="row pt-2">
-  <h3><i class="fas fa-user-cog fa-2x pb"></i> Bassic Settings <%= guild.name%></h3>
+<div class="col-md-12">
+  <h3><i class="fas fa-user-cog fa-2x pb"></i> Bassic Settings</h3>
   <hr>
 </div>
-<form id="formBassic" method="POST" action="/bassicSuccess">
+<form id="form" method="POST" action="/bassicSuccess">
   <input type="text" value="<%= guild.id%>" name="guildID" hidden>
   <div class="row g-3">
     <!-- PREFIX -->
@@ -133,6 +133,12 @@
   </div>
 </form>
 <script>
+  var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+  function alert(message, type) {
+    var wrapper = document.createElement('div')
+    wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>'
+    alertPlaceholder.append(wrapper)
+  }
   $('#btn-submit').on('click', function (e) {
     e.preventDefault();
     var form = $(this).parents('form');
@@ -148,13 +154,7 @@
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Saved!',
-          text: '',
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        alert('Successfully save data, please wait for page auto reload', 'success')
         form.submit()
       } else if (result.isDenied) {
         Swal.fire({

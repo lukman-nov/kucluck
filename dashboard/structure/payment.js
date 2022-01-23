@@ -18,7 +18,7 @@ module.exports = (client, app, checkAuth) => {
   app.post("/paymentgate", async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guild)
     if (!guild)
-      return res.redirect('/errorNotInGuild')
+      return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);
     if (!member) {
       try {

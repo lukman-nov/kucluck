@@ -8,13 +8,14 @@
         alt="example_Embed" style="border-radius: 10px; ">
     </div>
   </div>
-  <form method="post" action="/setupEmbedSuccess">
+  <form id="form" method="post" action="/setupEmbedSuccess">
     <input type="text" value="<%= guild.id%>" name="guildID" hidden>
     <div class="input-group mb-3 mt-3">
       <!-- Color Embed -->
       <span class="input-group-text" id="color">Color Embed
         <span style="margin-left: 5px; color:#828cff" data-bs-toggle="popEmbed" data-bs-trigger="hover"
-          data-bs-content="Color embed to give color to the left of the embed | Default: RANDOM" data-bs-placement="top">
+          data-bs-content="Color embed to give color to the left of the embed | Default: RANDOM"
+          data-bs-placement="top">
           <i class="fas fa-question-circle"></i>
         </span>
       </span>
@@ -64,7 +65,8 @@
     <!-- BUTTON SAVE -->
     <div class="d-flex" style="float: right;">
       <button type="reset" class="btn text-white" style="font-size: 20px;" id="btn-cancel-se">Cancel </button>
-      <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-se"><i class="fas fa-save"></i> Save</button>
+      <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-se"><i
+          class="fas fa-save"></i> Save</button>
     </div>
   </form>
   <script>

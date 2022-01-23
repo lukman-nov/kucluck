@@ -23,8 +23,12 @@ module.exports = {
   type: "bot",
   cooldown: 5,
   run: async (client, message, args, cmduser, text, prefix, player, es, ls) => {
-    StatsGSchema.findOne({ BotId : client.user.id }, async (err, data) => {
-      StatsSchema.findOne({ GuildId : message.guild.id }, async (err, data2) => {
+    StatsGSchema.findOne({
+      BotId: client.user.id
+    }, async (err, data) => {
+      StatsSchema.findOne({
+        GuildId: message.guild.id
+      }, async (err, data2) => {
         if (data) {
           if (data2) {
             let tempmsg = await message.reply({
@@ -32,7 +36,7 @@ module.exports = {
                 .setAuthor(client.getAuthor(client.la[ls].cmds.info.botinfo.loading, "https://cdn.discordapp.com/emojis/756773010123522058.gif", "https://discord.gg/BuACxn4XUw"))
               ]
             })
-            cpuStat.usagePercent(function(e, percent, seconds) {
+            cpuStat.usagePercent(function (e, percent, seconds) {
               if (e) {
                 return console.log(e.stack ? String(e.stack).grey : String(e).grey);
               }
@@ -50,7 +54,7 @@ module.exports = {
                 .setColor(es.color).setThumbnail(es.thumb ? es.footericon : null)
                 .addField(client.la[ls].cmds.info.botinfo.field1.title, handlemsg(client.la[ls].cmds.info.botinfo.field1.value, {
                   totalGuilds: totalGuilds,
-                  totalMembers: totalMembers, 
+                  totalMembers: totalMembers,
                   connections: connectedchannelsamount,
                   connectedchannelsamount: connectedchannelsamount
                 }), true)

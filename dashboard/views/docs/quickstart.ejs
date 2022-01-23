@@ -1,0 +1,99 @@
+<!-- ABOUT -->
+<div class="col-md-12 pt-3 pb-3" id="About">
+  <div class="row m-2">
+    <div class="col-md-1">
+      <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+        target="popup" onclick="openInvite()"><img src="<%= bot.user.displayAvatarURL() %>" alt="Logo" width="70px"></a>
+    </div>
+    <div class="col-md-11 pt-1">
+      <p><a
+          href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+          target="popup" onclick="openInvite()" class="text-decoration-none text-white"><%= bot.user.username%></a>
+        <span class="bg-primary" style="padding: 0px 5px; border-radius: 5px; font-size: 12px;">BOT</span><span
+          class="text-muted" style="font-size: 12px; padding-left: 5px;"> 23/01/2022</span>
+      </p>
+      <div class="embed">
+        <!-- TITLE -->
+        <h4 class="title">About a Kucluck Bot</h4>
+        <!-- DESCRIPTION -->
+        <p class="description">I <span class="text-info"><%= owner.tag%></span> as the developer of <span
+            class="text-info"><%= bot.user.username%></span>, are
+          very grateful to those
+          of you who use this Discord Bot. <span class="text-info"><%= bot.user.username%></span> is a
+          Discord bot that was intentionally created to help
+          manage your Discord server, and also to entertain all members on your server with music or other
+          things.</p>
+        <!-- FOOTER -->
+        <p class="footer"><img src="<%= owner.displayAvatarURL()%>" alt="ownerimg" width="30px"> Write by:
+          <%= owner.tag%></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- INVITE -->
+<div class="col-md-12 pt-3 pb-3" id="Invite">
+  <div class="row m-2">
+    <div class="col-md-1">
+      <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+        target="popup" onclick="openInvite()"><img src="<%= bot.user.displayAvatarURL() %>" alt="Logo" width="70px"></a>
+    </div>
+    <div class="col-md-11 pt-1">
+      <p><a
+          href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+          target="popup" onclick="openInvite()" class="text-decoration-none text-white"><%= bot.user.username%></a>
+        <span class="bg-primary" style="padding: 0px 5px; border-radius: 5px; font-size: 12px;">BOT</span><span
+          class="text-muted" style="font-size: 12px; padding-left: 5px;"> 23/01/2022</span>
+      </p>
+      <div class="embed">
+        <!-- TITLE -->
+        <h4 class="title">Invite a Kucluck Bot</h4>
+        <!-- DESCRIPTION -->
+        <p class="description">Inviting Kucluck Bot on your server is very easy. First, please check if you
+          have Administrator or Manage Server permissions.
+          For the server owner has all the permissions even without roles.
+          If you have confirmed that you have a role in managing the server, now you can invite Kucluck Bot
+          using <a
+            href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+            target="popup" onclick="openInvite()" class="text-decoration-none">this link</a>.</p>
+        <!-- IMAGE -->
+        <div class="img"><img
+            src="https://media.discordapp.net/attachments/901446802711142460/934599682334801920/unknown.png?width=250&height=479"
+            alt="invite"></div>
+        <!-- FOOTER -->
+        <p class="footer"><img src="<%= owner.displayAvatarURL()%>" alt="ownerimg" width="30px"> Write by:
+          <%= owner.tag%></p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- USE -->
+<div class="col-md-12 pt-3 pb-3" id="Use">
+  <div class="row m-2">
+    <div class="col-md-1">
+      <a href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+        target="popup" onclick="openInvite()"><img src="<%= bot.user.displayAvatarURL() %>" alt="Logo" width="70px"></a>
+    </div>
+    <div class="col-md-11 pt-1">
+      <p><a
+          href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"
+          target="popup" onclick="openInvite()" class="text-decoration-none text-white"><%= bot.user.username%></a>
+        <span class="bg-primary" style="padding: 0px 5px; border-radius: 5px; font-size: 12px;">BOT</span><span
+          class="text-muted" style="font-size: 12px; padding-left: 5px;"> 23/01/2022</span>
+      </p>
+      <div class="embed">
+        <!-- TITLE -->
+        <h4 class="title">Use a Kucluck Bot</h4>
+        <!-- DESCRIPTION -->
+        <p class="description">Now you can use Kucluck Bot on your Discord server. To use Kucluck bot, you
+          can use the required prefix + command. <br><br>Default Prefix:
+          <code>[<%= config.prefix%>]</code><br>You can see the commands for
+          Kucluck Bot <a href="/commands" target="_blank">here</a>, or you can send a message <code><%= config.prefix%>help
+            [command]</code>.
+        </p>
+        <!-- FOOTER -->
+        <p class="footer"><img src="<%= owner.displayAvatarURL()%>" alt="ownerimg" width="30px"> Write by:
+          <%= owner.tag%></p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -24,13 +24,38 @@
   }
 </script>
 <!-- END INNER SCRIPT -->
+<% if (!premium) { %>
+<script>
+  setTimeout(() => {
+    Swal.fire({
+      title: 'Upgrade Kucluck Premium Now!',
+      html: '<p><img src="https://cdn.discordapp.com/emojis/929361328836079656.gif?size=96&quality=lossless" alt="" width="30px">Get a discount for a 3 month subscription!.<img src="https://cdn.discordapp.com/emojis/929361328836079656.gif?size=96&quality=lossless" alt="" width="30px"></p>',
+      text: '',
+      color: '#eee',
+      imageUrl: 'https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png',
+      imageAlt: 'Kucluck_Coin',
+      imageWidth: 150,
+      showCancelButton: true,
+      confirmButtonText: '<i class="fa fa-thumbs-up text-muted"></i> Upgrade!',
+      confirmButtonColor: '#ddc3ff',
+      cancelButtonText: 'Close',
+      focusConfirm: false,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        location.href = '/premium';
+      }
+    })
+  }, 30000);
+</script>
+<% } %>
 
 <body>
   <%- include('./element/header'); -%>
   <!-- MAIN BODY -->
   <section style="margin-bottom: 90px; margin-top: 90px;">
-    <div class="container-fluid" style="max-width: 1400px;">
-      <div class="row gx-5 p-0" id="settings">
+    <div class="container">
+      <div class="row" id="settings">
         <div class="col-md-3 mb-5 rounded-3">
           <div class="col-md d-flex rounded-3 bg-dark mb-3 guild-nav">
             <div class="d-flex rounded-3" style="background-color: #3b3f47; padding: 10px; width: 100%;">
@@ -79,8 +104,9 @@
             </div>
           </div>
         </div>
-        <div class="col-md bg-dark rounded-3">
-          <div class="tab-content" id="nav-tabContent">
+        <div class="col-md-9 mb-5 rounded-3">
+          <div class="tab-content p-3 bg-dark" id="nav-tabContent">
+            <div id="liveAlertPlaceholder"></div>
             <!-- MUSIC SYSTEM -->
             <div class="row pt-2 pb-2 tab-pane fade show active" id="list-Music" role="tabpanel"
               aria-labelledby="list-Music-list">
@@ -119,4 +145,19 @@
   <%- include('./element/footer'); -%>
 </body>
 
-</html>
+<script>
+  (function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>
