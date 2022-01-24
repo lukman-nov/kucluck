@@ -1,4 +1,6 @@
-const { MessageEmbed } = require("discord.js");
+const {
+    MessageEmbed
+} = require("discord.js");
 const emoji = require(`${process.cwd()}/botconfig/emojis.json`);
 const GreetingSchema = require('../../databases/greetingmsg');
 const SettingsSchema = require('../../databases/settings');
@@ -47,20 +49,24 @@ module.exports = {
             })
         }
 
-        GreetingSchema.findOne({ GuildId: message.guild.id }, async (err, data) => {
-            if(!data) {
+        GreetingSchema.findOne({
+            GuildId: message.guild.id
+        }, async (err, data) => {
+            if (!data) {
                 new GreetingSchema({
                     GuildId: message.guild.id,
                     ChannelId: channel.id,
                     Message: msg,
                     // Channelmsg: channel2
                 }).save();
-                SettingsSchema.findOne({ GuildId: message.guild.id }, async (err, ss) => {
+                SettingsSchema.findOne({
+                    GuildId: message.guild.id
+                }, async (err, ss) => {
                     if (ss) {
                         if (!ss.Greeting) {
                             ss.Greeting = true;
                             await ss.save();
-                        } else if (ss.Greeting === false) {
+                        } else {
                             ss.Greeting = true;
                             await ss.save();
                         }

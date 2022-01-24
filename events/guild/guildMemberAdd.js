@@ -47,7 +47,9 @@ module.exports = async (client, member) => {
 
   let channelToSendTo;
   if (ss.AutoRole == true) {
-    await AutoRoleSchema.findOne({ GuildId: member.guild.id }, async (err, ard) => {
+    await AutoRoleSchema.findOne({
+      GuildId: member.guild.id
+    }, async (err, ard) => {
       if (!ard) return;
       try {
         if (ard) {
@@ -61,8 +63,7 @@ module.exports = async (client, member) => {
             channelToSendTo.send({
               embeds: [new MessageEmbed()
                 .setColor(es.wrongcolor)
-                .setTitle(`${emoji.msg.ERROR} Cant find role`)
-                .setFooter(client.getFooter(es))
+                .setTitle(`${emoji.msg.ERROR} ERROR! I Cannot find role for use Auto Role`)
               ]
             })
             return ard.delete().catch(() => {});
@@ -78,8 +79,7 @@ module.exports = async (client, member) => {
         channelToSendTo.send({
           embeds: [new MessageEmbed()
             .setColor(es.wrongcolor)
-            .setTitle(`${emoji.msg.ERROR} **My role level is lowed! Please up my roles before use command autorole!**`)
-            .setFooter(client.getFooter(es))
+            .setTitle(`${emoji.msg.ERROR} ERROR **My role level is lowed! Please up my roles before use command autorole!**`)
           ]
         })
       }

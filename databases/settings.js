@@ -14,9 +14,10 @@ const GuildSettings = new mongoose.Schema({
   PlayMessage: String,
   AutoRole: Boolean,
   Greeting: Boolean,
+  leaveMessage: Boolean,
   DjRoles: String,
   BotChannel: Array,
-  Embed: Object, 
+  Embed: Object,
 });
 
 module.exports = mongoose.model("guild-settings", GuildSettings);

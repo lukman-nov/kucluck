@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../element/head'); -%>
+  <!-- My CSS -->
+  <link rel="stylesheet" href="/header.css">
+  <link rel="stylesheet" href="/footer.css">
+  <link rel="stylesheet" href="/settings.css">
+  <title>Basic Settings | <%= bot.user.username %></title>
+  <link rel="icon" type="image/png" href="<%= bot.user.displayAvatarURL({size: 128}) %>">
+</head>
+<%- include('../element/header'); -%>
+
+<body>
+  <%- include('../settings'); -%>
+  <main class="container justify-content-center m-2" id="bassicsettings">
+    <div class="row bg-dark p-3">
+      <div class="col-md-12">
+        <h3><i class="fas fa-user-cog fa-2x pb"></i> Bassic Settings</h3>
+        <hr>
+      </div>
+      <form id="form" method="post">
+        <input type="text" value="<%= guild.id%>" name="guildID" hidden>
+        <div class="row g-3">
+          <!-- PREFIX -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff" id="prefix"><i
+                    class="fas fa-terminal"></i>
+                  Prefix:</h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Changes the prefix for all commands.<br> Current Prefix:
+                  <code><%= settingsSchema.Prefix %></code>
+                </p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <input oninput="showBassic()" style="margin-top: -10px;" type="text"
+                  class="form-control form-control-one" name="prefix" placeholder="Your Prefix" maxlength="3" size="3"
+                  autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <!-- LANGUAGE -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-language"></i>
+                  Language:</h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Change the bot language on your server.<br>Current Language:
+                  <% if (settingsSchema.Language === "en") { %>
+                  <img
+                    src="https://media.discordapp.net/attachments/901446802711142460/931751586303189032/united-states.png?width=480&height=480"
+                    alt="English" style="max-width: 25px; margin-left: 10px; margin-right: 10px;"><code>English</code>
+                  <% } else if (settingsSchema.Language === "ind"){ %>
+                  <img
+                    src="https://media.discordapp.net/attachments/901446802711142460/931751586097680415/indonesia.png?width=480&height=480"
+                    alt="Indonseia"
+                    style="max-width: 25px; margin-left: 10px; margin-right: 10px;"><code>Bahasa Indonseia</code>
+                  <% } %>
+                </p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <select oninput="showBassic()" class="form-select" aria-label="language" name="language"
+                  autocomplete="off">
+                  <option selected disabled>Choose here...</option>
+                  <option value="en">English</option>
+                  <option value="ind">Bahasa Indonseia</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- DJROLE -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-headphones-alt"></i>
+                  DJ Role:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Let's you define a Dj Role. <br>Current Dj Role:
+                  <% if(settingsSchema.DjRoles.length > 5 ) {%>
+                  <code>@<%= guild.roles.cache.get(settingsSchema.DjRoles).name %></code>
+                  <% }else {  %>
+                  <code>Not Set</code>
+                  <% } %>
+                </p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <select oninput="showBassic()" class="form-select" data-live-search="true" aria-label="Roles"
+                  name="roles" autocomplete="off">
+                  <option selected disabled>Choose here...</option>
+                  <% guild.roles.cache.filter(role => !role.managed && role.name != `@everyone`).sort((a, b) => b.rawPosition - a.rawPosition).forEach((role, i) => { %>
+                  <option value="<%= role.name%>">@<%= role.name%></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- BOT CHAT -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-comment-dots"></i>
+                  Bot
+                  Chat:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Let's you enable a bot only chat where the community is allowed to use commands
+                  <br>Current Bot Channel:
+                  <% if(settingsSchema.BotChannel.toString() !== "" ) {%>
+                  <% for (const botch of settingsSchema.BotChannel.map(c => c)) {%>
+                  <% let channel = guild.channels.cache.get(botch) %>
+                  <% if (!channel) { %>
+                  <% settingsSchema.BotChannel.remove(botch) %>
+                  <% settingsSchema.save(); %>
+                  <% }%>
+                  <code>#<%= channel.name %>,</code>
+                  <% } %>
+                  <% }else {  %>
+                  <code>Not Set</code>
+                  <% } %>
+                </p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <select oninput="showBassic()" class="form-select" data-live-search="true" aria-label="botchannel"
+                  name="botchannel" autocomplete="off">
+                  <option selected disabled>Choose here...</option>
+                  <% guild.channels.cache.filter(c=> c.type === "GUILD_TEXT" ).sort((a, b) => b.rawPosition - a.rawPosition).forEach((channel, i) => { %>
+                  <option value="<%= channel.name%>">#<%= channel.name%></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- UNKNOWN COMMANDS MESSAGES -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-comment-slash"></i>
+                  Unknown Commands Message:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Toggles if the Bot should send you an Informational Message, when the Command is
+                  NOT FOUND!</p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <div class="form-check form-switch">
+                  <label class="form-check-label switch" for="unkowncmdmessage">
+                    <input class="form-check-input" onclick="showBassic()" type="checkbox" name="unkowncmdmessage"
+                      id="unkowncmdmessage" style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+                      <%= settingsSchema.Unkowncmdmessage ? "checked" : "" %>>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- LEVELING SYSTEM -->
+          <% if (leveling) { %>
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-star-half-alt"></i>
+                  Leveling System:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Toggle to enable or disable the Leveling System feature</p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <div class="form-check form-switch">
+                  <label class="form-check-label switch" for="leveling">
+                    <input class="form-check-input" onclick="showBassic()" type="checkbox" name="leveling" id="leveling"
+                      style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+                      <%= leveling.status ? "checked" : "" %>>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }%>
+          <!-- GREETING MESSAGE -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff">
+                  <i class="fas fa-envelope-open-text"></i> Greeting Message:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Toggle to enable or disable if you has been set the Greeting Message</p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <div class="form-check form-switch">
+                  <label class="form-check-label switch" for="toggleGreetingmsg">
+                    <input class="form-check-input" onclick="showBassic()" type="checkbox" name="toggleGreetingmsg"
+                      id="toggleGreetingmsg" style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+                      <%= settingsSchema.Greeting ? "checked" : "" %>
+                      <%= greetingmsg.ChannelId.length > 5 ? '':'disabled' %>>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- LEAVE MESSAGE -->
+          <div class="col-md-6 offset-sm-2 col-md-6 offset-md-0 bassicsettings">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 200px;">
+              <div class="bd-highlight">
+                <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff"><i class="fas fa-star-half-alt"></i>
+                  Leave Message:
+                </h5>
+              </div>
+              <div class="bd-highlight">
+                <p class="text-muted">Toggle to enable or disable if you has been set the Leave Message</p>
+              </div>
+              <div class="mt-auto bd-highlight" style="width: 100%;">
+                <div class="form-check form-switch">
+                  <label class="form-check-label switch" for="toggleLeavemsg">
+                    <input class="form-check-input" onclick="showBassic()" type="checkbox" name="toggleLeavemsg"
+                      id="toggleLeavemsg" style="zoom:2;margin-left: auto;margin-top: auto;margin: auto;"
+                      <%= settingsSchema.leaveMessage ? "checked" : "" %>
+                      <%= leavemsg.ChannelId.length > 5 ? '' : 'disabled' %>>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="popup" id="popupSave">
+          <span class="popuptext" id="myPopup">
+            <p class="text-decoration-underline"
+              style="float: left; margin-bottom: 0; margin-top: 8px; font-size: 18px;">
+              Careful - You have unsaved changes!</p>
+            <div class="d-flex" style="float: right;">
+              <button type="reset" class="btn text-white" style="font-size: 20px;" onclick="closeBassic()"
+                id="cancel">Cancel
+              </button>
+              <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit"><i
+                  class="fas fa-save"></i> Save</button>
+            </div>
+          </span>
+        </div>
+      </form>
+      <script>
+        function showBassic() {
+          var popup = document.getElementById('myPopup');
+          popup.classList.toggle("show", true);
+        }
+        function closeBassic() {
+          var popup = document.getElementById('myPopup');
+          popup.classList.toggle("show", false);
+        }
+      </script>
+      <script>
+        var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+        function alert(message, type) {
+          var wrapper = document.createElement('div')
+          wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '</div>'
+          alertPlaceholder.append(wrapper)
+        }
+        $('#btn-submit').on('click', function (e) {
+          e.preventDefault();
+          var form = $(this).parents('form');
+          var cancelbtn = $('#cancel')
+          Swal.fire({
+            title: 'Do you want to save the changes?',
+            showDenyButton: true,
+            denyButtonColor: '#444444',
+            showCancelButton: false,
+            allowOutsideClick: false,
+            confirmButtonText: '<i class="fas fa-save"></i> Yes Save it!',
+            denyButtonText: `Don't save`,
+          }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Successfully changed settings...',
+                icon: 'success',
+                color: '#eee',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+              })
+              form.submit();
+            } else if (result.isDenied) {
+              Swal.fire({
+                title: 'Changes are not saved',
+                text: '',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 1500
+              })
+              cancelbtn.click();
+            }
+          })
+        });
+      </script>
+    </div>
+  </main>
+  </section>
+  <%- include('../element/footer'); -%>
+</body>
+
+</html>

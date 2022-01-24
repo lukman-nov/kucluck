@@ -12,6 +12,7 @@ const reactionRoles = require("../databases/reaction-roles");
 const settings = require("../databases/settings");
 const stats = require("../databases/stats");
 const statsGlobal = require("../databases/statsGlobal");
+const leaveMessage = require('../databases/leaveMessage');
 module.exports = client => {
   client.points = new Enmap({
     name: "points",
@@ -22,7 +23,7 @@ module.exports = client => {
     dataDir: "./databases/queuesaves",
     ensureProps: false
   });
-  
+
   client.Autorolesettings = autorole;
   client.Embedsettings = embedMessage;
   client.Greetingmsg = greetingmsg;
@@ -36,4 +37,5 @@ module.exports = client => {
   client.statsGlobal = statsGlobal;
   client.leveling = levelingSystem;
   client.autoresume = autoresume;
+  client.leaveMessage = leaveMessage;
 }

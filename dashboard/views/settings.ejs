@@ -1,163 +1,145 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-  <%- include('./element/head'); -%>
-  <!-- END OUTER CSS -->
-  <!-- MY CSS -->
-  <link rel="stylesheet" href="/settings.css">
-  <link rel="stylesheet" href="/header.css">
-  <link rel="stylesheet" href="/footer.css">
-  <!-- END MY CSS -->
-  <title>Settings | <%= bot.user.username %></title>
-  <link rel="icon" type="image/png" href="<%= bot.user.displayAvatarURL({size: 128}) %>">
-</head>
-<!-- INNER SCRIPT -->
-<script>
-  function showBassic() {
-    var popup = document.getElementById('myPopup');
-    popup.classList.toggle("show", true);
-  }
-  function closeBassic() {
-    var popup = document.getElementById('myPopup');
-    popup.classList.toggle("show", false);
-  }
-</script>
-<!-- END INNER SCRIPT -->
-<% if (!premium) { %>
-<script>
-  setTimeout(() => {
-    Swal.fire({
-      title: 'Upgrade Kucluck Premium Now!',
-      html: '<p><img src="https://cdn.discordapp.com/emojis/929361328836079656.gif?size=96&quality=lossless" alt="" width="30px">Get a discount for a 3 month subscription!.<img src="https://cdn.discordapp.com/emojis/929361328836079656.gif?size=96&quality=lossless" alt="" width="30px"></p>',
-      text: '',
-      color: '#eee',
-      imageUrl: 'https://media.discordapp.net/attachments/901446802711142460/918761121161310228/kucluck_koin_1.png',
-      imageAlt: 'Kucluck_Coin',
-      imageWidth: 150,
-      showCancelButton: true,
-      confirmButtonText: '<i class="fa fa-thumbs-up text-muted"></i> Upgrade!',
-      confirmButtonColor: '#ddc3ff',
-      cancelButtonText: 'Close',
-      focusConfirm: false,
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (result.isConfirmed) {
-        location.href = '/premium';
-      }
-    })
-  }, 30000);
-</script>
-<% } %>
-
-<body>
-  <%- include('./element/header'); -%>
-  <!-- MAIN BODY -->
-  <section style="margin-bottom: 90px; margin-top: 90px;">
-    <div class="container">
-      <div class="row" id="settings">
-        <div class="col-md-3 mb-5 rounded-3">
-          <div class="col-md d-flex rounded-3 bg-dark mb-3 guild-nav">
-            <div class="d-flex rounded-3" style="background-color: #3b3f47; padding: 10px; width: 100%;">
-              <div class="img" style="margin: auto;">
-                <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" style="max-width: 70px; max-height: 70px; border-radius: 50px">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" style="max-width: 70px; max-height: 70px; border-radius: 50px">` %>
-              </div>
-              <div class="d-blok" style="margin: auto; margin-left: 10px;">
-                <h5><%= guild.name%></h5>
-                <% if (premium) { %>
-                <p class="text-muted" style="margin-bottom: 0; font-size: 15px;"><i class="fas fa-gem text-muted"></i>
-                  Premium
-                  Guild</p>
-                <% } else { %>
-                <p class="text-muted" style="margin-bottom: 0; font-size: 15px;">Not Premium</p>
-                <% } %>
-                <p class="text-muted" style="margin-bottom: 0; font-size: 15px;"><%= user.username%></p>
-              </div>
+<section class="align-items-start m-auto container">
+  <side class="navbar navbar-expand-md" style="max-width: 400px;">
+    <div class="container justify-content-center">
+      <div class="row bg-dark">
+        <div class="col-md d-flex rounded-3 bg-dark mb-3 guild-nav">
+          <div class="d-flex rounded-3" style="background-color: #3b3f47; padding: 10px; width: 100%;">
+            <div class="img" style="margin: auto;">
+              <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" style="max-width: 70px; max-height: 70px; border-radius: 50px">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" style="max-width: 70px; max-height: 70px; border-radius: 50px">` %>
             </div>
-          </div>
-          <div class="col-md">
-            <div class="list-group" id="list-tab" role="tablist">
-              <a class="list-group-item list-group-item-action active" id="list-Music-list" data-bs-toggle="list"
-                href="#list-Music" role="tab" aria-controls="list-Music" onclick="deleteinput()"><i
-                  class="bi bi-music-note-list"></i> Music System</a>
-              <a class="list-group-item list-group-item-action" id="list-bassic-list" data-bs-toggle="list"
-                href="#list-bassic" role="tab" aria-controls="list-bassic" onclick="deleteinput()"><i
-                  class="fas fa-user-cog"></i> Bassic</a>
-              <a class="list-group-item list-group-item-action" id="list-ms-list" data-bs-toggle="list" href="#list-ms"
-                role="tab" aria-controls="list-ms" onclick="deleteinput()"><i class="bi bi-music-player-fill"></i> Music
-                Settings</a>
-              <a class="list-group-item list-group-item-action" id="list-Autorole-list" data-bs-toggle="list"
-                href="#list-Autorole" role="tab" aria-controls="list-Autorole" onclick="deleteinput()"><i
-                  class="fas fa-user-tag"></i> Autorole</a>
-              <a class="list-group-item list-group-item-action" id="list-GM-list" data-bs-toggle="list" href="#list-GM"
-                role="tab" aria-controls="list-GM" onclick="deleteinput()"><i class="fas fa-tools"></i> Greeting
-                Message</a>
-              <a class="list-group-item list-group-item-action" id="list-RR-list" data-bs-toggle="list" href="#list-RR"
-                role="tab" aria-controls="list-RR" onclick="deleteinput()"><i class="far fa-comment-alt"></i> Setup
-                Embed</a>
-              <a class="list-group-item list-group-item-action" id="list-reset-list" data-bs-toggle="list"
-                href="#list-reset" role="tab" aria-controls="list-reset" onclick="deleteinput()"><i
-                  class="fas fa-trash-restore"></i> Reset Settings</a>
-              <a class="list-group-item list-group-item-action" href="/dashboard"><i
-                  class="fas fa-arrow-left text-danger"></i> Switch
-                Server</a>
+            <div class="d-blok" style="margin: auto; margin-left: 10px;">
+              <h5><%= guild.name%></h5>
+              <% if (premium) { %>
+              <p class="text-muted" style="margin-bottom: 0; font-size: 15px;"><i class="fas fa-gem text-muted"></i>
+                Premium
+                Guild</p>
+              <% } else { %>
+              <p class="text-muted" style="margin-bottom: 0; font-size: 15px;">Not Premium</p>
+              <% } %>
+              <p class="text-muted" style="margin-bottom: 0; font-size: 15px;"><%= user.username%></p>
             </div>
           </div>
         </div>
-        <div class="col-md-9 mb-5 rounded-3">
-          <div class="tab-content p-3 bg-dark" id="nav-tabContent">
-            <div id="liveAlertPlaceholder"></div>
-            <!-- MUSIC SYSTEM -->
-            <div class="row pt-2 pb-2 tab-pane fade show active" id="list-Music" role="tabpanel"
-              aria-labelledby="list-Music-list">
-              <%- include('./settings/music-system'); -%>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBackdrop"
+          aria-controls="offcanvasScrolling" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon navbar-toggler-icon-settings"><i class="fas fa-bars"></i></span>
+        </button>
+        <div id="global">
+          <div class="navbar-collapse" id="sidebar-settings">
+            <ul class="navbar-nav d-block">
+              <li><a class="nav-link nav-link-settings text-white active" aria-current="page"
+                  href="/dashboard/<%=guild.id%>/musicsystem">
+                  <i class="bi bi-music-note-list"></i> Music System</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/bassicsettings">
+                  <i class="fas fa-user-cog"></i> Bassic</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/musicsettings">
+                  <i class="bi bi-music-player-fill"></i> Music Settings</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/autorole">
+                  <i class="fas fa-user-tag"></i> Autorole</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/greetingmessage">
+                  <i class="fas fa-envelope-open-text"></i> Greeting & Leave Message</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/setupembed">
+                  <i class="far fa-comment-alt"></i> Setup Embed</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/resetsettings">
+                  <i class="fas fa-trash-restore"></i> Reset Settings</a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard">
+                  <i class="fas fa-arrow-left text-danger"></i> Switch Server</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id="mobile">
+          <div class="offcanvas offcanvas-start bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+            id="offcanvasWithBackdrop" aria-labelledby="offcanvasWithBackdropLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasWithBackdropLabel"><%= guild.name%> Settings</h5>
+              <button type="button" class="btn-close text-white bg-light" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
             </div>
-            <!-- BASSIC SETTINGS -->
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-bassic" role="tabpanel"
-              aria-labelledby="list-bassic-list">
-              <%- include('./settings/bassic'); -%>
-            </div>
-            <!-- MUSIC SETTINGS -->
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-ms" role="tabpanel" aria-labelledby="list-ms-list">
-              <%- include('./settings/music-settings'); -%>
-            </div>
-            <!-- AUTO ROLE SETTINGS -->
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-Autorole" role="tabpanel"
-              aria-labelledby="list-Autorole-list">
-              <%- include('./settings/autorole'); -%>
-            </div>
-            <!-- GREETING MESSAGE SETTINGS -->
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-GM" role="tabpanel" aria-labelledby="list-GM-list">
-              <%- include(`./settings/greetingmsg`)-%>
-            </div>
-            <!-- REACTION ROLES -->
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-RR" role="tabpanel" aria-labelledby="list-RR-list">
-              <%- include(`./settings/setupEmbed`)-%>
-            </div>
-            <div class="row pt-2 pb-2 tab-pane fade" id="list-reset" role="tabpanel" aria-labelledby="list-reset-list">
-              <%- include(`./settings/reset`)-%>
+            <div class="offcanvas-body">
+              <div class="navbar-collapse" id="sidebar-settings">
+                <ul class="navbar-nav d-block">
+                  <li><a class="nav-link nav-link-settings text-white active" aria-current="page"
+                      href="/dashboard/<%=guild.id%>/musicsystem">
+                      <i class="bi bi-music-note-list"></i> Music System</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/bassicsettings">
+                      <i class="fas fa-user-cog"></i> Bassic</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/musicsettings">
+                      <i class="bi bi-music-player-fill"></i> Music Settings</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/autorole">
+                      <i class="fas fa-user-tag"></i> Autorole</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/greetingmessage">
+                      <i class="fas fa-envelope-open-text"></i> Greeting & Leave Message</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/setupembed">
+                      <i class="far fa-comment-alt"></i> Setup Embed</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/resetsettings">
+                      <i class="fas fa-trash-restore"></i> Reset Settings</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard">
+                      <i class="fas fa-arrow-left text-danger"></i> Switch Server</a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  <%- include('./element/footer'); -%>
-</body>
+  </side>
+  <style>
+    section {
+      display: flex;
+    }
 
-<script>
-  (function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-          form.classList.add('was-validated')
-        }, false)
-      })
-  })()
-</script>
+    .navbar-toggler-icon-settings {
+      color: #eee;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    .navbar-toggler-icon-settings::after {
+      content: "Show Menu";
+      padding-left: 5px;
+    }
+
+    .nav-link-settings {
+      transition: 0.2s ease-in-out;
+    }
+
+    .nav-link-settings:hover {
+      transform: translateX(5%);
+      color: #9b4890 !important;
+    }
+
+    side.navbar #sidebar-settings {
+      display: block !important;
+    }
+
+    @media screen and (max-width: 967px) {
+      section {
+        display: block;
+      }
+
+      #global {
+        display: none !important;
+      }
+
+      main.container {
+        margin: auto !important;
+        margin-bottom: 50px !important;
+      }
+    }
+  </style>

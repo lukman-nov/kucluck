@@ -121,7 +121,14 @@
 .upgradenow h1 {
   padding: 10px;
   border: 5px solid #ddc3ff;
-  background: radial-gradient(circle, #f48fb1 0%, #ce93d8 20%, #b2ebf2 40%, #ffffff 60%, #ddc3ff 100%);
+  background: radial-gradient(
+    circle,
+    #f48fb1 0%,
+    #ce93d8 20%,
+    #b2ebf2 40%,
+    #ffffff 60%,
+    #ddc3ff 100%
+  );
   border-radius: 10px;
   text-decoration: none;
   -webkit-background-clip: text;
@@ -141,7 +148,14 @@
   padding: 10px;
   transition: 0.2s;
   transform: scale(110%);
-  background: radial-gradient(circle, #f48fb1 0%, #ce93d8 20%, #b2ebf2 40%, #ffffff 60%, #ddc3ff 100%);
+  background: radial-gradient(
+    circle,
+    #f48fb1 0%,
+    #ce93d8 20%,
+    #b2ebf2 40%,
+    #ffffff 60%,
+    #ddc3ff 100%
+  );
   border-radius: 10px;
   text-decoration: none;
   -webkit-background-clip: text;

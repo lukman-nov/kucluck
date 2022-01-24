@@ -1,12 +1,13 @@
 {
   "msg": {
     "COMMENT": "IF YOU DECIDE TO USE CUSTOM EMOJIS, USE THE NAME AND THE ID IN MSG, EXAMPLE: ⬜ --> <:Youtube:840260133686870036>",
-    "ERROR" : "<a:x_:933044868446584902>",
-    "SUCCESS" : "<a:yess:927446817317204039>",
-    "disabled" : "❌",
-    "enabled" : "✅",
+    "ERROR": "<a:x_:933044868446584902>",
+    "SUCCESS": "<a:yess:927446817317204039>",
+    "disabled": "❌",
+    "enabled": "✅",
     "progress_bar": {
-      "style": "comlex",         "__comment__" : "styles: 'simple', 'comlex'",
+      "style": "comlex",
+      "__comment__": "styles: 'simple', 'comlex'",
 
       "leftindicator": "[",
       "rightindicator": "]",
@@ -15,11 +16,11 @@
       "size": 25,
       "line": "▬",
 
-      "___comment___" : "those are for the complex style",
+      "___comment___": "those are for the complex style",
       "empty_left": "<:left_empty:927079147719753770>",
       "filled_left": "<:left_filled:927079147552010292>",
-      "empty_right": "<:right_empty:927079147400990751>", 
-      "filled_right": "<:right_filled:927079147950452746>", 
+      "empty_right": "<:right_empty:927079147400990751>",
+      "filled_right": "<:right_filled:927079147950452746>",
       "emptyframe": "<:middle_empty:927079147912720424>",
       "filledframe": "<:middle_filled:927079147547811881>"
     },
@@ -64,10 +65,10 @@
   },
   "react": {
     "COMMENT": "IF YOU DECIDE TO USE CUSTOM EMOJIS, USE JUST THE ID IN REACT, EXAMPLE: ⏪ --> 818558865268408341",
-    "ERROR" : "❌",
-    "SUCCESS" : "👍",
-    "disabled" : "❌",
-    "enabled" : "✅",
+    "ERROR": "❌",
+    "SUCCESS": "👍",
+    "disabled": "❌",
+    "enabled": "✅",
     "change_language": "✌️",
     "reset_language": "✌️",
     "cancel": "💢",

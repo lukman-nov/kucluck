@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-md navbar-dark header">
   <div class="container-fluid" style="max-width: 1800px;">
     <a class="navbar-brand" href="/">
       <img src="https://media.discordapp.net/attachments/901446802711142460/931714294654042162/newlkuclucklogok.png"
@@ -9,15 +9,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link" href="/commands"><i class="fab fa-rocketchat"></i> Commands</a>
-        <a class="nav-link" href="/docs"><i class="far fa-file-alt"></i> Docs</a>
-        <a class="nav-link" href="https://discord.gg/BuACxn4XUw" target="_blank"><i class="fab fa-discord"></i> Discord
+        <a class="nav-link header-link" href="/commands"><i class="fab fa-rocketchat"></i> Commands</a>
+        <a class="nav-link header-link" href="/docs"><i class="far fa-file-alt"></i> Docs</a>
+        <a class="nav-link header-link" href="https://discord.gg/BuACxn4XUw" target="_blank"><i
+            class="fab fa-discord"></i> Discord
           Server</a>
-        <a class="nav-link"
-          href="https://discord.com/api/oauth2/authorize?client_id=<%=bot.user.id%>&permissions=8&scope=bot%20applications.commands"><i
+        <a class="nav-link header-link"
+          href="https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands"><i
             class="fas fa-user-plus"></i> Invite</a>
-        <a class="nav-link" href="/dashboard"><i class="fas fa-sliders-h"></i> Dashboard</a>
-        <a class="nav-link" href="/#upgrade"><i class="fas fa-gem"></i> Upgrade</a>
+        <a class="nav-link header-link" href="/dashboard"><i class="fas fa-sliders-h"></i> Dashboard</a>
+        <a class="nav-link header-link" href="/#upgrade"><i class="fas fa-gem"></i> Upgrade</a>
       </div>
     </div>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -26,8 +27,8 @@
         <button type="button" class="btn dropdown-toggle" onclick="shownametag()" onblur="hidenametag()" id="btn"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <span id="nametag"></span>
-          <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user"
-            width="50px">
+          <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user" width="50px"
+            class="rounded-circle">
         </button>
         <script>
           function shownametag() {
@@ -43,7 +44,8 @@
         </script>
         <ul class="dropdown-menu dropdown-menu-dark bg-dark dropdown-menu-lg-end">
           <div class="col-xs-2" style="margin: auto; text-align: center;">
-            <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user"><br>
+            <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user"
+              class="rounded-circle mb-3"><br>
             <p>Hallo, <%=user.username%></p>
           </div>
           <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
@@ -54,7 +56,7 @@
                   class="fas fa-sign-out-alt"></i></span></a></li>
         </ul>
         <% } else { %>
-        <button type="button" class="btn text-white nav-link" onclick="location.href='/login'">
+        <button type="button" class="btn text-white nav-link header-link" onclick="location.href='/login'">
           <i class="fas fa-sign-in-alt text-white"></i> Login
         </button>
         <% } %>

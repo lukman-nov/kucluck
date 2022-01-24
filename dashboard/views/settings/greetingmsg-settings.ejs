@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../element/head'); -%>
+  <!-- My CSS -->
+  <link rel="stylesheet" href="/header.css">
+  <link rel="stylesheet" href="/footer.css">
+  <link rel="stylesheet" href="/settings.css">
+  <title>Greeting Message Settings | <%= bot.user.username %></title>
+  <link rel="icon" type="image/png" href="<%= bot.user.displayAvatarURL({size: 128}) %>">
+</head>
+<%- include('../element/header'); -%>
+
+<body>
+  <%- include('../settings'); -%>
+  <main class="container justify-content-center m-2" id="greetingmessage">
+    <div class="row bg-dark p-3">
+      <div class="col-md-12">
+        <!-- GREETING MESSAGE -->
+        <h3><i class="fas fa-envelope-open-text fa-2x pb"></i> Greeting Messages</h3>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col" style="margin-bottom: 20px;">
+          <p class="text-muted">Greeting Message is used to greet new members on your server.</p>
+          <p class="text-muted">Format Message: <br>
+            <code>%mention%</code> = Mention Member<br>
+            <code>%guild%</code> = Guild Name<br>
+            <code>**% %**</code> = Bold font<br>
+          </p>
+          <p class="text-muted">For Example: <br>
+            <code>Hay, %mention% Welcome to **%guild%**. Take a Role on the #text-channel if you need to.</code>
+          </p>
+          <form method="POST" action="/dashboard/<%= guild.id%>/greetingmsgSuccess" class="needs-validation" novalidate>
+            <input type="text" value="<%= guild.id%>" name="guildID" hidden>
+            <div class="form-group">
+              <!-- CHANNEL -->
+              <div class="col-md mb-3 channels">
+                <label for="GreetingChannels" class="form-label">Channels: <span class="text-danger">*</span></label>
+                <select class="form-select" id="GreetingChannels" name="GreetingChannels" required>
+                  <option selected disabled value="">Choose Your Welcome Channel...</option>
+                  <% guild.channels.cache.filter(c=> c.type === "GUILD_TEXT" ).sort((a, b) => b.rawPosition - a.rawPosition).forEach((channel, i) => { %>
+                  <option value="<%= channel.name%>">#<%= channel.name%></option>
+                  <% }) %>
+                </select>
+                <div class="invalid-feedback">
+                  <i class="bi bi-exclamation-circle text-danger"></i> Please choose a channel.
+                </div>
+              </div>
+              <!-- MESSAGE BOX -->
+              <div class="col-md mb-3 messagesbox">
+                <div class="mb-3">
+                  <label for="greetingMessageBox" class="form-label">Message: <span class="text-danger">*</span></label>
+                  <textarea name="greetingmsg" maxlength="500" size="500" class="form-control form-control-two"
+                    id="greetingMessageBox" rows="5"
+                    placeholder="<%= greetingmsg.Message ? greetingmsg.Message : `Not Set` %>" required></textarea>
+                  <div id="counter" style="font-size: 14px; color: #a6a6a6; margin-top: 5px;"></div>
+                  <div class="invalid-feedback">
+                    <i class="bi bi-exclamation-circle text-danger"></i> Please enter a messages.
+                  </div>
+                </div>
+                <script>
+                  const messageEle = document.getElementById('greetingMessageBox');
+                  const counterEle = document.getElementById('counter');
+                  messageEle.addEventListener('input', function (e) {
+                    const target = e.target;
+                    const maxLength = target.getAttribute('maxlength');
+                    const currentLength = target.value.length;
+                    counterEle.innerHTML = `${currentLength}/${maxLength}`;
+                  });
+                </script>
+              </div>
+              <% if(greetingmsg.ChannelId.length > 5 ) { %>
+              <p class="text-muted">Greeting Message has been set, now I will send Greeting Message every time a new
+                member joins your server. If you want to replace it, please reset it first at <a
+                  href="/dashboard/<%=guild.id%>/resetsettings" class="text-info text-decoration-none">here</a>.
+              </p>
+              <% } %>
+              <!-- BUTTONS -->
+              <div class="col ms-auto" style="float: right;">
+                <button type="reset" class="btn text-white" style="font-size: 20px;" id="btn-cancel-gm">Cancel </button>
+                <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-gm"
+                  <%= greetingmsg.ChannelId ? 'disabled' : ''%>><i class="fas fa-save"></i> Save</button>
+              </div>
+          </form>
+        </div>
+      </div>
+      <!-- LEAVE MESSAGE -->
+      <hr>
+      <div class="col-md-12">
+        <h3><i class="fas fa-envelope-open-text fa-2x pb"></i> Leave Messages</h3>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col" style="margin-bottom: 20px;">
+          <p class="text-muted">Greeting Message is used to greet new members on your server.</p>
+          <p class="text-muted">Format Message: <br>
+            <code>%mention%</code> = Mention Member<br>
+            <code>%guild%</code> = Guild Name<br>
+            <code>**% %**</code> = Bold font<br>
+          </p>
+          <p class="text-muted">For Example: <br>
+            <code>Hay, %mention% Welcome to **%guild%**. Take a Role on the #text-channel if you need to.</code>
+          </p>
+          <form method="POST" action="/dashboard/<%= guild.id%>/leavemsgSuccess" class="needs-validation" novalidate>
+            <input type="text" value="<%= guild.id%>" name="guildID" hidden>
+            <div class="form-group">
+              <!-- CHANNEL -->
+              <div class="col-md mb-3 channels">
+                <label for="leaveMessageChannels" class="form-label">Channels:
+                  <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="leaveMessageChannels" name="leaveMessageChannels" required>
+                  <option selected disabled value="">Choose Your Welcome Channel...</option>
+                  <% guild.channels.cache.filter(c=> c.type === "GUILD_TEXT" ).sort((a, b) => b.rawPosition - a.rawPosition).forEach((channel, i) => { %>
+                  <option value="<%= channel.name%>">#<%= channel.name%></option>
+                  <% }) %>
+                </select>
+                <div class="invalid-feedback">
+                  <i class="bi bi-exclamation-circle text-danger"></i> Please choose a channel.
+                </div>
+              </div>
+              <!-- MESSAGE BOX -->
+              <div class="col-md mb-3 messagesbox">
+                <div class="mb-3">
+                  <label for="leaveMessageBox" class="form-label">Message: <span class="text-danger">*</span></label>
+                  <textarea name="leaveMessageBox" maxlength="500" size="500" class="form-control form-control-two"
+                    id="leaveMessageBox" rows="5"
+                    placeholder="<%= leaveMessage.Message ? leaveMessage.Message : `Not Set` %>" required></textarea>
+                  <div id="counter" style="font-size: 14px; color: #a6a6a6; margin-top: 5px;"></div>
+                  <div class="invalid-feedback">
+                    <i class="bi bi-exclamation-circle text-danger"></i> Please enter a messages.
+                  </div>
+                </div>
+                <script>
+                  const messageEle = document.getElementById('leaveMessageBox');
+                  const counterEle = document.getElementById('counter');
+                  messageEle.addEventListener('input', function (e) {
+                    const target = e.target;
+                    const maxLength = target.getAttribute('maxlength');
+                    const currentLength = target.value.length;
+                    counterEle.innerHTML = `${currentLength}/${maxLength}`;
+                  });
+                </script>
+              </div>
+              <% if(leaveMessage.ChannelId.length > 5 ) { %>
+              <p class="text-muted">Leave Message has been set, now I will send Leave Message every time a members leave
+                on your server. If you want to replace it, please reset it first at <a
+                  href="/dashboard/<%=guild.id%>/resetsettings" class="text-info text-decoration-none">here</a>.
+              </p>
+              <% } %>
+              <!-- BUTTONS -->
+              <div class="col ms-auto" style="float: right;">
+                <button type="reset" class="btn text-white" style="font-size: 20px;" id="btn-cancel-gm">Cancel </button>
+                <button type="submit" class="btn btn-primary text-white" style="font-size: 20px;" id="btn-submit-gm"
+                  <%= leaveMessage.ChannelId ? 'disabled' : ''%>><i class="fas fa-save"></i> Save</button>
+              </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+          .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+              if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+              }
+
+              form.classList.add('was-validated')
+            }, false)
+          })
+      })()
+    </script>
+  </main>
+  </section>
+  <%- include('../element/footer'); -%>
+</body>
+<style>
+  .btn-autorole {
+    padding: 3px 6px;
+    border-color: none;
+    box-shadow: none !important;
+    border: 1px solid #373737;
+  }
+</style>
+
+</html>

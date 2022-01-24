@@ -26,6 +26,7 @@ const levelingSystem = require("../databases/leveling-system");
 const greetingmsg = require("../databases/greetingmsg");
 const autorole = require('../databases/autorole');
 const url = require('../botconfig/url.json');
+const leaveMessage = require('../databases/leaveMessage');
 
 module.exports.handlemsg = handlemsg;
 module.exports.nFormatter = nFormatter;
@@ -51,19 +52,21 @@ module.exports.formatNonSeconds = formatNonSeconds;
 function check_if_dj(client, member, song) {
   //if no message added return
   if (!client) return false;
-  SettingsSchema.findOne ({ GuildId : member.guild.id }, async(err, data) => {
-    if(data) {
-    var roleid = await data.DjRoles;
-    if (roleid == "") return false;
-    var isdj = false;
-    for (const djRole of roleid) {
-      if (!member.guild.roles.cache.get(djRole)){
-        continue;
+  SettingsSchema.findOne({
+    GuildId: member.guild.id
+  }, async (err, data) => {
+    if (data) {
+      var roleid = await data.DjRoles;
+      if (roleid == "") return false;
+      var isdj = false;
+      for (const djRole of roleid) {
+        if (!member.guild.roles.cache.get(djRole)) {
+          continue;
+        }
+        if (member.roles.cache.has(djRole)) isdj = true;
       }
-      if (member.roles.cache.has(djRole)) isdj = true;
     }
-    }
-    if (!isdj && !member.permissions.has("ADMINISTRATOR") && song?.requester?.id != member.id)
+    if (!isdj && !member.permissions.has("ADMINISTRATOR") && song.requester.id != member.id)
       return roleid;
     else
       return false;
@@ -182,8 +185,15 @@ function delay(delayInms) {
 }
 
 function createBar(player) {
-  let { size, line, slider, leftindicator, rightindicator, style } = emoji.msg.progress_bar;
-  if(style == "simple") {
+  let {
+    size,
+    line,
+    slider,
+    leftindicator,
+    rightindicator,
+    style
+  } = emoji.msg.progress_bar;
+  if (style == "simple") {
     //player.queue.current.duration == 0 ? player.position : player.queue.current.duration, player.position, 25, "▬", "🔷")
     if (!player.queue.current) return `**[${slider}${line.repeat(size - 1)}${rightindicator}**\n**00:00:00 / 00:00:00**`;
     let current = player.queue.current.duration !== 0 ? player.position : player.queue.current.duration;
@@ -236,15 +246,17 @@ function formatNonSeconds(millis) {
     var h = Math.floor(millis / 3600000),
       m = Math.floor(millis / 60000),
       s = ((millis % 60000) / 1000).toFixed(0);
-    if (h < 1) return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s ;
-    else return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s ;
+    if (h < 1) return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
+    else return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
   } catch (e) {
     console.log(String(e.stack).grey.bgRed)
   }
 }
 
 async function stations(client, prefix, message) {
-  let ss = await client.Settings.findOne({ GuildId : message.guild.id })
+  let ss = await client.Settings.findOne({
+    GuildId: message.guild.id
+  })
   let es = ss.Embed;
   let ls = ss.Language;
   try {
@@ -399,8 +411,10 @@ function escapeRegex(str) {
 }
 
 async function autoplay(client, player, type) {
-  
-  let ss = await SettingsSchema.findOne({ GuildId : player.guild }).clone();
+
+  let ss = await SettingsSchema.findOne({
+    GuildId: player.guild
+  }).clone();
   let ls = ss.Language;
   let es = ss.Embed;
   try {
@@ -519,14 +533,16 @@ function nFormatter(num, digits = 2) {
     }
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  var item = lookup.slice().reverse().find(function(item) {
+  var item = lookup.slice().reverse().find(function (item) {
     return num >= item.value;
   });
   return item ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol : "0";
 }
 
 async function swap_pages(client, message, description, TITLE) {
-  let ss = await SettingsSchema.findOne({ GuildId : message.guild.id })
+  let ss = await SettingsSchema.findOne({
+    GuildId: message.guild.id
+  })
   let prefix = await ss.Prefix;
   let es = await ss.Embed;
   let cmduser = message.author;
@@ -652,7 +668,9 @@ async function swap_pages(client, message, description, TITLE) {
   });
 }
 async function musicSystem(client, guildid, channelid) {
-  let ss = await SettingsSchema.findOne({ GuildId: guildid });
+  let ss = await SettingsSchema.findOne({
+    GuildId: guildid
+  });
   let es = ss.Embed;
   let ls = ss.Language;
   let guild = client.guilds.cache.get(guildid)
@@ -670,82 +688,80 @@ async function musicSystem(client, guildid, channelid) {
     }) : "https://media.discordapp.net/attachments/904821764146745404/916261377511944212/kucluck_play.gif")
     .setTitle(`Start Listening to Music, by connecting to a Voice Channel and sending either the **SONG LINK** or **SONG NAME** in this Channel!`)
     .setDescription(`<:K_youtube:917297918564765706> Youtube <:K_spotify:932951936016207872> Spotify <:K_soundcloud:917297586556248064> Soundcloud, <:K_iTunes:932952720636248074> iTunes, 💾 and direct MP3 Links!`)
-    .addFields(
-      {
-        name: "🌐",
-        value: `┕[[Website]](${url.website.web})`,
-        inline: true,
-      },
-      {
-        name: "🏠",
-        value: `┕[[Support]](${url.website.supportserver})`,
-        inline: true,
-      },
-      {
-        name: `<:K_logo:917295875619962880>`,
-        value: `┕[[Invite]](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=identify%20email%20guilds%20bot%20applications.commands)`,
-        inline: true,
-      }
-    )
+    .addFields({
+      name: "🌐",
+      value: `┕[[Website]](${url.website.web})`,
+      inline: true,
+    }, {
+      name: "🏠",
+      value: `┕[[Support]](${url.website.supportserver})`,
+      inline: true,
+    }, {
+      name: `<:K_logo:917295875619962880>`,
+      value: `┕[[Invite]](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=identify%20email%20guilds%20bot%20applications.commands)`,
+      inline: true,
+    })
   ]
   var Emojis = [
-      emoji.kucluck.number.kosong,
-      emoji.kucluck.number.satu,
-      emoji.kucluck.number.dua,
-      emoji.kucluck.number.tiga,
-      emoji.kucluck.number.empat,
-      emoji.kucluck.number.lima,
-      emoji.kucluck.number.enam,
-      emoji.kucluck.number.tujuh,
-      emoji.kucluck.number.delapan,
-      emoji.kucluck.number.sembilan,
-      emoji.kucluck.number.sepuluh,
-      emoji.kucluck.number.sebelas,
-      emoji.kucluck.number.duabelas,
-      emoji.kucluck.number.tigabelas,
-      emoji.kucluck.number.empatbelas,
-      emoji.kucluck.number.limabelas,
-      emoji.kucluck.number.enambelas,
-      emoji.kucluck.number.tujuhbelas,
+    emoji.kucluck.number.kosong,
+    emoji.kucluck.number.satu,
+    emoji.kucluck.number.dua,
+    emoji.kucluck.number.tiga,
+    emoji.kucluck.number.empat,
+    emoji.kucluck.number.lima,
+    emoji.kucluck.number.enam,
+    emoji.kucluck.number.tujuh,
+    emoji.kucluck.number.delapan,
+    emoji.kucluck.number.sembilan,
+    emoji.kucluck.number.sepuluh,
+    emoji.kucluck.number.sebelas,
+    emoji.kucluck.number.duabelas,
+    emoji.kucluck.number.tigabelas,
+    emoji.kucluck.number.empatbelas,
+    emoji.kucluck.number.limabelas,
+    emoji.kucluck.number.enambelas,
+    emoji.kucluck.number.tujuhbelas,
   ]
   var components = [
-      new MessageActionRow().addComponents([
-        new MessageSelectMenu()
-        .setCustomId("MessageSelectMenu")
-        .addOptions([
-          "Global Hits", "Indonesia Hits", "Hits Indonesia 2015-2020", "K-pop Daebak", "Kpop 2022 Hits", "Lofi", "Moody Mix", "Pop", "Strange-Fruits", "Gaming", "Chill", "Rock", "Jazz", "Blues", "Metal", "Magic-Release", "NCS | No Copyright Music"
-        ].map((t, index) => {
-          return {
-            label: t.substr(0, 25),
-            value: t.substr(0, 25),
-            description: `Load a Kucluck-Music-Playlist: "${t}"`.substr(0, 50),
-            emoji: Emojis[index]
-          }
-        }))
-        .setPlaceholder(eval(client.la[ls]["cmds"]["settings"]["setup-music"]["var5"]))
-      ]),
-      new MessageActionRow().addComponents([
-        new MessageButton().setStyle('PRIMARY').setCustomId('Skip').setEmoji(`⏭`).setLabel(`Skip`).setDisabled(),
-        new MessageButton().setStyle('DANGER').setCustomId('Stop').setEmoji(`⏹️`).setLabel(`Stop`).setDisabled(),
-        new MessageButton().setStyle('SECONDARY').setCustomId('Pause').setEmoji('⏸').setLabel(`Pause`).setDisabled(),
-        new MessageButton().setStyle('PRIMARY').setCustomId('Shuffle').setEmoji('🔀').setLabel(`Shuffle`).setDisabled(),
-        new MessageButton().setStyle('SECONDARY').setCustomId('Autoplay').setEmoji('🔁').setLabel(`Autoplay Off`).setDisabled(),
-      ]),
-      new MessageActionRow().addComponents([
-        new MessageButton().setStyle('SUCCESS').setCustomId('VolUp').setEmoji(`🔊`).setLabel(`Vol +10`).setDisabled(),
-        new MessageButton().setStyle('SUCCESS').setCustomId('VolDown').setEmoji(`🔉`).setLabel(`Vol -10`).setDisabled(),
-        new MessageButton().setStyle('PRIMARY').setCustomId('Forward').setEmoji('⏩').setLabel(`+10 Sec`).setDisabled(),
-        new MessageButton().setStyle('PRIMARY').setCustomId('Rewind').setEmoji('⏪').setLabel(`-10 Sec`).setDisabled(),
-        new MessageButton().setStyle('SUCCESS').setCustomId('Queue').setEmoji(`🔂`).setLabel(`Loop Queue`).setDisabled(),
-      ]),
+    new MessageActionRow().addComponents([
+      new MessageSelectMenu()
+      .setCustomId("MessageSelectMenu")
+      .addOptions([
+        "Global Hits", "Indonesia Hits", "Hits Indonesia 2015-2020", "K-pop Daebak", "Kpop 2022 Hits", "Lofi", "Moody Mix", "Pop", "Strange-Fruits", "Gaming", "Chill", "Rock", "Jazz", "Blues", "Metal", "Magic-Release", "NCS | No Copyright Music"
+      ].map((t, index) => {
+        return {
+          label: t.substr(0, 25),
+          value: t.substr(0, 25),
+          description: `Load a Kucluck-Music-Playlist: "${t}"`.substr(0, 50),
+          emoji: Emojis[index]
+        }
+      }))
+      .setPlaceholder(eval(client.la[ls]["cmds"]["settings"]["setup-music"]["var5"]))
+    ]),
+    new MessageActionRow().addComponents([
+      new MessageButton().setStyle('PRIMARY').setCustomId('Skip').setEmoji(`⏭`).setLabel(`Skip`).setDisabled(),
+      new MessageButton().setStyle('DANGER').setCustomId('Stop').setEmoji(`⏹️`).setLabel(`Stop`).setDisabled(),
+      new MessageButton().setStyle('SECONDARY').setCustomId('Pause').setEmoji('⏸').setLabel(`Pause`).setDisabled(),
+      new MessageButton().setStyle('PRIMARY').setCustomId('Shuffle').setEmoji('🔀').setLabel(`Shuffle`).setDisabled(),
+      new MessageButton().setStyle('SECONDARY').setCustomId('Autoplay').setEmoji('🔁').setLabel(`Autoplay Off`).setDisabled(),
+    ]),
+    new MessageActionRow().addComponents([
+      new MessageButton().setStyle('SUCCESS').setCustomId('VolUp').setEmoji(`🔊`).setLabel(`Vol +10`).setDisabled(),
+      new MessageButton().setStyle('SUCCESS').setCustomId('VolDown').setEmoji(`🔉`).setLabel(`Vol -10`).setDisabled(),
+      new MessageButton().setStyle('PRIMARY').setCustomId('Forward').setEmoji('⏩').setLabel(`+10 Sec`).setDisabled(),
+      new MessageButton().setStyle('PRIMARY').setCustomId('Rewind').setEmoji('⏪').setLabel(`-10 Sec`).setDisabled(),
+      new MessageButton().setStyle('SUCCESS').setCustomId('Queue').setEmoji(`🔂`).setLabel(`Loop Queue`).setDisabled(),
+    ]),
   ]
-  let data = await MusicSchema.findOne({ guildId : guildid });
+  let data = await MusicSchema.findOne({
+    guildId: guildid
+  });
   if (data.channelId.length > 5) return;
-  
+
   channel.send({
-    files: [
-      { attachment: 'https://media.discordapp.net/attachments/901446802711142460/925841557339381770/kucluck_queue.png' }
-  ],
+    files: [{
+      attachment: 'https://media.discordapp.net/attachments/901446802711142460/925841557339381770/kucluck_queue.png'
+    }],
     embeds,
     components
   }).then(msg => {
@@ -764,7 +780,9 @@ async function swap_pages2(client, message, embeds) {
   let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
   let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
   const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
-  let ss = await SettingsSchema.findOne({ GuildId : message.guild.id });
+  let ss = await SettingsSchema.findOne({
+    GuildId: message.guild.id
+  });
   let prefix = ss.Prefix;
   //Send message with buttons
   let swapmsg = await message.channel.send({
@@ -847,7 +865,9 @@ async function swap_pages2_interaction(client, interaction, embeds) {
   let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
   let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
   const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
-  let ss = await client.Settings.findOne({ GuildId : interaction.member.guild.id});
+  let ss = await client.Settings.findOne({
+    GuildId: interaction.member.guild.id
+  });
   let prefix = ss.Prefix;
   //Send message with buttons
   let swapmsg = await interaction.reply({
@@ -924,6 +944,7 @@ async function swap_pages2_interaction(client, interaction, embeds) {
     }
   });
 }
+
 function databasing(client, guildid, userid) {
   let guild = client.guilds.cache.get(guildid);
   if (!client || client == undefined || !client.user || client.user == undefined) return;
@@ -933,9 +954,11 @@ function databasing(client, guildid, userid) {
         "TEMPLATEQUEUEINFORMATION": ["queue", "sadasd"]
       });
     }
-    MusicSchema.findOne({ guildId : guildid}, async(err, data) => {
-      if(!data){
-        new MusicSchema ({
+    MusicSchema.findOne({
+      guildId: guildid
+    }, async (err, data) => {
+      if (!data) {
+        new MusicSchema({
           guildId: guildid,
           channelId: "",
           messageId: "",
@@ -944,9 +967,11 @@ function databasing(client, guildid, userid) {
         return;
       }
     });
-    StatsSchema.findOne({ GuildId : guildid }, async (err, data) => {
-      if(!data) {
-        new StatsSchema ({
+    StatsSchema.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
+      if (!data) {
+        new StatsSchema({
           GuildId: guildid,
           Commands: 0,
           Songs: 0,
@@ -955,9 +980,11 @@ function databasing(client, guildid, userid) {
         return;
       }
     });
-    StatsGSchema.findOne({ BotId : client.user.id }, async (err, data) => {
-      if(!data) {
-        new StatsGSchema ({
+    StatsGSchema.findOne({
+      BotId: client.user.id
+    }, async (err, data) => {
+      if (!data) {
+        new StatsGSchema({
           BotId: client.user.id,
           Commands: 0,
           Songs: 0,
@@ -966,9 +993,11 @@ function databasing(client, guildid, userid) {
         return;
       }
     });
-    EmbedSchema.findOne({ GuildId : guildid }, async (err, data) => {
+    EmbedSchema.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
       if (!data) {
-        new EmbedSchema ({
+        new EmbedSchema({
           GuildId: guildid,
           Color: "",
           Footer: "",
@@ -978,30 +1007,51 @@ function databasing(client, guildid, userid) {
           Image: "",
           ChannelId: "",
         }).save();
-      } 
+      }
     })
-    greetingmsg.findOne({ GuildId : guildid }, async (err,data) => {
+    greetingmsg.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
       if (!data) {
-        new greetingmsg ({
+        new greetingmsg({
           GuildId: guildid,
           ChannelId: "",
           Message: "",
         }).save();
       }
     })
-    autorole.findOne({ GuildId : guildid }, async (err, data) => {
+    leaveMessage.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
       if (!data) {
-        new autorole ({
-          GuildId : guildid,
+        new leaveMessage({
+          GuildId: guildid,
+          ChannelId: "",
+          Message: "",
+        }).save();
+      }
+    })
+    autorole.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
+      if (!data) {
+        new autorole({
+          GuildId: guildid,
           RoleId: "",
         }).save();
       }
     })
-    SettingsSchema.findOne ({ GuildId : guildid }, async (err, data) => {
-      let avatar = client.guilds.cache.get(guildid).iconURL({ dynamic: true });
-      if (avatar === null) avatar = client.user.displayAvatarURL({ dynamic: true });
-      if (!data){
-        new SettingsSchema ({
+    SettingsSchema.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
+      let avatar = client.guilds.cache.get(guildid).iconURL({
+        dynamic: true
+      });
+      if (avatar === null) avatar = client.user.displayAvatarURL({
+        dynamic: true
+      });
+      if (!data) {
+        new SettingsSchema({
           GuildId: guildid,
           GuildName: guild.name,
           Prefix: config.prefix,
@@ -1014,6 +1064,7 @@ function databasing(client, guildid, userid) {
           AutoPlay: settings.default_db_data.defaultautoplay,
           AutoRole: settings.default_db_data.autorole,
           Greeting: settings.default_db_data.greeting,
+          leaveMessage: false,
           DjRoles: "",
           BotChannel: [],
           Embed: {
@@ -1039,30 +1090,36 @@ function leveling(client, message, guildid, userid) {
   if (!client || client == undefined || !client.user || client.user == undefined) return;
   let key = member.user.id;
   try {
-    levelingSystem.findOne({ GuildId : guildid }, async (err, data) => {
-      if(member.user.bot) return;
+    levelingSystem.findOne({
+      GuildId: guildid
+    }, async (err, data) => {
+      if (member.user.bot) return;
       if (!data) {
-        new levelingSystem ({
+        new levelingSystem({
           GuildId: guildid,
           status: false,
           user: {
-                [userid]: {
-                  point : 0,
-                  level : 1,
-                },
+            [userid]: {
+              point: 0,
+              level: 1,
             },
+          },
         }).save();
       } else {
         const key = userid;
         if (!data.user[0][key]) {
           data.user[0][key] = {
-              point : 0,
-              level : 1,
+            point: 0,
+            level: 1,
           }
-          await levelingSystem.findOneAndUpdate({ GuildId: guildid }, data);
+          await levelingSystem.findOneAndUpdate({
+            GuildId: guildid
+          }, data);
         }
       }
-      let ss = await client.Settings.findOne({ GuildId: guildid});
+      let ss = await client.Settings.findOne({
+        GuildId: guildid
+      });
       let es = ss.Embed;
       let ls = ss.Language;
       if (!data) return;
@@ -1081,11 +1138,15 @@ function leveling(client, message, guildid, userid) {
       if (msgl < 10) {
         var randomnum = Math.floor((Math.random() * 0.1) * 100) / 100
         data.user[0][key].point += randomnum;
-        await levelingSystem.findOneAndUpdate({ GuildId: guildid }, data);
+        await levelingSystem.findOneAndUpdate({
+          GuildId: guildid
+        }, data);
       } else {
         var randomnum = 1 + Math.floor(msgl * 100) / 100
         data.user[0][key].point += randomnum;
-        await levelingSystem.findOneAndUpdate({ GuildId: guildid }, data);
+        await levelingSystem.findOneAndUpdate({
+          GuildId: guildid
+        }, data);
       }
 
       client.points.set(key2, data.user[0][key].point, `points`)
@@ -1101,21 +1162,23 @@ function leveling(client, message, guildid, userid) {
       if (data.user[0][key].level < curLevel) {
         //define ranked embed
         const embed = new Discord.MessageEmbed()
-        .setColor(es.color).setFooter(client.getFooter(es))
-        .setThumbnail(es.thumb ? es.footericon : null)
-        .setTimestamp()
-        .setTitle(`<a:Tada_Yellow:929361328836079656> Congrats ${message.author.username} your Level has been Up!`)
-        .setDescription(`**You've leveled up to Level: **\`${curLevel}\`! \n**Your Point: **\`${Number(curpoints.toFixed(2))}\``)
-      
+          .setColor(es.color).setFooter(client.getFooter(es))
+          .setThumbnail(es.thumb ? es.footericon : null)
+          .setTimestamp()
+          .setTitle(`<a:Tada_Yellow:929361328836079656> Congrats ${message.author.username} your Level has been Up!`)
+          .setDescription(`**You've leveled up to Level: **\`${curLevel}\`! \n**Your Point: **\`${Number(curpoints.toFixed(2))}\``)
+
         message.channel.send({
           content: `<@!${key}>`,
-          embeds : [embed]
+          embeds: [embed]
         });
 
         //set the new level
         data.user[0][key].level = curLevel;
-        
-        await levelingSystem.findOneAndUpdate({ GuildId: guildid }, data);
+
+        await levelingSystem.findOneAndUpdate({
+          GuildId: guildid
+        }, data);
       }
       //set the new level
       client.points.set(key2, data.user[0][key].level, `level`);

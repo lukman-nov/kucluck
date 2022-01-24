@@ -8,6 +8,7 @@ const {
   generateQueueEmbed
 } = require('../../handlers/erela_events/musicsystem');
 const greetingmsgSchema = require('../../databases/greetingmsg');
+const leavemessageSchema = require('../../databases/leaveMessage');
 const autoresume = require('../../databases/autoresume');
 const config = require('../../botconfig/config.json');
 module.exports = (client, app, checkAuth) => {
@@ -29,22 +30,23 @@ module.exports = (client, app, checkAuth) => {
       stats: await client.stats.find({}),
     })
   });
-  app.get("/dashboard/:guildID", checkAuth, async (req, res) => {
+  /**
+   * MUSIC SISTEM
+   */
+  app.get("/dashboard/:guildID/musicsystem", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
     if (!guild) return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);
     if (!member) {
       try {
         member = await guild.members.fetch(req.user.id);
-      } catch {
-
-      }
+      } catch {}
     }
     if (!member)
       return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
     if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
       return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
-    res.render("settings", {
+    res.render("settings/music-system", {
       req: req,
       user: req.isAuthenticated() ? req.user : null,
       guild: guild,
@@ -59,51 +61,25 @@ module.exports = (client, app, checkAuth) => {
       premium: await client.Premium.findOne({
         GuildId: guild.id
       }),
-      leveling: await client.leveling.findOne({
-        GuildId: guild.id
-      }),
       player: client.manager.players.get(guild.id),
-      greetingmsg: await client.Greetingmsg.findOne({
-        GuildId: guild.id
-      }),
       musicsettings: await client.Musicsettings.findOne({
         guildId: guild.id
       }),
-      stats: await client.stats.findOne({
-        GuildId: guild.id
-      }),
-      autorole: await client.Autorolesettings.findOne({
-        GuildId: guild.id
-      }),
-      reactionRoles: await client.reactrole.findOne({
-        GuildId: guild.id
-      }),
     })
-  });
-  app.post("/dashboard/:guildID", checkAuth, async (req, res) => {
+  })
+  app.post("/dashboard/:guildID/musicsystem", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
     if (!guild) return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);
     if (!member) {
       try {
         member = await guild.members.fetch(req.user.id);
-      } catch {
-
-      }
+      } catch {}
     }
     if (!member) return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
     if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
 
-    var autorole = await client.Autorolesettings.findOne({
-      GuildId: guild.id
-    });
-    var greetingmsg = await client.Greetingmsg.findOne({
-      GuildId: guild.id
-    });
     var premium = await client.Premium.findOne({
-      GuildId: guild.id
-    });
-    var reactionRoles = await client.reactrole.findOne({
       GuildId: guild.id
     });
     var ss = await client.Settings.findOne({
@@ -112,14 +88,11 @@ module.exports = (client, app, checkAuth) => {
     var musicsettings = await client.Musicsettings.findOne({
       guildId: guild.id
     });
-    var leveling = await client.leveling.findOne({
-      GuildId: guild.id
-    });
     let player = client.manager.players.get(guild.id)
     var autoResume = await autoresume.findOne({
       guild: player.guild
     })
-    res.render("settings", {
+    res.render("settings/music-system", {
       req: req,
       user: req.isAuthenticated() ? req.user : null,
       guild: guild,
@@ -129,16 +102,9 @@ module.exports = (client, app, checkAuth) => {
       callback: config.websiteSettings.callback,
       settingsSchema: ss,
       premium: premium,
-      leveling: leveling,
       player: client.manager.players.get(guild.id),
       format: formatNonSeconds,
-      greetingmsg: greetingmsg,
       musicsettings: musicsettings,
-      stats: await client.stats.findOne({
-        GuildId: guild.id
-      }),
-      autorole: autorole,
-      reactionRoles: reactionRoles,
     })
 
     let channel = guild.channels.cache.get(musicsettings.channelId)
@@ -172,8 +138,68 @@ module.exports = (client, app, checkAuth) => {
       message.edit(data).catch((e) => {})
       return;
     }
-  });
-  app.post('/bassicSuccess', async (req, res) => {
+  })
+  /**
+   * BASSIC SETTINGS
+   */
+  app.get("/dashboard/:guildID/bassicsettings", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {
+
+      }
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/bassic-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      format: formatNonSeconds,
+      player: client.manager.players.get(guild.id),
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      leveling: await client.leveling.findOne({
+        GuildId: guild.id
+      }),
+      greetingmsg: await client.Greetingmsg.findOne({
+        GuildId: guild.id
+      }),
+      musicsettings: await client.Musicsettings.findOne({
+        guildId: guild.id
+      }),
+      stats: await client.stats.findOne({
+        GuildId: guild.id
+      }),
+      autorole: await client.Autorolesettings.findOne({
+        GuildId: guild.id
+      }),
+      reactionRoles: await client.reactrole.findOne({
+        GuildId: guild.id
+      }),
+      greetingmsg: await client.Greetingmsg.findOne({
+        GuildId: guild.id
+      }),
+      leavemsg: await client.leaveMessage.findOne({
+        GuildId: guild.id
+      }),
+    })
+  })
+  app.post("/dashboard/:guildID/bassicsettings", async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
     var ss = await client.Settings.findOne({
       GuildId: guild.id
@@ -204,77 +230,72 @@ module.exports = (client, app, checkAuth) => {
     if (req.body.leveling) {
       leveling.status = true;
     } else leveling.status = false;
+
+    if (req.body.toggleGreetingmsg) {
+      ss.Greeting = true;
+    } else ss.Greeting = false;
+
+    if (req.body.toggleLeavemsg) {
+      ss.leaveMessage = true;
+    } else ss.leaveMessage = false;
     await ss.save();
     await leveling.save();
 
     setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
+      res.redirect(`/dashboard/${req.body.guildID}/bassicsettings`)
     }, 3000);
-  });
-  app.post('/autoroleSuccess', async (req, res) => {
-    const guild = client.guilds.cache.get(req.body.guildID)
-    var autorole = await client.Autorolesettings.findOne({
-      GuildId: guild.id
-    });
-    var ss = await client.Settings.findOne({
-      GuildId: guild.id
-    });
-    if (req.body.autoroleId && req.body.autorolecheck) {
-      guild.roles.cache.filter(r => r.name === req.body.autoroleId).forEach((role, i) => {
-        autorole.RoleId = role.id;
-      });
-      await autorole.save();
-      ss.AutoRole = true;
-    } else ss.AutoRole = false;
-    await ss.save();
-    await autorole.save();
-    setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
-    }, 3000);
-  });
-  app.post('/greetingmsgSucces', async (req, res) => {
-    const guild = client.guilds.cache.get(req.body.guildID)
-    var greetingmsg = await client.Greetingmsg.findOne({
-      GuildId: guild.id
-    });
-    var ss = await client.Settings.findOne({
-      GuildId: guild.id
-    });
+  })
 
-    if (req.body.greetingmsg && req.body.GreetingChannels && req.body.greetingbtn) {
-      guild.channels.cache.filter(c => c.name === req.body.GreetingChannels).forEach((channel, i) => {
-        if (!greetingmsg) {
-          new greetingmsgSchema({
-            GuildId: guild.id,
-            ChannelId: channel.id,
-            Message: req.body.greetingmsg,
-          }).save();
-        } else {
-          greetingmsg.ChannelId = channel.id;
-          greetingmsg.Message = req.body.greetingmsg;
-        }
-      });
-      ss.Greeting = true;
-    } else ss.Greeting = false;
-    await greetingmsg.save();
-    await ss.save();
-
-    setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
-    }, 3000);
-  });
-  app.post('/musicsettingsSuccess', async (req, res) => {
+  /**
+   * MUSIC SETTINGS
+   */
+  app.get("/dashboard/:guildID/musicsettings", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {}
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/music-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      format: formatNonSeconds,
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      player: client.manager.players.get(guild.id),
+      musicsettings: await client.Musicsettings.findOne({
+        guildId: guild.id
+      }),
+    })
+  })
+  app.post('/dashboard/:guildID/musicsettingsSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
     var ss = await client.Settings.findOne({
       GuildId: guild.id
     });
-    let player = await client.manager.players.get(guild.id);
     if (req.body.pruning) {
       ss.Pruning = true;
     } else ss.Pruning = false;
+
     if (req.body.autoresume) {
       ss.Autoresume = true;
     } else ss.Autoresume = false;
+
     if (req.body.musicsetup) {
       guild.channels.cache.filter(c => c.name === req.body.musicsetup).forEach((channel, i) => {
         musicSystem(client, guild.id, channel.id)
@@ -282,10 +303,10 @@ module.exports = (client, app, checkAuth) => {
     }
     await ss.save();
     setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
+      res.redirect(`/dashboard/${req.body.guildID}/musicsettings`)
     }, 3000);
   });
-  app.post('/musicsettingsSuccessPremium', async (req, res) => {
+  app.post('/dashboard/:guildID/musicsettingsSuccessPremium', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
     var premium = await client.Premium.findOne({
       GuildId: guild.id
@@ -488,92 +509,213 @@ module.exports = (client, app, checkAuth) => {
     }
     await ss.save();
     setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
+      res.redirect(`/dashboard/${req.body.guildID}/musicsettings`)
     }, 3000);
   });
-  app.post('/resetSuccess', async (req, res) => {
+
+  /**
+   * AUTO ROLE
+   */
+  app.get("/dashboard/:guildID/autorole", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {}
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/autorole-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      format: formatNonSeconds,
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      autorole: await client.Autorolesettings.findOne({
+        GuildId: guild.id
+      }),
+    })
+  })
+  app.post('/dashboard/:guildID/autoroleSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
-    const member = guild.members.cache.get(req.user.id);
     var autorole = await client.Autorolesettings.findOne({
-      GuildId: guild.id
-    });
-    var embed = await client.Embedsettings.findOne({
-      guildId: guild.id
-    });
-    var greetingmsg = await client.Greetingmsg.findOne({
-      GuildId: guild.id
-    });
-    var membercount = await client.Membercount.findOne({
-      GuildId: guild.id
-    });
-    var mute = await client.Mutesettings.findOne({
-      GuildId: guild.id
-    });
-    var premium = await client.Premium.findOne({
-      GuildId: guild.id
-    });
-    var reactionRoles = await client.reactrole.findOne({
       GuildId: guild.id
     });
     var ss = await client.Settings.findOne({
       GuildId: guild.id
     });
-    var stats = await client.stats.findOne({
+
+    if (req.body.autoroleId == "reset") {
+      autorole.RoleId = "";
+      await autorole.save();
+    } else if (req.body.autoroleId != "reset") {
+      guild.roles.cache.filter(r => r.name === req.body.autoroleId).forEach((role, i) => {
+        autorole.RoleId = role.id;
+      });
+      await autorole.save();
+    }
+
+    if (req.body.autorolecheck == "_on") {
+      ss.AutoRole = true;
+      await ss.save();
+    } else if (req.body.autorolecheck == "_off") {
+      ss.AutoRole = false;
+      await ss.save();
+    }
+    await ss.save();
+    await autorole.save();
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}/autorole`)
+    }, 3000);
+  });
+
+  /**
+   * GREETING & LEAVE MESSAGE
+   */
+  app.get("/dashboard/:guildID/greetingmessage", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {}
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/greetingmsg-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      format: formatNonSeconds,
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      greetingmsg: await client.Greetingmsg.findOne({
+        GuildId: guild.id
+      }),
+      leaveMessage: await client.leaveMessage.findOne({
+        GuildId: guild.id
+      })
+    })
+  })
+  app.post('/dashboard/:guildID/greetingmsgSuccess', async (req, res) => {
+    const guild = client.guilds.cache.get(req.body.guildID)
+    var greetingmsg = await client.Greetingmsg.findOne({
       GuildId: guild.id
     });
-    var musicsettings = await client.Musicsettings.findOne({
-      guildId: guild.id
-    });
-    var leveling = await client.leveling.findOne({
+    var ss = await client.Settings.findOne({
       GuildId: guild.id
     });
 
-    if (req.body.resetPrefix) ss.Prefix = BotConfig.prefix;
-    if (req.body.resetDjrole) ss.DjRoles = "";
-    if (req.body.resetMusicSetup) {
-      if (musicsettings.channelId.length > 5) {
-        let ch = await guild.channels.cache.get(musicsettings.channelId);
-        ch.clone().then(c => {
-          c.setPosition(ch.position)
-        });
-        ch.delete();
-        musicsettings.delete();
-        await databasing(client, guild.id, member.id)
-      }
+    if (req.body.greetingmsg && req.body.GreetingChannels) {
+      guild.channels.cache.filter(c => c.name === req.body.GreetingChannels).forEach((channel, i) => {
+        if (!greetingmsg) {
+          new greetingmsgSchema({
+            GuildId: guild.id,
+            ChannelId: channel.id,
+            Message: req.body.greetingmsg,
+          }).save();
+        } else {
+          greetingmsg.ChannelId = channel.id;
+          greetingmsg.Message = req.body.greetingmsg;
+        }
+      });
+      ss.Greeting = true;
     }
-    if (req.body.resetBotChannelChat) ss.BotChannel = "";
-    if (req.body.resetAutorole) {
-      if (autorole) autorole.RoleId = "";
-    }
-    if (req.body.resetGreetingMessage) {
-      if (greetingmsg) greetingmsg.delete();
-      await databasing(client, guild.id, member.id)
-    }
-    await autorole.save();
-    await leveling.save();
-    if (req.body.resetAllSettings) {
-      if (autorole) autorole.delete();
-      if (embed) embed.delete();
-      if (greetingmsg) greetingmsg.delete();
-      if (membercount) membercount.delete();
-      if (mute) mute.delete();
-      if (premium) {
-        premium.BotAFK = false;
-        premium.BotAFKVc = "";
-        premium.BotAFKCh = "";
-        await premium.save();
-      }
-      if (reactionRoles) reactionRoles.delete();
-      if (ss) ss.delete();
-      if (stats) stats.delete();
-      await databasing(client, guild.id, member.id)
-    }
+    await greetingmsg.save();
     await ss.save();
+
     setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
+      res.redirect(`/dashboard/${req.body.guildID}/greetingmessage`)
     }, 3000);
   });
-  app.post('/setupEmbedSuccess', async (req, res) => {
+  app.post('/dashboard/:guildID/leavemsgSuccess', async (req, res) => {
+    const guild = client.guilds.cache.get(req.body.guildID)
+    var leavemessage = await client.leaveMessage.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+
+    if (req.body.leaveMessageBox && req.body.leaveMessageChannels) {
+      guild.channels.cache.filter(c => c.name === req.body.leaveMessageChannels).forEach((channel, i) => {
+        if (!leavemessage) {
+          new leavemessageSchema({
+            GuildId: guild.id,
+            ChannelId: channel.id,
+            Message: req.body.leaveMessageBox,
+          }).save();
+        } else {
+          leavemessage.ChannelId = channel.id;
+          leavemessage.Message = req.body.leaveMessageBox;
+        }
+      });
+      ss.leaveMessage = true;
+    }
+    await leavemessage.save();
+    await ss.save();
+
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}/greetingmessage`)
+    }, 3000);
+  });
+  /**
+   * EMBED SETTINGS
+   */
+  app.get("/dashboard/:guildID/setupembed", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {}
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/embed-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+    })
+  })
+  app.post('/dashboard/:guildID/setupEmbedSuccess', async (req, res) => {
     const guild = client.guilds.cache.get(req.body.guildID)
     var ss = await client.Settings.findOne({
       GuildId: guild.id
@@ -630,7 +772,150 @@ module.exports = (client, app, checkAuth) => {
 
     await ss.save();
     setTimeout(() => {
-      res.redirect(`/dashboard/${req.body.guildID}`)
+      res.redirect(`/dashboard/${req.body.guildID}/setupembed`)
+    }, 3000);
+  });
+  /**
+   * RESET SETTINGS
+   */
+  app.get("/dashboard/:guildID/resetsettings", checkAuth, async (req, res) => {
+    const guild = client.guilds.cache.get(req.params.guildID)
+    if (!guild) return res.redirect('/errornotinguild')
+    let member = guild.members.cache.get(req.user.id);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(req.user.id);
+      } catch {}
+    }
+    if (!member)
+      return res.redirect("/?error=" + encodeURIComponent("Login first please! / Join the Guild again!"))
+    if (!member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
+      return res.redirect("/?error=" + encodeURIComponent("You are not allowed to do that"))
+    res.render("settings/reset-settings", {
+      req: req,
+      user: req.isAuthenticated() ? req.user : null,
+      guild: guild,
+      bot: client,
+      Permissions: Discord.Permissions,
+      botconfig: config.websiteSettings,
+      callback: config.websiteSettings.callback,
+      format: formatNonSeconds,
+      settingsSchema: await client.Settings.findOne({
+        GuildId: guild.id
+      }),
+      premium: await client.Premium.findOne({
+        GuildId: guild.id
+      }),
+      leveling: await client.leveling.findOne({
+        GuildId: guild.id
+      }),
+      player: client.manager.players.get(guild.id),
+      greetingmsg: await client.Greetingmsg.findOne({
+        GuildId: guild.id
+      }),
+      musicsettings: await client.Musicsettings.findOne({
+        guildId: guild.id
+      }),
+      stats: await client.stats.findOne({
+        GuildId: guild.id
+      }),
+      autorole: await client.Autorolesettings.findOne({
+        GuildId: guild.id
+      }),
+      reactionRoles: await client.reactrole.findOne({
+        GuildId: guild.id
+      }),
+      leaveMessage: await client.leaveMessage.findOne({
+        GuildId: guild.id
+      }),
+    })
+  })
+  app.post('/dashboard/:guildID/resetSuccess', async (req, res) => {
+    const guild = client.guilds.cache.get(req.body.guildID)
+    const member = guild.members.cache.get(req.user.id);
+    var autorole = await client.Autorolesettings.findOne({
+      GuildId: guild.id
+    });
+    var embed = await client.Embedsettings.findOne({
+      guildId: guild.id
+    });
+    var greetingmsg = await client.Greetingmsg.findOne({
+      GuildId: guild.id
+    });
+    var membercount = await client.Membercount.findOne({
+      GuildId: guild.id
+    });
+    var mute = await client.Mutesettings.findOne({
+      GuildId: guild.id
+    });
+    var premium = await client.Premium.findOne({
+      GuildId: guild.id
+    });
+    var reactionRoles = await client.reactrole.findOne({
+      GuildId: guild.id
+    });
+    var ss = await client.Settings.findOne({
+      GuildId: guild.id
+    });
+    var stats = await client.stats.findOne({
+      GuildId: guild.id
+    });
+    var musicsettings = await client.Musicsettings.findOne({
+      guildId: guild.id
+    });
+    var leveling = await client.leveling.findOne({
+      GuildId: guild.id
+    });
+    var leaveMessage = await client.leaveMessage.findOne({
+      GuildId: guild.id
+    });
+    if (req.body.resetPrefix) ss.Prefix = BotConfig.prefix;
+    if (req.body.resetDjrole) ss.DjRoles = "";
+    if (req.body.resetMusicSetup) {
+      if (musicsettings.channelId.length > 5) {
+        let ch = await guild.channels.cache.get(musicsettings.channelId);
+        ch.clone().then(c => {
+          c.setPosition(ch.position)
+        });
+        ch.delete();
+        musicsettings.delete();
+        await databasing(client, guild.id, member.id)
+      }
+    }
+    if (req.body.resetBotChannelChat) ss.BotChannel = "";
+    if (req.body.resetAutorole) {
+      if (autorole) autorole.RoleId = "";
+    }
+    if (req.body.resetGreetingMessage) {
+      if (greetingmsg) greetingmsg.delete();
+      await databasing(client, guild.id, member.id)
+    }
+    if (req.body.resetLeaveMessage) {
+      if (leaveMessage) leaveMessage.delete();
+      await databasing(client, guild.id, member.id)
+    }
+    await autorole.save();
+    await leveling.save();
+    if (req.body.resetAllSettings) {
+      if (autorole) autorole.delete();
+      if (embed) embed.delete();
+      if (greetingmsg) greetingmsg.delete();
+      if (membercount) membercount.delete();
+      if (mute) mute.delete();
+      if (premium) {
+        premium.BotAFK = false;
+        premium.BotAFKVc = "";
+        premium.BotAFKCh = "";
+        await premium.save();
+      }
+      if (reactionRoles) reactionRoles.delete();
+      if (ss) ss.delete();
+      if (stats) stats.delete();
+      await databasing(client, guild.id, member.id)
+    }
+    await ss.save();
+    setTimeout(() => {
+      res.redirect(`/dashboard/${req.body.guildID}/resetsettings`)
     }, 3000);
   });
 }
