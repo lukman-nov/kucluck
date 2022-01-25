@@ -20,6 +20,18 @@
   border-radius: 5px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+.embed .description a {
+  text-decoration: none;
+}
+.bot-text {
+  padding: 0px 5px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.title {
+  color: #eee;
+}
+
 img {
   border-radius: 5px;
 }
@@ -48,6 +60,9 @@ button.category {
 }
 button.embed-accordion {
   font-size: large;
+}
+button.embed-accordion:hover {
+  color: #9b4890 !important;
 }
 strong {
   font-weight: 500;
@@ -101,4 +116,45 @@ button.category[aria-expanded="true"]::after {
   color: #fff;
   text-decoration: none;
   transition: color 0.15s ease-in-out;
+}
+#quickstart {
+  padding: 0;
+}
+.heading .hastag {
+  background-color: #4444447c;
+}
+.heading h1 {
+  font-weight: 600;
+}
+.heading hr {
+  background-color: #e2e2e2;
+}
+
+@media screen and (max-width: 967px) {
+  * {
+    font-size: small;
+  }
+  .row.bg-dark.rounded-3 {
+    width: 100%;
+  }
+  .navbar-toggler-icon-settings {
+    margin-top: 10px;
+  }
+  .row.bg-dark.p-3.rounded-3 {
+    width: 100%;
+    margin: auto;
+    align-items: center !important;
+  }
+  .guild-nav {
+    display: none !important;
+  }
+  .embed .img img {
+    width: 100%;
+  }
+  .blockquote-footer {
+    font-size: 10px;
+  }
+  .blockquote-footer cite {
+    font-size: 10px;
+  }
 }

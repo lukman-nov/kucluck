@@ -122,6 +122,13 @@ code {
   font-size: 16px;
 }
 @media screen and (max-width: 967px) {
+  nav.navbar.navbar-expand-md.navbar-dark.header {
+    margin-top: 0 !important;
+    background-color: #24262b;
+  }
+  .dropdown-menu.show {
+    transition: 0.2s ease-in-out;
+  }
   a.navbar-brand img {
     display: none !important;
   }
