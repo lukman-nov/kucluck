@@ -33,7 +33,7 @@ module.exports = {
         ]
       })
       setTimeout(() => {
-        msg.delete();
+        msg.delete().catch(() => {});
       }, 5000);
       playermanager(client, message, args, `song:soundcloud`);
     } else if (args.join("").includes("spotify")) {
@@ -45,7 +45,7 @@ module.exports = {
         ]
       })
       setTimeout(() => {
-        msg.delete();
+        msg.delete().catch(() => {});
       }, 5000);
       playermanager(client, message, args, `song:raw`);
     } else if (args.join("").includes("apple")) {
@@ -57,7 +57,7 @@ module.exports = {
         ]
       })
       setTimeout(() => {
-        msg.delete();
+        msg.delete().catch(() => {});
       }, 5000);
       playermanager(client, message, args, `song:raw`);
     } else {
@@ -69,7 +69,7 @@ module.exports = {
         ]
       })
       setTimeout(() => {
-        msg.delete();
+        msg.delete().catch(() => {});
       }, 5000);
       //play from YOUTUBE
       playermanager(client, message, args, `song:youtube`);

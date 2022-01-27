@@ -1,7 +1,13 @@
-const { MessageEmbed } = require("discord.js");
-const { TrackUtils } = require("erela.js");
+const {
+  MessageEmbed
+} = require("discord.js");
+const {
+  TrackUtils
+} = require("erela.js");
 const lyricsFinder = require("lyrics-finder");
-const pagination = require('../../handlers/pagination')
+const {
+  swap_pages2
+} = require('../../handlers/functions')
 const _ = require("lodash");
 const premiums = ("", "");
 const url = require('../../botconfig/url.json')
@@ -22,7 +28,7 @@ module.exports = {
     let SearchString = args.join(" ");
     if (!args[0] && !player)
       return message.reply({
-        embeds: [new MessageEmbed() 
+        embeds: [new MessageEmbed()
           .setColor(es.wrongcolor)
           .setFooter(client.getFooter(es))
           .setThumbnail(es.thumb ? url.img.ERROR : null)
@@ -37,24 +43,22 @@ module.exports = {
 
     let lyrics = await lyricsFinder(SongTitle);
     if (!lyrics)
-    return message.reply({
-      embeds: [new MessageEmbed() 
-        .setColor(es.wrongcolor)
-        .setFooter(client.getFooter(es))
-        .setThumbnail(es.thumb ? url.img.ERROR : null)
-        .setTitle(eval(client.la[ls]["cmds"]["premium"]["lyrics"]["var2"]))
-      ]
-    });
+      return message.reply({
+        embeds: [new MessageEmbed()
+          .setColor(es.wrongcolor)
+          .setTitle(eval(client.la[ls]["cmds"]["premium"]["lyrics"]["var2"]))
+        ]
+      });
     lyrics = lyrics.split("\n"); //spliting into lines
     let SplitedLyrics = _.chunk(lyrics, 40); //45 lines each page
 
     var pages = SplitedLyrics.map((ly) => {
-      let em = 
+      let em =
         new MessageEmbed()
-          .setAuthor(client.getAuthor(`Lyrics for: ${SongTitle}`, url.img.icon))
-          .setColor(es.color)
-          .setDescription(ly.join("\n"))
-        
+        .setAuthor(client.getAuthor(`Lyrics for: ${SongTitle}`, url.img.icon))
+        .setColor(es.color)
+        .setDescription(ly.join("\n"))
+
 
       if (args.join(" ") !== SongTitle)
         em.setThumbnail(player.queue.current.displayThumbnail());
@@ -62,8 +66,10 @@ module.exports = {
       return em;
     });
 
-    // if (!pages.length || pages.length === 1)
-      return message.reply({ embeds : [pages[0]]});
-    // else return pagination(client, message, { embeds : [pages[0]]});
+    if (!pages.length || pages.length === 1)
+      return message.reply({
+        embeds: [pages[0]]
+      });
+    else return swap_pages2(client, message, pages);
   },
 };

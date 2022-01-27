@@ -18,7 +18,7 @@
     <div class="row bg-dark p-3">
       <!-- TITLE HEADER -->
       <div class="col-md-12">
-        <h3><i class="bi bi-music-note-list fa-2x pb"></i> Music System </h3>
+        <h3><i class="bi bi-music-note-list fa-2x pb"></i> Music Player </h3>
         <hr>
       </div>
       <!-- MUSIC PLAYER -->
@@ -80,7 +80,7 @@
           </h6>
         </div>
         <div class="col-md-4 mb-3 p-0" id="btn-control">
-          <form method="post" class="d-flex justify-content-evenly">
+          <form method="post" class="d-flex justify-content-evenly" action="/dashboard/<%=guild.id%>/musicsystempost">
             <!-- PAUSE BTN -->
             <input type="checkbox" class="btn-check" id="btn-resume" autocomplete="off" name="resume" title="resume">
             <label class="btn btn-success" for="btn-resume" data-bs-toggle="resume" data-bs-trigger="hover"

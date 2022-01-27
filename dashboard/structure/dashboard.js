@@ -67,7 +67,7 @@ module.exports = (client, app, checkAuth) => {
       }),
     })
   })
-  app.post("/dashboard/:guildID/musicsystem", checkAuth, async (req, res) => {
+  app.post("/dashboard/:guildID/musicsystempost", checkAuth, async (req, res) => {
     const guild = client.guilds.cache.get(req.params.guildID)
     if (!guild) return res.redirect('/errornotinguild')
     let member = guild.members.cache.get(req.user.id);

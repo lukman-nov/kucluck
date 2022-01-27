@@ -149,19 +149,19 @@ module.exports = (client) => {
       ],
       medium: [{
           band: 0,
-          gain: 0.125
+          gain: 0.135
         },
         {
           band: 1,
-          gain: 0.25
+          gain: 0.285
         },
         {
           band: 2,
-          gain: -0.25
+          gain: 0.15
         },
         {
           band: 3,
-          gain: -0.125
+          gain: 0.125
         },
         {
           band: 4,
@@ -169,11 +169,11 @@ module.exports = (client) => {
         },
         {
           band: 5,
-          gain: -0.0125
+          gain: -0.01
         },
         {
           band: 6,
-          gain: -0.025
+          gain: -0.015
         },
         {
           band: 7,
@@ -197,7 +197,7 @@ module.exports = (client) => {
         },
         {
           band: 12,
-          gain: 0.375
+          gain: 0.25
         },
         {
           band: 13,

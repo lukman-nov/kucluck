@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const config = require('../../botconfig/config.json');
-const Swal = require('sweetalert2');
 
 module.exports = (client, app, checkAuth) => {
   app.get("/payment", async (req, res) => {

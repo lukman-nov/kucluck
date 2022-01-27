@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 const Strategy = require("passport-discord").Strategy;
 const config = require("../botconfig/config.json");
 const passport = require("passport");
-const Swal = require('sweetalert2')
 
 module.exports = client => {
   //WEBSITE CONFIG BACKEND
@@ -125,7 +124,7 @@ module.exports = client => {
     })
   })
 
-  Array("premium", "dashboard", "commands", "payment", "terms", "error", "docs").forEach(handler => {
+  Array("premium", "dashboard", "commands", "payment", "terms", "error", "docs", "music-player").forEach(handler => {
     try {
       require(`./structure/${handler}`)(client, app, checkAuth);
     } catch (e) {

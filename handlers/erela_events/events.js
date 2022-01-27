@@ -29,7 +29,7 @@ var {
   lyricsFinder = require("lyrics-finder"),
   _ = require("lodash");
 
-  playercreated = new Map(),
+playercreated = new Map(),
   collector = false,
   playerintervals = new Map(),
   playerintervals_autoresume = new Map();
@@ -41,25 +41,37 @@ module.exports = (client) => {
   const autoconnect = async () => {
     await delay(500);
     await autoresumeSchema.find({}, async (err, data) => {
-      data.forEach( async (value) => {
+      data.forEach(async (value) => {
         let guilds = client.guilds.cache.get(value.guild)
         if (!guilds || guilds.length == 0) return;
         try {
           let guild = client.guilds.cache.get(guilds.id);
           if (!guild) {
-            await autoresumeSchema.findOneAndDelete({ guild : guilds.id});
+            await autoresumeSchema.findOneAndDelete({
+              guild: guild.id
+            });
             client.logger(`Autoresume`.brightCyan + ` - Bot got Kicked out of the Guild in ${String(guild.name).brightBlue}`)
           }
           let voiceChannel = guild.channels.cache.get(value.voiceChannel);
+          const premium = await client.Premium.findOne({
+            GuildId: guild.id
+          });
+          const ss = await client.Settings.findOne({
+            GuildId: guild.id
+          });
           if (!voiceChannel) voiceChannel = await guild.channels.fetch(value.voiceChannel).catch(() => {}) || false;
           if (!voiceChannel || !voiceChannel.members || voiceChannel.members.filter(m => !m.user.bot && !m.voice.deaf && !m.voice.selfDeaf).size < 1) {
-            await autoresumeSchema.findOneAndDelete({ guild : guilds.id});
+            await autoresumeSchema.findOneAndDelete({
+              guild: guild.id
+            });
             client.logger(`Autoresume`.brightCyan + ` - Voice Channel is either Empty / no Listeners / got deleted in ${String(guild.name).brightBlue}`)
           }
           let textChannel = guild.channels.cache.get(value.textChannel);
           if (!textChannel) textChannel = await guild.channels.fetch(value.textChannel).catch(() => {}) || false;
           if (!textChannel) {
-            await autoresumeSchema.findOneAndDelete({ guild : guilds.id});
+            await autoresumeSchema.findOneAndDelete({
+              guild: guild.id
+            });
             client.logger(`Autoresume`.brightCyan + ` - Text Channel got deleted in ${String(guild.name).brightBlue}`)
           }
           let player = await client.manager.create({
@@ -71,6 +83,7 @@ module.exports = (client) => {
           player.set("autoresume", true);
           if (player && player.node && !player.node.connected) await player.node.connect();
           await player.connect();
+          await player.setVolume(ss.Volume)
           if (value.current && value.current.identifier) {
             const buildTrack = async (data) => {
               return data.track && data.identifier ? TrackUtils.build({
@@ -103,37 +116,24 @@ module.exports = (client) => {
             player.play()
             if (value.queue.length)
               for (let track of value.queue) player.queue.add(await buildTrack(track))
+          } else if (premium && premium.BotAFK) {
+            client.logger(`AFK Mode`.brightCyan + ` - Joining the player to ${String(guild.name).brightBlue} in ${String(guild.channels.cache.get(player.voiceChannel).name).blue}.`);
           } else {
-            premiumSchema.findOne({ GuildId : player.guild}, async(err, data) => {
-              if (data) {
-                if(data.BotAFK == true ) {
-                  client.logger(`Autoconnect`.brightCyan + ` - Player in ${String(guild.name).brightBlue}, AFK enable.`);
-                }
-                if(data.BotAFK == false) {
-                  player.destroy();
-                  client.logger(`Autoresume`.brightCyan + ` - Destroyed the player in ${String(guild.name).brightBlue}, because there are no tracks available and afk disable.`);
-                }
-              } else {
-                player.destroy();
-                client.logger(`Autoresume`.brightCyan + ` - Destroyed the player in ${String(guild.name).brightBlue}, because there are no tracks available.`);
-              }
-            }).clone();
+            player.destroy();
+            client.logger(`Autoresume`.brightCyan + ` - Destroyed the player in ${String(guild.name).brightBlue}, because there are no tracks available.`);
           }
           client.logger(`Autoresume`.brightCyan + ` - Added ${player.queue.length} Tracks on the QUEUE and started playing ${player.queue.current.title} in ${String(guild.name).brightBlue}`);
           //ADJUST THE QUEUE SETTINGS
           player.set("pitchvalue", value.pitchvalue)
-          await player.setVolume(value.volume)
-          if (value.queueRepeat) {
-            player.setQueueRepeat(value.queueRepeat);
-          }
-          if (value.trackRepeat) {
-            player.setTrackRepeat(value.trackRepeat);
-          }
-          if (!value.playing) {
-            player.pause(true);
-          }
           await player.seek(value.position);
+          // if (value.queueRepeat) player.setQueueRepeat(value.queueRepeat);
+          // if (value.trackRepeat) player.setTrackRepeat(value.trackRepeat);
+          if (!value.playing) player.pause(true);
           switch (value.eq) {
+            case `💣 None`:
+              player.set("eq", "💣 None");
+              await player.setEQ(client.eqs.music);
+              break;
             case `🎵 Music`:
               player.set("eq", "🎵 Music");
               await player.setEQ(client.eqs.music);
@@ -176,7 +176,6 @@ module.exports = (client) => {
               await player.setEQ(client.eqs.earrape);
               break;
           }
-  
           switch (value.filter) {
             case "💯 Vibrato": {
               require("../../commands/Filter/vibrato").run(client, {
@@ -307,20 +306,18 @@ module.exports = (client) => {
           }
           break;
           }
-          await autoresumeSchema.findOneAndDelete({ guild : player.guild });
+          await autoresumeSchema.findOneAndDelete({
+            guild: player.guild
+          });
           client.logger("changed autoresume track to queue adjustments + deleted the database entry")
           if (value.playing) {
             setTimeout(() => {
               player.pause(true);
               setTimeout(() => player.pause(false), client.ws.ping * 2);
             }, client.ws.ping * 2)
-  
           }
           await delay(settings["auto-resume-delay"] || 1000)
-          
-        } catch (e) {
-
-        }
+        } catch (e) {}
       })
     }).clone();
   }
@@ -342,25 +339,25 @@ module.exports = (client) => {
       playercreated.set(player.guild, true)
       //for checking the relevant messages
       var interval = setInterval(async () => {
-        let mss = await musicsettings.findOne({ guildId : player.guild }).clone();
+        let mss = await musicsettings.findOne({
+          guildId: player.guild
+        }).clone();
         if (mss.channelId && mss.channelId.length > 5 && player.textChannel === mss.channelId && player.playing) {
-          client.logger(`Music System - Relevant Checker - Checkingfor unrelevant Messages`)
           let messageId = await mss.messageId;
           //try to get the guild
           let guild = client.guilds.cache.get(player.guild);
-          if (!guild) return client.logger(`Music System - Relevant Checker - Guild not found!`)
+          if (!guild) return client.logger(`Music System`.brightCyan + ` - Relevant Checker - Guild not found in ${String(guild.name).brightBlue}`)
           //try to get the channel
           let channel = await guild.channels.cache.get(mss.channelId);
           if (!channel) channel = await guild.channels.fetch(mss.channelId).catch(() => {}) || false
-          if (!channel) return client.logger(`Music System - Relevant Checker - Channel not found!`)
+          if (!channel) return client.logger(`Music System`.brightCyan + ` - Relevant Checker - Channel not found in ${String(guild.name).brightBlue}`)
           if (!channel.permissionsFor(channel.guild.me).has(Permissions.FLAGS.MANAGE_MESSAGES)) return client.logger(`Music System - Relevant Checker - Missing Permissions`)
           //try to get the channel
           let messages = await channel.messages.fetch();
           if (messages.filter(m => m.id != messageId).size > 0) {
-            channel.bulkDelete(messages.filter(m => m.id != messageId)).catch(() => {})
-              .then(messages => client.logger(`Music System - Relevant Checker - Bulk deleted ${messages.size} messages`))
+            channel.bulkDelete(messages.filter(m => m.id != messageId)).then(messages => client.logger(`Music System`.brightCyan + ` - Relevant Checker - Bulk deleted ${messages.size} messages in ${String(guild.name).brightBlue}`)).catch(() => {})
           } else {
-            client.logger(`Music System - Relevant Checker - No Relevant Messages`)
+            client.logger(`Music System`.brightCyan + ` - Relevant Checker - No Relevant Messages in ${String(guild.name).brightBlue}`)
           }
         }
       }, 120000);
@@ -370,12 +367,15 @@ module.exports = (client) => {
        */
       var autoresumeinterval = setInterval(async () => {
         var pl = client.manager.players.get(player.guild);
-        let ss = await client.Settings.findOne({ GuildId : pl.guild }).clone();
-        if (ss.Autoresume === true ) {
+        let ss = await client.Settings.findOne({
+          GuildId: pl.guild
+        }).clone();
+        if (ss.Autoresume) {
           let filter = pl.get(`filter`)
           let filtervalue = pl.get(`filtervalue`)
           let autoplay = pl.get(`autoplay`)
           let eq = pl.get(`eq`)
+
           const makeTrack = track => {
             return {
               track: track.track,
@@ -390,9 +390,11 @@ module.exports = (client) => {
               requester: track.requester.id,
             }
           }
-          autoresumeSchema.findOne({ guild : pl.guild }, async (err,data) => {
+          autoresumeSchema.findOne({
+            guild: pl.guild
+          }, async (err, data) => {
             if (!data) {
-              new autoresumeSchema ({
+              new autoresumeSchema({
                 guild: pl.guild,
                 voiceChannel: null,
                 textChannel: null,
@@ -412,7 +414,7 @@ module.exports = (client) => {
               if (data.guild != pl.guild) data.guild = pl.guild;
               if (data.voiceChannel != pl.voiceChannel) data.voiceChannel = pl.voiceChannel;
               if (data.textChannel != pl.textChannel) data.textChannel = pl.textChannel;
-    
+
               if (pl.queue && pl.queue.current && (!data.current || data.current.identifier != pl.queue.current.identifier)) data.current = makeTrack(pl.queue.current);
               if (data.volume != pl.volume) data.volume = pl.volume;
               if (data.queueRepeat != pl.queueRepeat) data.queueRepeat = pl.queueRepeat;
@@ -461,8 +463,12 @@ module.exports = (client) => {
       playerintervals.delete(player.guild);
       //clear the interval for the autoresume system
       clearInterval(playerintervals_autoresume.get(player.guild))
-      autoresumeSchema.findOne({ guild : player.guild }, async (err, data) => {
-        if (data) await autoresumeSchema.findOneAndDelete({ guild : player.guild })
+      autoresumeSchema.findOne({
+        guild: player.guild
+      }, async (err, data) => {
+        if (data) await autoresumeSchema.findOneAndDelete({
+          guild: player.guild
+        })
       }).clone();
       playerintervals_autoresume.delete(player.guild);
       //if the song ends, edit message(s)
@@ -477,10 +483,14 @@ module.exports = (client) => {
     .on(`trackStart`, async (player, track, args) => {
       try {
         try {
-          let sts = await StatsSchema.findOne ({ GuildId : player.guild });
+          let sts = await StatsSchema.findOne({
+            GuildId: player.guild
+          });
           sts.Songs += 1;
           sts.save();
-          let stsG = await StatsGSchema.findOne ({ BotId : client.user.id });
+          let stsG = await StatsGSchema.findOne({
+            BotId: client.user.id
+          });
           stsG.Songs += 1;
           stsG.save();
         } catch (e) {}
@@ -491,8 +501,16 @@ module.exports = (client) => {
         let channel = guild.channels.cache.get(player.textChannel);
         if (!channel) channel = await guild.channels.fetch(player.textChannel);
 
-        const premium = await client.Premium.findOne({ GuildId: player.guild });
-        const ss = await SettingsSchema.findOne({ GuildId: player.guild }).clone();
+        const premium = await client.Premium.findOne({
+          GuildId: player.guild
+        });
+        const ss = await SettingsSchema.findOne({
+          GuildId: player.guild
+        }).clone();
+
+        const mss = await musicsettings.findOne({
+          guildId: player.guild
+        }).clone();
         const ls = await ss.Language;
         const es = await ss.Embed;
 
@@ -517,8 +535,8 @@ module.exports = (client) => {
           }
           databasing(client, player.guild, player.get(`playerauthor`));
           playercreated.delete(player.guild); // delete the playercreated state from the thing
-          client.logger(`Player Created in ${String(guild ? guild.name : player.guild).brightBlue} | Set the - Guild Default Data`);
-          if (!player.get("autoresume") && channel && channel.permissionsFor(guild.me).has(Permissions.FLAGS.SEND_MESSAGES)) {
+          client.logger(`Player Created :: ${String(guild ? guild.name : player.guild).brightBlue}`);
+          if (!player.get("autoresume") && !player.get(`afk`) && channel && channel.permissionsFor(guild.me).has(Permissions.FLAGS.SEND_MESSAGES)) {
             channel.send({
               embeds: [
                 new MessageEmbed()
@@ -545,15 +563,13 @@ module.exports = (client) => {
         player.set(`votes`, `0`);
         //set the vote of every user to FALSE so if they voteskip it will vote skip and not remove voteskip if they have voted before bruh
         for (var userid of guild.members.cache.map(member => member.user.id))
-        player.set(`vote-${userid}`, false);
+          player.set(`vote-${userid}`, false);
         //set the previous track just have it is used for the autoplay function!
         player.set(`previoustrack`, track);
-        const mss = await musicsettings.findOne({ guildId : player.guild }).clone();
-        if (mss.channelId == player.textChannel) {
-          return client.logger(`No PRUNING-Message sent, because Player-TextChannel == Music System Text Channel`)
-        }
+        if (mss.channelId == player.textChannel) return;
         //if that's disabled return
-        if (!ss.Pruning) return client.logger(`Pruning Disabled - Not Sending a Message`);
+        if (!ss.Pruning) return;
+        // client.logger(`Pruning Disabled - Not Sending a Message`);
         let playdata = generateQueueEmbed(client, player, track)
         //Send message with buttons
         if (channel && channel.permissionsFor(guild.me).has(Permissions.FLAGS.SEND_MESSAGES)) {
@@ -630,7 +646,7 @@ module.exports = (client) => {
                   ]
                 })
                 edited = true;
-                if(!premium.BotAFK) await player.destroy()
+                if (!premium.BotAFK) await player.destroy()
                 return player.stop();
               }
               //skip the track
@@ -648,7 +664,7 @@ module.exports = (client) => {
             }
             //stop
             if (i.customId == `2`) {
-              if(player.get(`autoplay`)) {
+              if (player.get(`autoplay`)) {
                 return await i.reply({
                   embeds: [new MessageEmbed()
                     .setColor(es.wrongcolor)
@@ -662,7 +678,9 @@ module.exports = (client) => {
               }
               //Stop the player
               if (premium.BotAFK === true) {
-                await autoresumeSchema.findOneAndDelete({ guild : player.guild});
+                await autoresumeSchema.findOneAndDelete({
+                  guild: player.guild
+                });
                 await player.queue.clear();
                 await player.stop();
                 return i.reply({
@@ -687,7 +705,9 @@ module.exports = (client) => {
                 ]
               })
               edited = true;
-              await autoresumeSchema.findOneAndDelete({ guild : player.guild });
+              await autoresumeSchema.findOneAndDelete({
+                guild: player.guild
+              });
               await player.queue.clear();
               await player.stop();
             }
@@ -729,10 +749,10 @@ module.exports = (client) => {
             if (i.customId == `4`) {
               if (ss.AutoPlay === false) {
                 ss.AutoPlay = true,
-                ss.save();
+                  ss.save();
               } else if (ss.AutoPlay === true) {
                 ss.AutoPlay = false,
-                ss.save();
+                  ss.save();
               }
               //pause the player
               player.set(`autoplay`, !player.get(`autoplay`))
@@ -865,12 +885,12 @@ module.exports = (client) => {
             if (i.customId == `10`) {
               SongTitle = player.queue.current.title;
               SongTitle = SongTitle.replace(/lyrics|lyric|lyrical|official music video|\(official music video\)|audio|official|official video|official video hd|official hdvideo|offical video music|\(offical video music\)|extended|hd|(\[.+\])/gi, "");
-  
+
               let lyrics = await lyricsFinder(SongTitle);
               if (!lyrics) {
                 return i.reply(`**No lyrics found for -** \`${SongTitle}\``);
               }
-              
+
               lyrics = lyrics.split("\n"); //spliting into lines
               let SplitedLyrics = _.chunk(lyrics, 40); //45 lines each page
               let Pages = SplitedLyrics.map((ly) => {
@@ -879,13 +899,16 @@ module.exports = (client) => {
                   .setColor(es.color)
                   .setDescription(ly.join("\n"));
                 em.setThumbnail(player.queue.current.displayThumbnail());
-                return i.reply({ embeds : [em], ephemeral: true}).catch(() => {});
+                return i.reply({
+                  embeds: [em],
+                  ephemeral: true
+                }).catch(() => {});
               })
             }
           });
         }
       } catch (e) {
-        console.log(String(e.stack).grey.yellow) /* */
+        console.log(String(e.stack).grey.yellow)
       }
     })
     .on(`trackStuck`, async (player, track, payload) => {
@@ -908,13 +931,14 @@ module.exports = (client) => {
       }
     })
     .on(`queueEnd`, async (player) => {
-      //en-sure the database data
       client.editLastPruningMessage(player, `\n⛔️ SONG & QUEUE ENDED! `)
       databasing(client, player.guild, player.get(`playerauthor`));
       //if autoplay is enabled, then continue with the autoplay function
       if (player.get(`autoplay`)) return autoplay(client, player);
       try {
-        let ss = await client.Settings.findOne({ GuildId : player.guild })
+        let ss = await client.Settings.findOne({
+          GuildId: player.guild
+        })
         let es = ss.Embed
         let ls = ss.Language
         //update the player
@@ -925,28 +949,32 @@ module.exports = (client) => {
           client.updateMusicSystem(player, true);
 
           //Delete autoresume
-          await autoresumeSchema.findOneAndDelete({ guild : player.guild });
-          client.logger(`Queue went empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue} deleted the database entry`)
+          await autoresumeSchema.findOneAndDelete({
+            guild: player.guild
+          });
+          // client.logger(`Queue went empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue} deleted the database entry`)
 
           //if afk is enbaled return and not destroy the PLAYER
-          const premium = await premiumSchema.findOne({ GuildId : player.guild }).clone();
-          if(premium && player) { 
-            if (player.get(`afk`) || premium.BotAFK === true) {
-              client.logger(`Queue went empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue}, not leaving, because AFK is enabled!`)
-              setTimeout(() => {
-                return client.channels.cache.get(player.textChannel).send({
-                  embeds: [new MessageEmbed()
-                    .setColor(es.color)
-                    .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["events"]["var16"]))
-                  ]
-                }).then((msg) => {
-                  setTimeout(() => {
-                    msg.delete().catch(() => {});
-                  }, 60000);
-                })
-              }, settings.LeaveOnEmpty_Queue.time_delay);
+          const premium = await premiumSchema.findOne({
+            GuildId: player.guild
+          }).clone();
+          if (premium && player) {
+            if (player.get(`afk`) || premium.BotAFK) {
+              return;
+              // client.logger(`Queue went empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue}, not leaving, because AFK is enabled!`)
+              // setTimeout(() => {
+              //   return client.channels.cache.get(player.textChannel).send({
+              //     embeds: [new MessageEmbed()
+              //       .setColor(es.color)
+              //       .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["events"]["var16"]))
+              //     ]
+              //   }).then((msg) => {
+              //     setTimeout(() => {
+              //       msg.delete().catch(() => {});
+              //     }, 60000);
+              //   })
+              // }, settings.LeaveOnEmpty_Queue.time_delay);
             }
-            return;
           }
           //if afk is disable return and not destroy the PLAYER
           if (settings.LeaveOnEmpty_Queue.enabled && player) {
@@ -954,16 +982,16 @@ module.exports = (client) => {
               try {
                 if (!player.queue || !player.queue.current) {
                   await player.destroy();
-                  client.logger(`Destroyed because it went Empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue}`)
+                  // client.logger(`Destroyed because it went Empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue}`)
                   return client.channels.cache.get(player.textChannel).send({
-                  embeds: [new MessageEmbed()
-                    .setColor(es.color)
-                    .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["events"]["var17"]))
-                  ]
-                })
+                    embeds: [new MessageEmbed()
+                      .setColor(es.color)
+                      .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["events"]["var17"]))
+                    ]
+                  })
                 }
               } catch (e) {
-                console.log(`===== Destroy Player in ${settings.LeaveOnEmpty_Queue.time_delay} ===== \n ${String(e.stack).grey.yellow}`)
+                console.log(String(e.stack).grey.yellow)
               }
             }, settings.LeaveOnEmpty_Queue.time_delay)
           }
@@ -976,7 +1004,7 @@ module.exports = (client) => {
 
 function generateQueueEmbed(client, player, track) {
   var embed = new MessageEmbed()
-  .setColor(ee.color)
+    .setColor(ee.color)
   embed.setAuthor(client.getAuthor(`${track.title}`, `https://images-ext-1.discordapp.net/external/DkPCBVBHBDJC8xHHCF2G7-rJXnTwj_qs78udThL8Cy0/%3Fv%3D1/https/cdn.discordapp.com/emojis/859459305152708630.gif`, track.uri))
   embed.setThumbnail(`https://img.youtube.com/vi/${track.identifier}/mqdefault.jpg`)
   embed.addField(`${emoji.msg.time} Duration: `, `\`${format(player.queue.current.duration).split(" | ")[0]}\` | \`${format(player.queue.current.duration).split(" | ")[1]}\``, true)

@@ -12,7 +12,8 @@ const {
   format,
   duration,
   createBar,
-  delay
+  delay,
+  swap_pages2_interaction
 } = require("../functions");
 const ms = require("ms")
 const config = require(`${process.cwd()}/botconfig/config.json`);
@@ -21,6 +22,8 @@ const ee = require(`${process.cwd()}/botconfig/embed`);
 const emoji = require(`${process.cwd()}/botconfig/emojis.json`);
 const url = require(`${process.cwd()}/botconfig/url.json`);
 const playermanager = require(`${process.cwd()}/handlers/playermanager`);
+const lyricsFinder = require("lyrics-finder");
+const _ = require("lodash");
 //we need to create the music system, somewhere...
 module.exports = client => {
   client.on("interactionCreate", async (interaction) => {
@@ -97,81 +100,150 @@ module.exports = client => {
         }
       }
       switch (interaction.customId) {
-        case "Skip": {
-          //if ther is nothing more to skip then stop music and leave the Channel
-          if (player.queue.size === 0) {
-            //if its on autoplay mode, then do autoplay before leaving...
-            if (player.get("autoplay")) {
-              interaction.reply({
-                embeds: [new MessageEmbed()
-                  .setColor(es.color)
-                  .setTimestamp()
-                  .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var1"]))
-                  .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                    dynamic: true
-                  })))
-                ]
-              })
-              return autoplay(client, player, "skip");
-            }
-            if (premium && premium.BotAFK) {
-              interaction.reply({
-                embeds: [new MessageEmbed()
-                  .setColor(es.color)
-                  .setTimestamp()
-                  .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var2"]))
-                  .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                    dynamic: true
-                  })))
-                ]
-              })
-              await client.autoresume.findOneAndDelete({
-                guild: guild.id
-              });
-              await player.stop();
-              var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles, true)
-              message.edit(data).catch((e) => {
-                //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-              })
-              return;
-            }
+        case "Previous": {
+          if (!player.queue.previous) return interaction.reply({
+            embeds: [new MessageEmbed()
+              .setColor(es.wrongcolor)
+              .setTimestamp()
+              .setTitle(`${emoji.msg.ERROR} Can't find the last song`)
+              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                dynamic: true
+              })))
+            ]
+          });
+          if (!premium) {
+            return interaction.reply({
+              content: eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["premium"]),
+            })
+          } else {
             interaction.reply({
               embeds: [new MessageEmbed()
                 .setColor(es.color)
                 .setTimestamp()
-                .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var3"]))
+                .setTitle(`⏮️ Playing to the last Song!`)
                 .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
                   dynamic: true
                 })))
               ]
-            })
-            await player.destroy()
-            //edit the message so that it's right!
-            var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles, true)
+            });
+            player.queue.add(player.queue.previous);
+            //skip the track
+            player.stop();
+            var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
             message.edit(data).catch((e) => {
               //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-            })
-            return
+            });
           }
-          //skip the track
-          await player.stop();
+        }
+        break;
+      case "Pause": {
+        if (!player.playing) {
+          player.pause(false);
           interaction.reply({
             embeds: [new MessageEmbed()
               .setColor(es.color)
               .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var4"]))
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var8"]))
               .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
                 dynamic: true
               })))
             ]
           })
+        }
+        //pause the player
+        player.pause(true);
+        interaction.reply({
+          embeds: [new MessageEmbed()
+            .setColor(es.color)
+            .setTimestamp()
+            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var9"]))
+            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+              dynamic: true
+            })))
+          ]
+        })
+        //edit the message so that it's right!
+        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+        message.edit(data).catch((e) => {
+          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+        })
+      }
+      break;
+      case "Skip": {
+        //if ther is nothing more to skip then stop music and leave the Channel
+        if (player.queue.size === 0) {
+          //if its on autoplay mode, then do autoplay before leaving...
+          if (player.get("autoplay")) {
+            interaction.reply({
+              embeds: [new MessageEmbed()
+                .setColor(es.color)
+                .setTimestamp()
+                .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var1"]))
+                .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                  dynamic: true
+                })))
+              ]
+            })
+            return autoplay(client, player, "skip");
+          }
+          if (premium && premium.BotAFK) {
+            interaction.reply({
+              embeds: [new MessageEmbed()
+                .setColor(es.color)
+                .setTimestamp()
+                .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var2"]))
+                .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                  dynamic: true
+                })))
+              ]
+            })
+            await client.autoresume.findOneAndDelete({
+              guild: guild.id
+            });
+            await player.stop();
+            var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles, true)
+            message.edit(data).catch((e) => {
+              //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+            })
+            return;
+          }
+          interaction.reply({
+            embeds: [new MessageEmbed()
+              .setColor(es.color)
+              .setTimestamp()
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var3"]))
+              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                dynamic: true
+              })))
+            ]
+          })
+          await player.destroy()
           //edit the message so that it's right!
-          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles, true)
           message.edit(data).catch((e) => {
             //console.log(e.stack ? String(e.stack).grey : String(e).grey)
           })
+          return
         }
-        break;
+        //skip the track
+        await player.stop();
+        interaction.reply({
+          embeds: [new MessageEmbed()
+            .setColor(es.color)
+            .setTimestamp()
+            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var4"]))
+            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+              dynamic: true
+            })))
+          ]
+        })
+        //edit the message so that it's right!
+        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+        message.edit(data).catch((e) => {
+          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+        })
+      }
+      break;
       case "Stop": {
         //Stop the player
         if (premium && premium.BotAFK) {
@@ -251,148 +323,66 @@ module.exports = client => {
         }
       }
       break;
-      case "Pause": {
-        if (!player.playing) {
-          player.pause(false);
-          interaction.reply({
-            embeds: [new MessageEmbed()
-              .setColor(es.color)
-              .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var8"]))
-              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                dynamic: true
-              })))
-            ]
-          })
-        } else {
-          //pause the player
-          player.pause(true);
+      case "Leave": {
+        await player.destroy();
+        interaction.reply({
+          embeds: [new MessageEmbed()
+            .setColor(es.color)
+            .setTimestamp()
+            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var18"]))
+            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+              dynamic: true
+            })))
+          ]
+        })
+      }
+      break;
 
-          interaction.reply({
-            embeds: [new MessageEmbed()
-              .setColor(es.color)
-              .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var9"]))
-              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                dynamic: true
-              })))
-            ]
-          })
-        }
-        //edit the message so that it's right!
-        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
-        message.edit(data).catch((e) => {
-          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-        })
-      }
-      break;
-      case "Autoplay": {
+      case "VolUp": {
         if (!premium) {
           return interaction.reply({
             content: `${emoji.msg.ERROR} Your Guild not Premium`,
           })
         } else {
-          if (ss.AutoPlay === false) {
-            ss.AutoPlay = true,
-              ss.save();
-          } else if (ss.AutoPlay === true) {
-            ss.AutoPlay = false,
-              ss.save();
-          }
-          //pause the player
-          player.set(`autoplay`, !player.get(`autoplay`))
+          var volumeup = player.volume + 10;
+          if (volumeup > 150) volumeup = 0;
+          player.setVolume(volumeup);
           interaction.reply({
             embeds: [new MessageEmbed()
               .setColor(es.color)
               .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var10"]))
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var16"]))
               .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
                 dynamic: true
               })))
             ]
           })
-          // edit the message so that it's right!
-          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
-          message.edit(data).catch((e) => {
-            //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-          })
+          ss.Volume = player.volume;
+          ss.save();
         }
       }
       break;
-      case "Shuffle": {
-        //set into the player instance an old Queue, before the shuffle...
-        player.set(`beforeshuffle`, player.queue.map(track => track));
-        //shuffle the Queue
-        player.queue.shuffle();
-        //Send Success Message
-        interaction.reply({
-          embeds: [new MessageEmbed()
-            .setColor(es.color)
-            .setTimestamp()
-            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var11"]))
-            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-              dynamic: true
-            })))
-          ]
-        })
-        //edit the message so that it's right!
-        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
-        message.edit(data).catch((e) => {
-          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-        })
-      }
-      break;
-      case "Song": {
-        //if there is active queue loop, disable it + add embed information
-        if (player.queueRepeat) {
-          player.setQueueRepeat(false);
-        }
-        //set track repeat to revers of old track repeat
-        player.setTrackRepeat(!player.trackRepeat);
-        interaction.reply({
-          embeds: [new MessageEmbed()
-            .setColor(es.color)
-            .setTimestamp()
-            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var12"]))
-            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-              dynamic: true
-            })))
-          ]
-        })
-        //edit the message so that it's right!
-        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
-        message.edit(data).catch((e) => {
-          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-        })
-      }
-      break;
-      case "Queue": {
+      case "VolDown": {
         if (!premium) {
           return interaction.reply({
-            content: `${emoji.msg.ERROR} Your Guild not Premium`,
+            content: eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["premium"]),
           })
         } else {
-          //if there is active queue loop, disable it + add embed information
-          if (player.trackRepeat) {
-            player.setTrackRepeat(false);
-          }
-          //set track repeat to revers of old track repeat
-          player.setQueueRepeat(!player.queueRepeat);
+          var volumedown = player.volume - 10;
+          if (volumedown < 0) volumedown = 0;
+          await player.setVolume(volumedown);
           interaction.reply({
             embeds: [new MessageEmbed()
               .setColor(es.color)
               .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var13"]))
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var17"]))
               .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
                 dynamic: true
               })))
             ]
           })
-          //edit the message so that it's right!
-          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
-          message.edit(data).catch((e) => {
-            //console.log(e.stack ? String(e.stack).grey : String(e).grey)
-          })
+          ss.Volume = player.volume;
+          ss.save();
         }
       }
       break;
@@ -458,66 +448,141 @@ module.exports = client => {
         }
       }
       break;
-      case "VolUp": {
-        if (!premium) {
-          return interaction.reply({
-            content: `${emoji.msg.ERROR} Your Guild not Premium`,
-          })
-        } else {
-          var volumeup = player.volume + 10;
-          if (volumeup > 150) volumeup = 0;
-          player.setVolume(volumeup);
-          interaction.reply({
-            embeds: [new MessageEmbed()
-              .setColor(es.color)
-              .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var16"]))
-              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                dynamic: true
-              })))
-            ]
-          })
-          ss.Volume = player.volume;
-          ss.save();
-        }
-      }
-      break;
-      case "VolDown": {
-        if (!premium) {
-          return interaction.reply({
-            content: eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["premium"]),
-          })
-        } else {
-          var volumedown = player.volume - 10;
-          if (volumedown < 0) volumedown = 0;
-          await player.setVolume(volumedown);
-          interaction.reply({
-            embeds: [new MessageEmbed()
-              .setColor(es.color)
-              .setTimestamp()
-              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var17"]))
-              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-                dynamic: true
-              })))
-            ]
-          })
-          ss.Volume = player.volume;
-          ss.save();
-        }
-      }
-      break;
-      case "LeaveVC": {
-        await player.destroy();
+
+      case "Shuffle": {
+        //set into the player instance an old Queue, before the shuffle...
+        player.set(`beforeshuffle`, player.queue.map(track => track));
+        //shuffle the Queue
+        player.queue.shuffle();
+        //Send Success Message
         interaction.reply({
           embeds: [new MessageEmbed()
             .setColor(es.color)
             .setTimestamp()
-            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var18"]))
+            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var11"]))
             .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
               dynamic: true
             })))
           ]
         })
+        //edit the message so that it's right!
+        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+        message.edit(data).catch((e) => {
+          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+        })
+      }
+      break;
+      case "Autoplay": {
+        if (!premium) {
+          return interaction.reply({
+            content: `${emoji.msg.ERROR} Your Guild not Premium`,
+          })
+        } else {
+          if (ss.AutoPlay === false) {
+            ss.AutoPlay = true,
+              ss.save();
+          } else if (ss.AutoPlay === true) {
+            ss.AutoPlay = false,
+              ss.save();
+          }
+          //pause the player
+          player.set(`autoplay`, !player.get(`autoplay`))
+          interaction.reply({
+            embeds: [new MessageEmbed()
+              .setColor(es.color)
+              .setTimestamp()
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var10"]))
+              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                dynamic: true
+              })))
+            ]
+          })
+          // edit the message so that it's right!
+          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+          message.edit(data).catch((e) => {
+            //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+          })
+        }
+      }
+      break;
+      case "Queue": {
+        if (!premium) {
+          return interaction.reply({
+            content: `${emoji.msg.ERROR} Your Guild not Premium`,
+          })
+        } else {
+          //if there is active queue loop, disable it + add embed information
+          if (player.trackRepeat) {
+            player.setTrackRepeat(false);
+          }
+          //set track repeat to revers of old track repeat
+          player.setQueueRepeat(!player.queueRepeat);
+          interaction.reply({
+            embeds: [new MessageEmbed()
+              .setColor(es.color)
+              .setTimestamp()
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var13"]))
+              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                dynamic: true
+              })))
+            ]
+          })
+          //edit the message so that it's right!
+          var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+          message.edit(data).catch((e) => {
+            //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+          })
+        }
+      }
+      break;
+      case "Song": {
+        //if there is active queue loop, disable it + add embed information
+        if (player.queueRepeat) {
+          player.setQueueRepeat(false);
+        }
+        //set track repeat to revers of old track repeat
+        player.setTrackRepeat(!player.trackRepeat);
+        interaction.reply({
+          embeds: [new MessageEmbed()
+            .setColor(es.color)
+            .setTimestamp()
+            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var12"]))
+            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+              dynamic: true
+            })))
+          ]
+        })
+        //edit the message so that it's right!
+        var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
+        message.edit(data).catch((e) => {
+          //console.log(e.stack ? String(e.stack).grey : String(e).grey)
+        })
+      }
+      break;
+      case "Lyrics": {
+        if (!premium) {
+          return interaction.reply({
+            content: `${emoji.msg.ERROR} Your Guild not Premium`,
+          })
+        } else {
+          SongTitle = player.queue.current.title;
+          SongTitle = SongTitle.replace(/lyrics|lyric|lyrical|official music video|\(official music video\)|audio|official|official video|official video hd|official hdvideo|offical video music|\(offical video music\)|extended|hd|(\[.+\])/gi, "");
+          let lyrics = await lyricsFinder(SongTitle);
+          if (!lyrics) {
+            return interaction.reply(`**No lyrics found for -** \`${SongTitle}\``);
+          }
+          lyrics = lyrics.split("\n"); //spliting into lines
+          let SplitedLyrics = _.chunk(lyrics, 40); //45 lines each page
+          let Pages = SplitedLyrics.map((ly) => {
+            let em = new MessageEmbed()
+              .setTitle(`${emoji.msg.lyrics} Lyrics for: ${SongTitle}`)
+              .setColor(es.color)
+              .setDescription(ly.join("\n"))
+              .setThumbnail(player.queue.current.displayThumbnail())
+            return em;
+          })
+          swap_pages2_interaction(client, interaction, Pages);
+        }
       }
       break;
       }
@@ -594,13 +659,9 @@ module.exports = client => {
     if (musicChannelId != message.channel.id) return;
     if (message.author.id === client.user.id) {
       await delay(5000);
-      message.delete().catch((e) => {
-        console.log(e)
-      })
+      message.delete().catch(() => {})
     } else {
-      message.delete().catch((e) => {
-        console.log(e)
-      })
+      message.delete().catch(() => {})
     }
     if (message.author.bot) return;
     const ss = await client.Settings.findOne({
@@ -683,8 +744,8 @@ function generateQueueEmbed(client, guildId, es, ls, djroles, leave) {
       .addField(`${emoji.msg.song_by} Song By: `, `┕\`${player.queue.current.author}\``, true)
       .addField(`${emoji.msg.repeat_mode} Queue length: `, `┕\`${player.queue.length} Songs\``, true)
       .addField(`${emoji.msg.raise_volume} Volume: `, `┕\`${player.volume}\``, true)
-      .addField(`♾ Auto Play: `, `┕\`${player.get(`autoplay`) ? `Enabled`: `Disabled`}\``, true)
-      .addField(`${emoji.kucluck.logoHeadset} DJ - Role: `, `┕${djroles ? `<@&${djroles}>` : `\`Not Set\``}`, true)
+      .addField(`🎚 Equalizer: `, `┕\`${player.get(`eq`)}\``, true)
+      .addField(`🎚 Filter: `, `┕\`${player.get(`filter`)}\``, true)
       .setAuthor(client.getAuthor(`${player.queue.current.title}`, "https://images-ext-1.discordapp.net/external/DkPCBVBHBDJC8xHHCF2G7-rJXnTwj_qs78udThL8Cy0/%3Fv%3D1/https/cdn.discordapp.com/emojis/859459305152708630.gif", player.queue.current.uri))
       .setColor("GREEN")
     delete embeds[1].description;
@@ -737,45 +798,59 @@ function generateQueueEmbed(client, guildId, es, ls, djroles, leave) {
       }
     }))
     .setPlaceholder("Playlist Selection by Kucluck")
+  var previousbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Previous').setEmoji(`⏮️`).setLabel(`Previous`).setDisabled();
+  var pausebutton = new MessageButton().setStyle('SECONDARY').setCustomId('Pause').setEmoji('⏸').setLabel(`Pause`).setDisabled();
   var skipbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Skip').setEmoji(`⏭`).setLabel(`Skip`).setDisabled();
   var stopbutton = new MessageButton().setStyle('DANGER').setCustomId('Stop').setEmoji(`⏹️`).setLabel(`Stop`).setDisabled();
-  var pausebutton = new MessageButton().setStyle('SECONDARY').setCustomId('Pause').setEmoji('⏸').setLabel(`Pause`).setDisabled();
-  var shufflebutton = new MessageButton().setStyle('PRIMARY').setCustomId('Shuffle').setEmoji('🔀').setLabel(`Shuffle`).setDisabled();
-  var autoplaybutton = new MessageButton().setStyle('SECONDARY').setCustomId('Autoplay').setEmoji('🔁').setLabel(`Autoplay Off`).setDisabled();
+  var leavebutton = new MessageButton().setStyle('DANGER').setCustomId('Leave').setEmoji(`🚪`).setLabel(`Leave`).setDisabled();
 
-  var volup = new MessageButton().setStyle('SUCCESS').setCustomId('VolUp').setEmoji(`🔊`).setLabel(`Vol +10`).setDisabled();
-  var voldown = new MessageButton().setStyle('SUCCESS').setCustomId('VolDown').setEmoji(`🔉`).setLabel(`Vol -10`).setDisabled();
-  var forwardbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Forward').setEmoji('⏩').setLabel(`+10 Sec`).setDisabled();
-  var rewindbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Rewind').setEmoji('⏪').setLabel(`-10 Sec`).setDisabled();
-  var queuebutton = new MessageButton().setStyle('SUCCESS').setCustomId('Queue').setEmoji(`🔂`).setLabel(`Loop Queue`).setDisabled();
+  var volup = new MessageButton().setStyle('PRIMARY').setCustomId('VolUp').setEmoji(`🔊`).setLabel(`Vol +10`).setDisabled();
+  var voldown = new MessageButton().setStyle('PRIMARY').setCustomId('VolDown').setEmoji(`🔉`).setLabel(`Vol -10`).setDisabled();
+
+  var shufflebutton = new MessageButton().setStyle('PRIMARY').setCustomId('Shuffle').setEmoji('🔀').setLabel(`Shuffle`).setDisabled();
+  var autoplaybutton = new MessageButton().setStyle('SECONDARY').setCustomId('Autoplay').setEmoji('♾').setLabel(`Autoplay`).setDisabled();
+  var queuebutton = new MessageButton().setStyle('SECONDARY').setCustomId('Queue').setEmoji(`🔂`).setLabel(`Loop Queue`).setDisabled();
+
+  // var forwardbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Forward').setEmoji('⏩').setLabel(`+10 Sec`).setDisabled();
+  // var rewindbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Rewind').setEmoji('⏪').setLabel(`-10 Sec`).setDisabled();
+  // var songbutton = new MessageButton().setStyle('SECONDARY').setCustomId('Song').setEmoji(`🔁`).setLabel(`Loop Song`).setDisabled();
+  // var lyricsbutton = new MessageButton().setStyle('PRIMARY').setCustomId('Lyrics').setEmoji('📝').setLabel(`Lyrics`).setDisabled();
 
   if (!leave && player && player.queue && player.queue.current) {
+    previousbutton = previousbutton.setDisabled(false);
+    pausebutton = pausebutton.setDisabled(false);
     skipbutton = skipbutton.setDisabled(false);
-    pausebutton = pausebutton.setDisabled(false)
     stopbutton = stopbutton.setDisabled(false);
-    shufflebutton = shufflebutton.setDisabled(false);
-    autoplaybutton = autoplaybutton.setDisabled(false)
+    leavebutton = leavebutton.setDisabled(false);
 
     volup = volup.setDisabled(false);
     voldown = voldown.setDisabled(false);
-    forwardbutton = forwardbutton.setDisabled(false);
-    rewindbutton = rewindbutton.setDisabled(false);
+    shufflebutton = shufflebutton.setDisabled(false);
+    autoplaybutton = autoplaybutton.setDisabled(false);
     queuebutton = queuebutton.setDisabled(false);
 
+    // forwardbutton = forwardbutton.setDisabled(false);
+    // rewindbutton = rewindbutton.setDisabled(false);
+    // songbutton = songbutton.setDisabled(false);
+    // lyricsbutton = lyricsbutton.setDisabled(false);
+
     if (player.get("autoplay")) {
-      autoplaybutton = autoplaybutton.setStyle('SUCCESS').setLabel(`Autoplay On`)
-      stopbutton = stopbutton.setEmoji(`🚪`).setLabel(`Leave`)
+      autoplaybutton = autoplaybutton.setStyle('SUCCESS').setLabel(`Autoplay`)
+      stopbutton = stopbutton.setDisabled(true);
     }
     if (!player.playing) {
       pausebutton = pausebutton.setStyle('SUCCESS').setEmoji('▶️').setLabel(`Resume`)
     }
     if (!player.queueRepeat && !player.trackRepeat) {
-      queuebutton = queuebutton.setStyle('SUCCESS')
+      // songbutton = songbutton.setStyle('SECONDARY')
+      queuebutton = queuebutton.setStyle('SECONDARY')
     }
     if (player.trackRepeat) {
+      // songbutton = songbutton.setStyle('SECONDARY')
       queuebutton = queuebutton.setStyle('SUCCESS')
     }
     if (player.queueRepeat) {
+      // songbutton = songbutton.setStyle('SUCCESS')
       queuebutton = queuebutton.setStyle('SECONDARY')
     }
   }
@@ -785,19 +860,26 @@ function generateQueueEmbed(client, guildId, es, ls, djroles, leave) {
       musicmixMenu
     ]),
     new MessageActionRow().addComponents([
-      skipbutton,
+      previousbutton,
       pausebutton,
+      skipbutton,
       stopbutton,
-      shufflebutton,
-      autoplaybutton,
+      leavebutton,
     ]),
     new MessageActionRow().addComponents([
       volup,
       voldown,
-      forwardbutton,
-      rewindbutton,
+      shufflebutton,
+      autoplaybutton,
       queuebutton,
     ]),
+    // new MessageActionRow().addComponents([
+    //   shufflebutton,
+    //   autoplaybutton,
+    //   queuebutton,
+    //   songbutton,
+    //   lyricsbutton,
+    // ]),
   ]
   return {
     embeds,
