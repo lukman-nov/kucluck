@@ -36,3 +36,29 @@
 .btn-success:hover {
   transform: scale(103%);
 }
+
+@media screen and (max-width: 967px) {
+  .icon-footer {
+    width: 40px !important;
+  }
+  .icon-flag {
+    width: 20px !important;
+  }
+  .heading {
+    display: grid !important;
+  }
+  .justify-content-md-end {
+    display: none !important;
+  }
+  .justify-content-center {
+    text-align: center;
+    padding: 0 !important;
+  }
+  .justify-content-center h1 {
+    margin: 0 auto !important;
+  }
+  .main-form {
+    padding: 20px !important;
+    margin: 0 !important;
+  }
+}

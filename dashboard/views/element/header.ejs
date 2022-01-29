@@ -1,8 +1,8 @@
-<nav class="navbar navbar-expand-md navbar-dark header">
+<nav class="navbar navbar-expand-md navbar-dark header mt-0">
   <div class="container-fluid" style="max-width: 1800px;">
     <a class="navbar-brand" href="/">
       <img src="https://media.discordapp.net/attachments/901446802711142460/931714294654042162/newlkuclucklogok.png"
-        alt="Logo" class="d-inline-block align-center" style="max-width: 100px;"></a>
+        alt="Logo" class="d-inline-block align-center" style="max-width: 70px;"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
       aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -27,8 +27,8 @@
         <button type="button" class="btn dropdown-toggle" onclick="shownametag()" onblur="hidenametag()" id="btn"
           data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
           <span id="nametag"></span>
-          <img src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png" alt="avatar-user" width="50px"
-            class="rounded-circle">
+          <img class="user-icon" src="https://cdn.discordapp.com/avatars/<%=user.id%>/<%=user.avatar%>.png"
+            alt="avatar-user" class="rounded-circle">
         </button>
         <script>
           function shownametag() {
@@ -56,8 +56,9 @@
                   class="fas fa-sign-out-alt"></i></span></a></li>
         </ul>
         <% } else { %>
-        <button type="button" class="btn text-white nav-link header-link" onclick="location.href='/login'">
-          <i class="fas fa-sign-in-alt text-white"></i> Login
+        <button type="button" class="btn btn-secondary text-white btn-login" onclick="location.href='/login'">
+          <span class="icon"><i class="fas fa-sign-in-alt text-white"></i></span>
+          <span class="text p-0">Login</span>
         </button>
         <% } %>
       </div>

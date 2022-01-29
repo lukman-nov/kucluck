@@ -13,14 +13,7 @@ input[type="number"] {
   margin-top: 80px;
   text-align: center;
   font-weight: 900;
-  background: radial-gradient(
-    circle,
-    #f48fb1 0%,
-    #ce93d8 20%,
-    #b2ebf2 40%,
-    #ffffff 60%,
-    #ddc3ff 100%
-  );
+  background: radial-gradient(circle, #f48fb1 0%, #ce93d8 20%, #b2ebf2 40%, #ffffff 60%, #ddc3ff 100%);
   font-size: 120px;
   -webkit-background-clip: text;
   color: transparent;
@@ -276,6 +269,8 @@ a.btn-ceklist-text:hover {
     font-size: 18px;
   }
   .payment {
+    width: 90%;
+    margin: auto;
     margin-bottom: 20px;
   }
 }

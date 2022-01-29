@@ -121,6 +121,9 @@ code {
   color: #f0a3ff !important;
   font-size: 16px;
 }
+.user-icon {
+  max-width: 50px !important;
+}
 @media screen and (max-width: 967px) {
   nav.navbar.navbar-expand-md.navbar-dark.header {
     margin-top: 0 !important;

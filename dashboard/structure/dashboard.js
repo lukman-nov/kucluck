@@ -92,52 +92,53 @@ module.exports = (client, app, checkAuth) => {
     var autoResume = await autoresume.findOne({
       guild: player.guild
     })
-    res.render("settings/music-system", {
-      req: req,
-      user: req.isAuthenticated() ? req.user : null,
-      guild: guild,
-      bot: client,
-      Permissions: Discord.Permissions,
-      botconfig: config.websiteSettings,
-      callback: config.websiteSettings.callback,
-      settingsSchema: ss,
-      premium: premium,
-      player: client.manager.players.get(guild.id),
-      format: formatNonSeconds,
-      musicsettings: musicsettings,
-    })
 
     let channel = guild.channels.cache.get(musicsettings.channelId)
     let message = channel.messages.cache.get(musicsettings.messageId);
     var data = generateQueueEmbed(client, guild.id, ss.Embed, ss.Language, ss.DjRoles, false)
 
     if (req.body.pause) {
-      player.pause(true);
-      return message.edit(data).catch((e) => {})
+      if (player.playing) {
+        player.pause(true);
+      } else {
+        player.pause(false);
+      }
+      message.edit(data).catch((e) => {})
     }
-    if (req.body.resume) {
-      player.pause(false);
-      return message.edit(data).catch((e) => {})
+    if (req.body.skip) player.stop();
+
+    if (req.body.previous) {
+      if (player.queue.previous) {
+        var QueueArray = [...player.queue];
+        //clear teh Queue
+        player.queue.clear();
+        player.queue.add(player.queue.previous);
+        //now add every old song again
+        for (var track of QueueArray)
+          player.queue.add(track);
+        //skip the track
+        player.stop();
+      }
     }
-    if (req.body.skip) return player.stop(true);
+
     if (req.body.stop) {
       if (player.get(`autoplay`)) {
-        return player.destroy();
+        player.destroy();
       } else {
         if (autoResume) await autoresume.findOneAndDelete({
           guild: guild.id
         })
         await player.queue.clear();
-        return player.stop();
+        player.stop();
       }
     }
-    if (req.body.leave) return player.destroy();
+    if (req.body.leave) player.destroy();
     if (req.body.shuffle) {
       player.set(`beforeshuffle`, player.queue.map(track => track));
       player.queue.shuffle();
       message.edit(data).catch((e) => {})
-      return;
     }
+    res.redirect(`/dashboard/${req.params.guildID}/musicsystem`)
   })
   /**
    * BASSIC SETTINGS
@@ -314,58 +315,84 @@ module.exports = (client, app, checkAuth) => {
     var ss = await client.Settings.findOne({
       GuildId: guild.id
     });
+    var musicsettings = await client.Musicsettings.findOne({
+      guildId: guild.id
+    });
     let player = await client.manager.players.get(guild.id);
+    let channel = guild.channels.cache.get(musicsettings.channelId);
+    let message = channel.messages.cache.get(musicsettings.messageId);
+    var data = generateQueueEmbed(client, guild.id, ss.Embed, ss.Language)
+
     if (premium) {
       if (req.body.afk) {
         premium.BotAFK = true;
         await player.set(`afk`, !player.get(`afk`));
       } else premium.BotAFK = false;
+
+
       if (req.body.defaultautoplay) {
-        ss.AutoPlay = true;
+        if (!ss.AutoPlay) ss.AutoPlay = true;
         await player.set(`autoplay`, !player.get(`autoplay`))
-      } else ss.AutoPlay = false;
+        message.edit(data).catch((e) => {})
+      } else {
+        if (ss.AutoPlay) ss.AutoPlay = false;
+        message.edit(data).catch((e) => {})
+      }
+
       if (req.body.volume) {
         if (req.body.volume != player.volume) {
           ss.Volume = req.body.volume;
-          player.setVolume(req.body.volume);
+          await player.setVolume(req.body.volume);
+          message.edit(data).catch((e) => {})
         }
       }
       if (req.body.equalizer) {
         if (req.body.equalizer === `🎵 Music`) {
           player.set("eq", "🎵 Music");
           player.setEQ(client.eqs.music);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `🎙 Pop`) {
           player.set("eq", "🎙 Pop");
           player.setEQ(client.eqs.pop);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `💾 Electronic`) {
           player.set("eq", "💾 Electronic");
           player.setEQ(client.eqs.electronic);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `📜 Classical`) {
           player.set("eq", "📜 Classical");
           player.setEQ(client.eqs.classical);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `🎚 Metal`) {
           player.set("eq", "🎚 Metal");
           player.setEQ(client.eqs.rock);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `📀 Full`) {
           player.set("eq", "📀 Full");
           player.setEQ(client.eqs.full);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `💿 Light`) {
           player.set("eq", "💿 Light");
           player.setEQ(client.eqs.light);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `🕹 Gaming`) {
           player.set("eq", "🕹 Gaming");
           player.setEQ(client.eqs.gaming);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `🎛 Bassboost`) {
           player.set("eq", "🎛 Bassboost");
           player.setEQ(client.eqs.bassboost);
+          message.edit(data).catch((e) => {})
         } else if (req.body.equalizer === `🔈 Earrape`) {
           player.set("eq", "🔈 Earrape");
           await player.setVolume(player.volume + 50);
           player.setEQ(client.eqs.earrape);
+          message.edit(data).catch((e) => {})
         } else {
           req.body.equalizer === `↩️ Reset`
           player.clearEQ();
           player.set("eq", "💣 None");
+          message.edit(data).catch((e) => {})
         }
       }
       if (req.body.filter) {
@@ -375,19 +402,21 @@ module.exports = (client, app, checkAuth) => {
               id: player.guild
             }
           }, [], null, null, null, player)
-          return;
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `💢 Vibrate`) {
           require("../../commands/Filter/vibrate").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🏮 Tremolo`) {
           require("../../commands/Filter/tremolo").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `⏱ Speed`) {
           player.node.send({
             op: "filters",
@@ -409,12 +438,14 @@ module.exports = (client, app, checkAuth) => {
           });
           player.set("filter", "⏱ Speed");
           player.set("filtervalue", Number(2));
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `⏱ Slowmode`) {
           require("../../commands/Filter/slowmo").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `📉 Rate`) {
           player.node.send({
             op: "filters",
@@ -436,66 +467,77 @@ module.exports = (client, app, checkAuth) => {
           });
           player.set("filter", "📉 Rate");
           player.set("filtervalue", Number(1));;
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `📈 Pitch`) {
           require("../../commands/Filter/pitch").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `👻 Nightcore`) {
           require("../../commands/Filter/nightcore").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `👾 Darth Vader`) {
           require("../../commands/Filter/darthvader").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🐿️ Chipmunk`) {
           require("../../commands/Filter/chipmunk").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `👺 China`) {
           require("../../commands/Filter/china").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🎚 Low Bass`) {
           require("../../commands/Filter/bassboost").run(client, {
             guild: {
               id: player.guild
             }
           }, ["low"], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🎚 Medium Bass`) {
           require("../../commands/Filter/bassboost").run(client, {
             guild: {
               id: player.guild
             }
           }, ["medium"], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🎚 High Bass`) {
           require("../../commands/Filter/bassboost").run(client, {
             guild: {
               id: player.guild
             }
           }, ["high"], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🎚 Earrape Bass`) {
           require("../../commands/Filter/bassboost").run(client, {
             guild: {
               id: player.guild
             }
           }, ["earrape"], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else if (req.body.filter === `🔊 8D`) {
           require("../../commands/Filter/3d").run(client, {
             guild: {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         } else {
           req.body.filter === `↩️ Reset`
           require("../../commands/Filter/clearfilter").run(client, {
@@ -503,7 +545,9 @@ module.exports = (client, app, checkAuth) => {
               id: player.guild
             }
           }, [], null, null, null, player);
+          message.edit(data).catch((e) => {})
         }
+        message.edit(data).catch((e) => {})
       }
       await premium.save();
     }

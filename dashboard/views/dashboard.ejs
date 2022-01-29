@@ -14,24 +14,26 @@
 
 <body>
   <%- include('./element/header'); -%>
-  <section>
+  <section class="justify-content-center">
     <div class="container">
       <div class="row d-flex">
         <div class="col-md m-2">
           <div class="d-flex flex-column bd-highlight mb-3">
-            <div class="p-2 bd-highlight text-center">
+            <div class="p-1 bd-highlight text-center">
               <h1 class="fw-bolder"><%= bot.user.username%></h1>
               <hr>
             </div>
-            <div class="p-2 bd-highlight text-center">
+            <div class="p-1 bd-highlight text-center">
               <p class="mb-0">
                 Commands Used: <code> <%= statsGlobal.Commands %> </code>
                 Songs Playing: <code> <%= statsGlobal.Songs %></code>
+                <br>
+                Hallo, <span style=" color: #f0a3ff; "><%= user.username%> </span> please select your servers.
               </p>
+
             </div>
             <div class="p-2 bd-highlight text-center">
               <p class="mb-0">
-                Hallo, <span style=" color: #f0a3ff; "><%= user.username%> </span> please select your servers.
               </p>
             </div>
           </div>
@@ -41,48 +43,46 @@
     </div>
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-md-12 guild" style="display: flex; flex-wrap: wrap; justify-content: center">
+        <div class="overflow-auto bg-dark rounded-3 guild-nav p-2">
           <% user.guilds.filter(guild=>{
             const permsOnGuild = new Permissions(guild.permissions_new);
             if(permsOnGuild.has(Permissions.FLAGS.MANAGE_GUILD)) return guild;
             }).sort((a, b) => {
               return (bot.guilds.cache.get(a.id) == bot.guilds.cache.get(b.id)) ? 0 : a ? -1 : 1;
             }).forEach(guild => { %>
-          <div class="col-sm-3 m-3 p-2 rounded-3 bg-dark shadow-sm">
-            <div class="col-sm">
-              <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 img">
-                  <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="rounded-circle img">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" class="rounded-circle img">` %>
+          <div class="col-md m-2 p-2 rounded-3 bg-dark shadow-sm">
+            <div class="d-flex align-items-center">
+              <div class="justify-item-start">
+                <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="rounded-circle img">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" class="rounded-circle img">` %>
+              </div>
+              <div class="ps-3 flex-grow-1">
+
+                <span class="align-items-center"><%= guild.name %></span>
+              </div>
+              <div class="d-flex ms-auto">
+                <% if(bot.guilds.cache.get(guild.id)){ %>
+                <div class="col-md group-btn">
+                  <button class="btn btn-dash-upgrade btn-dash fs-6 shadow-sm" onclick="location.href='/premium'"><i
+                      class="fas fa-gem"></i> Upgrade</button>
+                  <button class="btn btn-dash-edit btn-dash fs-6 shadow-sm"
+                    onclick="location.href='<%- botconfig.domain %>dashboard/<%- guild.id %>/musicsystem'">Dashboard</button>
                 </div>
-                <div class="d-flex align-items-start flex-column bd-highlight" style="height: 150px;">
-                  <div class="mb-auto p-2 bd-highlight">
-                    <p class="card-title" style="font-size: 20px;"><%= guild.name %></p>
-                  </div>
-                  <div class="p-2 bd-highlight">
-                    <div class="d-flex align-items-end bd-highlight">
-                      <% if(bot.guilds.cache.get(guild.id)){ %>
-                      <div class="col">
-                        <button class="btn btn-dash-upgrade fs-6 shadow-sm" onclick="location.href='/premium'"><i
-                            class="fas fa-gem"></i> Upgrade</button>
-                        <button class="btn btn-dash-edit fs-6 shadow-sm"
-                          onclick="location.href='<%- botconfig.domain %>dashboard/<%- guild.id %>/musicsystem'">Settings</button>
-                      </div>
-                      <% }else {  %>
-                      <div class="col">
-                        <button class="btn btn-dash-upgrade fs-6 shadow-sm" disabled>Upgrade</button>
-                        <button class="btn btn-dash-invite fs-6 shadow-sm"
-                          onclick="location.href='<%= `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=identify%20email%20guilds%20bot%20applications.commands&guild_id=${guild.id}&response_type=code&redirect_uri=${encodeURIComponent(`${callback}`)}` %>'">Invite
-                          me</button>
-                      </div>
-                      <% } %>
-                    </div>
-                  </div>
+                <% }else {  %>
+                <div class="col-md group-btn">
+                  <button class="btn btn-dash-upgrade btn-dash fs-6 shadow-sm" disabled><i class="fas fa-gem"></i>
+                    Upgrade</button>
+                  <button class="btn btn-dash-invite btn-dash fs-6 shadow-sm"
+                    onclick="location.href='<%= `https://discordapp.com/oauth2/authorize?client_id=${bot.user.id}&permissions=8&scope=identify%20email%20guilds%20bot%20applications.commands&guild_id=${guild.id}&response_type=code&redirect_uri=${encodeURIComponent(`${callback}`)}` %>'">Invite
+                    me</button>
                 </div>
+                <% } %>
               </div>
             </div>
           </div>
           <% }) %>
         </div>
+
+
       </div>
     </div>
     <% }else {  %>

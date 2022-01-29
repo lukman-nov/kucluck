@@ -1,0 +1,122 @@
+<section>
+  <side class="navbar navbar-expand-md" style="max-width: 150px;">
+    <div class="container justify-content-center">
+      <div class="row bg-dark">
+        <div class="col-md d-flex rounded-3 bg-dark mb-3 guild-nav mt-3">
+          <div class="d-flex rounded-3 img-guild-icon">
+            <div class="img" style="margin: auto;">
+              <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
+                data-bs-content="Disabled popover">
+                <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" style="max-width: 70px; max-height: 70px; border-radius: 50px">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" style="max-width: 70px; max-height: 70px; border-radius: 50px">` %>
+              </span>
+            </div>
+          </div>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBackdrop"
+          aria-controls="offcanvasScrolling" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon navbar-toggler-icon-settings"><i class="fas fa-bars"></i></span>
+        </button>
+        <div id="global">
+          <div class="navbar-collapse" id="sidebar-settings">
+            <ul class="navbar-nav d-block">
+              <li><a class="nav-link nav-link-settings text-white active" aria-current="page"
+                  href="/dashboard/<%=guild.id%>/musicsystem">
+                  <i class="bi bi-music-note-list fa-2x pb"></i></a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/bassicsettings">
+                  <i class="fas fa-user-cog fa-2x pb"></i></a>
+              </li>
+              <li><a class="nav-link nav-link-settings text-white" href="/dashboard">
+                  <i class="fas fa-arrow-left text-danger fa-2x pb"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div id="mobile">
+          <div class="offcanvas offcanvas-start bg-dark" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+            id="offcanvasWithBackdrop" aria-labelledby="offcanvasWithBackdropLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasWithBackdropLabel"><%= guild.name%> Settings</h5>
+              <button type="button" class="btn-close text-white bg-light" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <div class="navbar-collapse" id="sidebar-settings">
+                <ul class="navbar-nav d-block">
+                  <li><a class="nav-link nav-link-settings text-white active" aria-current="page"
+                      href="/dashboard/<%=guild.id%>/musicsystem">
+                      <i class="bi bi-music-note-list"></i> Music System</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/bassicsettings">
+                      <i class="fas fa-user-cog"></i> Bassic</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/musicsettings">
+                      <i class="bi bi-music-player-fill"></i> Music Player</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/autorole">
+                      <i class="fas fa-user-tag"></i> Autorole</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/greetingmessage">
+                      <i class="fas fa-envelope-open-text"></i> Greeting & Leave Message</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/setupembed">
+                      <i class="far fa-comment-alt"></i> Setup Embed</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard/<%=guild.id%>/resetsettings">
+                      <i class="fas fa-trash-restore"></i> Reset Settings</a>
+                  </li>
+                  <li><a class="nav-link nav-link-settings text-white" href="/dashboard">
+                      <i class="fas fa-arrow-left text-danger"></i> Switch Server</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </side>
+  <style>
+    section {
+      display: flex;
+    }
+
+    .navbar-toggler-icon-settings {
+      color: #eee;
+      transition: 0.2s;
+      width: 100%;
+    }
+
+    .navbar-toggler-icon-settings::after {
+      content: "Show Menu";
+      padding-left: 5px;
+    }
+
+    .nav-link-settings {
+      transition: 0.2s ease-in-out;
+    }
+
+    .nav-link-settings:hover {
+      transform: translateX(5%);
+      color: #9b4890 !important;
+    }
+
+    side.navbar #sidebar-settings {
+      display: block !important;
+    }
+
+    @media screen and (max-width: 967px) {
+      section {
+        display: block;
+      }
+
+      #global {
+        display: none !important;
+      }
+
+      main.container {
+        margin: auto !important;
+        margin-bottom: 50px !important;
+      }
+    }
+  </style>

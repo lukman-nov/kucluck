@@ -7,14 +7,14 @@ const autoresume = new mongoose.Schema({
     queue: Object,
     current: Object,
     volume: String,
-    queueRepeat: String,
-    trackRepeat: String,
-    playing: String,
+    queueRepeat: Boolean,
+    trackRepeat: Boolean,
+    playing: Boolean,
     position: String,
     eq: String,
     filter: String,
     filtervalue: String,
-    autoplay: String,
+    autoplay: Boolean,
 })
 
 module.exports = mongoose.model("autoresume", autoresume);

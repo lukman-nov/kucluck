@@ -1,13 +1,9 @@
 const Discord = require("discord.js");
 const {
-  Client,
-  Collection,
   MessageEmbed,
-  MessageAttachment,
   MessageButton,
   MessageActionRow,
   MessageSelectMenu,
-  Message
 } = require("discord.js");
 const emoji = require(`${process.cwd()}/botconfig/emojis.json`);
 const config = require(`${process.cwd()}/botconfig/config.json`);
@@ -1136,7 +1132,7 @@ function leveling(client, message, guildid, userid) {
       });
       var msgl = message.content.length / (Math.floor(Math.random() * (message.content.length - message.content.length / 100 + 1) + 10));
       if (msgl < 10) {
-        var randomnum = Math.floor((Math.random() * 0.1) * 100) / 100
+        var randomnum = Math.floor((Math.random() * 0.5) * 100) / 100
         data.user[0][key].point += randomnum;
         await levelingSystem.findOneAndUpdate({
           GuildId: guildid

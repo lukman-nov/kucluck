@@ -71,7 +71,7 @@ module.exports = client => {
         req.session.backURL = parsed.path
       }
     } else {
-      req.session.backURL = "/dashboard"
+      req.session.backURL = `/`;
     }
     next();
   }, passport.authenticate("discord", {
@@ -91,7 +91,7 @@ module.exports = client => {
       })
       req.logout();
     } else {
-      res.redirect("/")
+      res.redirect('/dashboard')
     }
   });
 

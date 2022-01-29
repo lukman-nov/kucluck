@@ -2,7 +2,3 @@ node_modules
 logs
 databases/queuesaves
 databases/leveling
-dashboard/public/music-player.css
-dashboard/structure/music-player.js
-dashboard/views/dashboard/music-player.ejs
-dashboard/views/element/sidebar-musicplayer.ejs

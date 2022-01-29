@@ -116,6 +116,17 @@ module.exports = client => {
               content: eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["premium"]),
             })
           } else {
+            if (player.queue.previous) {
+              var QueueArray = [...player.queue];
+              //clear teh Queue
+              player.queue.clear();
+              player.queue.add(player.queue.previous);
+              //now add every old song again
+              for (var track of QueueArray)
+                player.queue.add(track);
+              //skip the track
+              player.stop();
+            }
             interaction.reply({
               embeds: [new MessageEmbed()
                 .setColor(es.color)
@@ -126,9 +137,6 @@ module.exports = client => {
                 })))
               ]
             });
-            player.queue.add(player.queue.previous);
-            //skip the track
-            player.stop();
             var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
             message.edit(data).catch((e) => {
               //console.log(e.stack ? String(e.stack).grey : String(e).grey)
@@ -138,7 +146,7 @@ module.exports = client => {
         break;
       case "Pause": {
         if (!player.playing) {
-          player.pause(false);
+          await player.pause(false);
           interaction.reply({
             embeds: [new MessageEmbed()
               .setColor(es.color)
@@ -149,19 +157,20 @@ module.exports = client => {
               })))
             ]
           })
+        } else {
+          //pause the player
+          await player.pause(true);
+          interaction.reply({
+            embeds: [new MessageEmbed()
+              .setColor(es.color)
+              .setTimestamp()
+              .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var9"]))
+              .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
+                dynamic: true
+              })))
+            ]
+          })
         }
-        //pause the player
-        player.pause(true);
-        interaction.reply({
-          embeds: [new MessageEmbed()
-            .setColor(es.color)
-            .setTimestamp()
-            .setTitle(eval(client.la[ls]["handlers"]["erelaevents"]["musicsystem"]["var9"]))
-            .setFooter(client.getFooter(`💢 Action by: ${member.user.tag}`, member.user.displayAvatarURL({
-              dynamic: true
-            })))
-          ]
-        })
         //edit the message so that it's right!
         var data = generateQueueEmbed(client, guild.id, es, ls, ss.DjRoles)
         message.edit(data).catch((e) => {
@@ -657,8 +666,10 @@ module.exports = client => {
     const musicChannelId = data.channelId;
     if (!musicChannelId || musicChannelId.length < 5) return;
     if (musicChannelId != message.channel.id) return;
+
+    const player = client.manager.players.get(message.guild.id);
     if (message.author.id === client.user.id) {
-      await delay(5000);
+      await delay(3000);
       message.delete().catch(() => {})
     } else {
       message.delete().catch(() => {})
@@ -691,7 +702,6 @@ module.exports = client => {
         } catch (e) {}
       }, 5000)
     })
-    const player = client.manager.players.get(message.guild.id);
     if (player && channel.id !== player.voiceChannel) return message.reply(client.la[ls]["common"]["wrong_vc"]).then(msg => {
       setTimeout(() => {
         try {

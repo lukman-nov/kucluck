@@ -4,7 +4,7 @@
 }
 section {
   margin-top: 1rem;
-  margin-bottom: 5rem;
+  margin-bottom: 57px;
 }
 hr {
   margin: auto;
@@ -31,7 +31,29 @@ hr {
   color: #eee;
 }
 .img {
-  max-width: 80px;
+  max-width: 50px;
+}
+.guild-nav {
+  border: 3px solid #e673fd65;
+  height: 400px;
+  max-width: 800px !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px !important;
 }
 @media screen and (max-width: 967px) {
+  .btn-dash {
+    margin-bottom: 5px;
+    float: right;
+    font-size: 14px !important;
+    margin: 5px;
+  }
+  .col-md.group-btn {
+    width: 105px;
+    display: grid !important;
+  }
+  ::-webkit-scrollbar {
+    width: 5px !important;
+  }
 }

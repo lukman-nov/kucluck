@@ -63,19 +63,19 @@ module.exports = client => {
       guildId: player.guild
     });
     if (ms.channelId && ms.channelId.length > 5) {
-      // client.logger("Update Music System called and executed")
+      client.logger(`Music System`.brightCyan + ` - Update Music System called and executed in ${String(client.guilds.cache.get(player.guild).name).brightBlue}`)
       let messageId = await ms.messageId;
       //try to get the guild
       let guild = client.guilds.cache.get(player.guild);
-      if (!guild) return client.logger("Music System - Guild not found!")
+      if (!guild) return client.logger(`Music System`.brightCyan + ` - Guild not found!`)
       //try to get the channel
       let channel = await guild.channels.cache.get(ms.channelId);
       if (!channel) channel = await guild.channels.fetch(ms.channelId).catch(() => {}) || false
-      if (!channel) return client.logger("Music System - Channel not found!")
+      if (!channel) return client.logger(`Music System`.brightCyan + ` - Channel not found! `)
       //try to get the channel
       let message = await channel.messages.cache.get(messageId);
       if (!message) message = await channel.messages.fetch(messageId).catch(() => {}) || false;
-      if (!message) return client.logger("Music System - Message not found!")
+      if (!message) return client.logger(`Music System`.brightCyan + ` - Message not found!`)
       //edit the message so that it's right!
       var data = require(`${process.cwd()}/handlers/erela_events/musicsystem`).generateQueueEmbed(client, player.guild, ss.Embed, ss.Language, ss.DjRoles, leave)
       await message.edit(data).catch((e) => {

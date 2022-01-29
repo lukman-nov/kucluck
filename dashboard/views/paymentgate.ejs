@@ -14,8 +14,8 @@
 
 <body>
   <section>
-    <div class="container-lg p-5" style="max-width: 900px;">
-      <div class="row pb-3 bg-dark ">
+    <div class="container-lg p-5 main-form" style="max-width: 900px;">
+      <div class="row pb-3 bg-dark rounded-3">
         <!-- HEADER -->
         <div class="col-md-12 d-flex p-2 mt-3">
           <div class="d-flex align-items-center">
@@ -99,13 +99,13 @@
             <div class="d-flex justify-content-center bd-highlight">
               <button class="btn align-items-end"
                 onclick="window.open('https://discord.com/api/oauth2/authorize?client_id=<%= bot.user.id%>&permissions=8&redirect_uri=<%= callback%>&response_type=code&scope=identify%20email%20guilds%20bot%20applications.commands', '_blank,')"
-                title="Invite"><img
+                title="Invite"><img class="icon-footer"
                   src="https://media.discordapp.net/attachments/901446802711142460/931714385708220487/newlkuclucklogononbg_2.png"
                   alt="Logo" width="45px"></button>
               <% let owner = bot.users.cache.get("377636455016824834")%>
               <button class="btn align-items-end"
                 onclick="window.open('https://web.facebook.com/lukman.now', '_blank,')" title="Lukman Novawiyadi"><img
-                  src="<%= owner.displayAvatarURL()%>" alt="LN_Logo" width="40px"></button>
+                  class="icon-footer" src="<%= owner.displayAvatarURL()%>" alt="LN_Logo" width="40px"></button>
               <button class="btn align-items-end" onclick="window.open('https://discord.gg/BuACxn4XUw', '_blank,')"
                 title="Support Server"><i class="fab fa-discord fa-2x"></i></button>
             </div>

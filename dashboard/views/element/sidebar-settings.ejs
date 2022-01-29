@@ -5,7 +5,7 @@
         <div class="col-md d-flex rounded-3 bg-dark mb-3 guild-nav">
           <div class="d-flex rounded-3" style="background-color: #3b3f47; padding: 10px; width: 100%;">
             <div class="img" style="margin: auto;">
-              <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" style="max-width: 70px; max-height: 70px; border-radius: 50px">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" style="max-width: 70px; max-height: 70px; border-radius: 50px">` %>
+              <%- guild.icon ? `<img src="https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}" class="img-settings" style="max-width: 70px; max-height: 70px; border-radius: 50px">` : `<img src="https://media.discordapp.net/attachments/901446802711142460/931743540684415016/discord-statistics.jpg" class="img-settings" style="max-width: 70px; max-height: 70px; border-radius: 50px">` %>
             </div>
             <div class="d-blok" style="margin: auto; margin-left: 10px;">
               <h5><%= guild.name%></h5>
@@ -99,47 +99,3 @@
       </div>
     </div>
   </side>
-  <style>
-    section {
-      display: flex;
-    }
-
-    .navbar-toggler-icon-settings {
-      color: #eee;
-      transition: 0.2s;
-      width: 100%;
-    }
-
-    .navbar-toggler-icon-settings::after {
-      content: "Show Menu";
-      padding-left: 5px;
-    }
-
-    .nav-link-settings {
-      transition: 0.2s ease-in-out;
-    }
-
-    .nav-link-settings:hover {
-      transform: translateX(5%);
-      color: #9b4890 !important;
-    }
-
-    side.navbar #sidebar-settings {
-      display: block !important;
-    }
-
-    @media screen and (max-width: 967px) {
-      section {
-        display: block;
-      }
-
-      #global {
-        display: none !important;
-      }
-
-      main.container {
-        margin: auto !important;
-        margin-bottom: 50px !important;
-      }
-    }
-  </style>

@@ -50,7 +50,7 @@ module.exports = (client) => {
             await autoresumeSchema.findOneAndDelete({
               guild: guild.id
             });
-            client.logger(`Autoresume`.brightCyan + ` - Bot got Kicked out of the Guild in ${String(guild.name).brightBlue}`)
+            return client.logger(`Autoresume`.brightCyan + ` - Bot got Kicked out of the Guild in ${String(guild.name).brightBlue}`)
           }
           let voiceChannel = guild.channels.cache.get(value.voiceChannel);
           const premium = await client.Premium.findOne({
@@ -60,7 +60,13 @@ module.exports = (client) => {
             GuildId: guild.id
           });
           if (!voiceChannel) voiceChannel = await guild.channels.fetch(value.voiceChannel).catch(() => {}) || false;
-          if (!voiceChannel || !voiceChannel.members || voiceChannel.members.filter(m => !m.user.bot && !m.voice.deaf && !m.voice.selfDeaf).size < 1) {
+          if (!voiceChannel) {
+            await autoresumeSchema.findOneAndDelete({
+              guild: guild.id
+            });
+            return client.logger(`Autoresume`.brightCyan + ` - Destroy player, no voiceChannel in ${String(guild.name).brightBlue}`)
+          }
+          if (!voiceChannel.members || voiceChannel.members.filter(m => !m.user.bot && !m.voice.deaf && !m.voice.selfDeaf).size < 1) {
             await autoresumeSchema.findOneAndDelete({
               guild: guild.id
             });
@@ -117,6 +123,11 @@ module.exports = (client) => {
             if (value.queue.length)
               for (let track of value.queue) player.queue.add(await buildTrack(track))
           } else if (premium && premium.BotAFK) {
+            // destroy player if not voiceChannel
+            if (!player.voiceChannel && !player.textChannel) {
+              player.destroy();
+              client.logger(`Autoresume`.brightCyan + ` - Destroyed the player in ${String(guild.name).brightBlue} because no data in Autoresume Schema!.`);
+            }
             client.logger(`AFK Mode`.brightCyan + ` - Joining the player to ${String(guild.name).brightBlue} in ${String(guild.channels.cache.get(player.voiceChannel).name).blue}.`);
           } else {
             player.destroy();
@@ -126,8 +137,8 @@ module.exports = (client) => {
           //ADJUST THE QUEUE SETTINGS
           player.set("pitchvalue", value.pitchvalue)
           await player.seek(value.position);
-          // if (value.queueRepeat) player.setQueueRepeat(value.queueRepeat);
-          // if (value.trackRepeat) player.setTrackRepeat(value.trackRepeat);
+          if (value.queueRepeat) player.setQueueRepeat(value.queueRepeat);
+          if (value.trackRepeat) player.setTrackRepeat(value.trackRepeat);
           if (!value.playing) player.pause(true);
           switch (value.eq) {
             case `💣 None`:
@@ -309,7 +320,7 @@ module.exports = (client) => {
           await autoresumeSchema.findOneAndDelete({
             guild: player.guild
           });
-          client.logger("changed autoresume track to queue adjustments + deleted the database entry")
+          client.logger(`Autoresume`.brightCyan + ` - Changed autoresume track to queue adjustments + deleted the database entry in ${String(guild.name).brightBlue}`)
           if (value.playing) {
             setTimeout(() => {
               player.pause(true);
@@ -373,7 +384,7 @@ module.exports = (client) => {
         if (ss.Autoresume) {
           let filter = pl.get(`filter`)
           let filtervalue = pl.get(`filtervalue`)
-          let autoplay = pl.get(`autoplay`)
+          let autoplay = ss.AutoPlay;
           let eq = pl.get(`eq`)
 
           const makeTrack = track => {

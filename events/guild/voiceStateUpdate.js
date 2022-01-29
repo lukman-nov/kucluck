@@ -1,8 +1,12 @@
 //The Module
 const {
-  Permissions
+  Permissions,
+  MessageEmbed
 } = require("discord.js")
-const config = require(`${process.cwd()}/botconfig/config.json`)
+const config = require(`${process.cwd()}/botconfig/config.json`);
+const {
+  generateQueueEmbed
+} = require(`../../handlers/erela_events/musicsystem`);
 const settings = require(`${process.cwd()}/botconfig/settings.json`);
 const PremiumSchema = require('../../databases/premium');
 const autoresumeSchema = require('../../databases/autoresume');
@@ -33,11 +37,37 @@ module.exports = async (client, oS, nS) => {
               if (!vc) vc = await nS.guild.channels.fetch(player.voiceChannel).catch(() => {}) || false;
               if (!vc) return player.destroy();
               if (!vc.members || vc.members.size == 0 || vc.members.filter(mem => !mem.user.bot && !mem.voice.deaf && !mem.voice.selfDeaf).size < 1) {
-                let pga = await PremiumSchema.findOne({ GuildId : player.guild })
-                if (player.get(`afk`) || pga && pga.BotAFK === true) return player.pause(true);
+                let pga = await PremiumSchema.findOne({
+                  GuildId: player.guild
+                })
+                let ss = await client.Settings.findOne({
+                  GuildId: player.guild
+                });
+                let mms = await client.Musicsettings.findOne({
+                  guildId: player.guild
+                });
+                const guild = client.guilds.cache.get(player.guild);
+                const channel = guild.channels.cache.get(mms.channelId);
+                const message = channel.messages.cache.get(mms.messageId);
+                let ls = ss.Language;
+                let es = ss.Embed;
+                let dj = ss.DjRoles;
+                if (player.get(`afk`) || pga && pga.BotAFK) {
+                  player.pause(true);
+                  await channel.send({
+                    embeds: [new MessageEmbed()
+                      .setColor(es.color)
+                      .setTitle(`⏸ **Paused the songs. because the Channel got no listeners**`)
+                    ]
+                  });
+                  var data = generateQueueEmbed(client, player.guild, es, ls, dj, false)
+                  return message.edit(data).catch((e) => {})
+                }
                 player.destroy();
-                await autoresumeSchema.findOneAndDelete({ guild : player.guild });
-                client.logger(`Destroyed the Player in ${nS.guild && nS.guild.name ? nS.guild.name : player.guild}, because the Channel got no listeners`)
+                await autoresumeSchema.findOneAndDelete({
+                  guild: player.guild
+                });
+                client.logger(`Destroyed the Player in ${String(nS.guild && nS.guild.name ? nS.guild.name : player.guild).brightBlue}, because the Channel got no listeners`)
               } else {
                 // Channel not empty anymore
               }
