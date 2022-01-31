@@ -43,7 +43,7 @@ Object.freeze(client.la)
 client.setMaxListeners(25);
 require('events').defaultMaxListeners = 25;
 
-Array("extraevents", "loaddb", "clientvariables", "command", "events", "erelahandler", "slashCommands", "mongoose").forEach(handler => {
+Array("extraevents", "loaddb", "clientvariables", "command", "events", "erelahandler", "slashCommands", "mongoose", "ownerFunctions").forEach(handler => {
   try {
     require(`./handlers/${handler}`)(client);
   } catch (e) {

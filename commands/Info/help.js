@@ -11,6 +11,7 @@ const {
   duration,
   handlemsg
 } = require(`${process.cwd()}/handlers/functions`)
+const url = require(`${process.cwd()}/botconfig/url.json`);
 module.exports = {
   name: "help",
   category: "Info",
@@ -59,21 +60,21 @@ module.exports = {
             embeds: [embeds[3]]
           })
         if (cat == `⁉️ Misc`)
-        return message.reply({
-          embeds: [embeds[5]]
-        })
+          return message.reply({
+            embeds: [embeds[5]]
+          })
         if (cat == `🎉 Fun`)
-        return message.reply({
-          embeds: [embeds[6]]
-        })
+          return message.reply({
+            embeds: [embeds[6]]
+          })
         if (cat == `🔑 Admin`)
-        return message.reply({
-          embeds: [embeds[7]]
-        })
+          return message.reply({
+            embeds: [embeds[7]]
+          })
         if (cat == "⚙️ Settings")
           return message.reply({
             embeds: [embeds[4]]
-        })
+          })
         embed.setDescription(`:x: No Information found about this Category`)
         return message.reply({
           embeds: [embed]
@@ -174,7 +175,20 @@ module.exports = {
         .setTitle(eval(client.la[ls].cmds.info.help.OverviewEmbed.title))
         .addField(eval(client.la[ls].cmds.info.help.OverviewEmbed.field.title), eval(client.la[ls].cmds.info.help.OverviewEmbed.field.value))
         .addField(eval(client.la[ls].cmds.info.help.OverviewEmbed.field2.title), eval(client.la[ls].cmds.info.help.OverviewEmbed.field2.value))
-        .addField(eval(client.la[ls].cmds.info.help.OverviewEmbed.field3.title), eval(client.la[ls].cmds.info.help.OverviewEmbed.field3.value))
+        // .addField(eval(client.la[ls].cmds.info.help.OverviewEmbed.field3.title), eval(client.la[ls].cmds.info.help.OverviewEmbed.field3.value))
+        .addFields({
+          name: "🌐",
+          value: `┕[[Dashboard]](${config.websiteSettings.domain})`,
+          inline: true,
+        }, {
+          name: "🏠",
+          value: `┕[[Support]](${config.websiteSettings.support})`,
+          inline: true,
+        }, {
+          name: `<:K_logo:917295875619962880>`,
+          value: `┕[[Invite]](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=identify%20email%20guilds%20bot%20applications.commands)`,
+          inline: true,
+        })
 
       //Send message with buttons
       let helpmsg = await message.reply({
@@ -289,9 +303,6 @@ module.exports = {
         }
       });
 
-      //array of all disabled buttons
-      let d_buttonRow = new MessageActionRow().addComponents([button_back.setDisabled(true), button_home.setDisabled(true), button_forward.setDisabled(true), button_tutorial.setDisabled(true)])
-      const alldisabledbuttons = [d_buttonRow]
       collector.on('end', collected => {
         if (!edited) {
           edited = true;
@@ -300,7 +311,7 @@ module.exports = {
               prefix: prefix
             }),
             embeds: [helpmsg.embeds[0]],
-            components: alldisabledbuttons
+            components: [],
           }).catch((e) => {})
         }
       });
@@ -324,9 +335,9 @@ module.exports = {
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Music").size}\`] 🎶 Music Commands 🎶`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Music").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("📑 **Queue Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type?.includes("queue")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-        .addField("<a:disk_play:927445485843791882> **Song Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type?.includes("song")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-        .addField("<:bot_flag:917305290972622848> **Bot Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("📑 **Queue Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("queue")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("<a:disk_play:927445485843791882> **Song Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("song")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("<:bot_flag:917305290972622848> **Bot Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
       embeds.push(embed3)
 
       //FILTER COMMANDS
@@ -337,11 +348,11 @@ module.exports = {
 
       //CUSTOM QUEUE COMMANDS
       var embed5 = new MessageEmbed()
-        .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Premium").size}\`] <:K_coin:916166348890079252> Premium`)
+        .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Premium").size}\`] <:K_coin:916166348890079252> Premium Commands <:K_coin:916166348890079252>`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Premium").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-        .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type?.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
       embeds.push(embed5)
 
       //Settings
@@ -349,33 +360,32 @@ module.exports = {
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Settings").size}\`] ⚙️ Settings Commands ⚙️`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Settings").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-        .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type?.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
       embeds.push(embed8)
 
-        //Misc
-        var embed9 = new MessageEmbed()
+      //Misc
+      var embed9 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Mics").size}\`] ⁉️ Mics Commands ⁉️`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Mics").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Mics" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-        embeds.push(embed9)
+        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Mics" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+      embeds.push(embed9)
 
       //Admin
       var embed10 = new MessageEmbed()
-      .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Admin").size}\`] 🔑 Admin Commands 🔑`)
-      .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Admin").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
-      .addField("\u200b", "__**Sub-Categorized Commands:**__")
-      .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Admin" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Admin" && cmd.type?.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-    embeds.push(embed10)
+        .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Admin").size}\`] 🔑 Admin Commands 🔑`)
+        .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Admin").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
+        .addField("\u200b", "__**Sub-Categorized Commands:**__")
+        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Admin" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+      embeds.push(embed10)
 
-    //Fun
+      //Fun
       var embed8 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Fun").size}\`] 🎉 Fun Commands 🎉`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Fun").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Fun" && cmd.type?.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Fun" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
       embeds.push(embed8)
 
       return embeds.map((embed, index) => {

@@ -86,7 +86,7 @@ module.exports = client => {
   client.editLastPruningMessage = async (player, footertext = "\n⛔️ SONG ENDED!") => {
     // client.logger("Editing the Last Message System called and executed")
     let guild = client.guilds.cache.get(player.guild);
-    if (!guild) return client.logger("Editing the Last Message - Guild not found!")
+    if (!guild) return client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Guild not found!")
     //try to get the channel
     let mss = await client.Musicsettings.findOne({
       guildId: guild.id
@@ -94,22 +94,29 @@ module.exports = client => {
     if (mss.channelId == player.textChannel) return;
     let channel = guild.channels.cache.get(player.textChannel);
     if (!channel) channel = await guild.channels.fetch(player.textChannel).catch(() => {}) || false;
-    if (!channel) return client.logger("Editing the Last Message - Channel not found")
-    if (!channel.permissionsFor(channel.guild.me).has(Permissions.FLAGS.SEND_MESSAGES)) return client.logger("Editing the Last Message - Missing Permissions")
+    if (!channel) return client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Channel not found")
+    if (!channel.permissionsFor(channel.guild.me).has(Permissions.FLAGS.SEND_MESSAGES)) return client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Missing Permissions")
     //try to get the message
     let message = channel.messages.cache.get(player.get("currentmsg"));
     if (!message) message = await channel.messages.fetch(player.get("currentmsg")).catch(() => {}) || false;
-    if (!message) return client.logger("Editing the Last Message - Message not found!")
-    if (!message.embeds || !message.embeds[0]) return client.logger("Editing the Last Message - Embeds got removed!")
+    if (!message) return client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Message not found!")
+    if (!message.embeds || !message.embeds[0]) return client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Embeds got removed!")
     //get the embed + change it
     var embed = message.embeds[0];
     embed.author.iconURL = "https://cdn.discordapp.com/attachments/883978730261860383/883978741892649000/847032838998196234.png"
     embed.footer.text += footertext;
+    // embed.fields = 
+    // {
+    //   name: "Views all queue on Dashboard",
+    //   value: `┕[[Dashboard]](${config.websiteSettings.domain}dashboard/${guild.id}/musicsystem)`,
+    //   inline: false,
+    // }
     //Edit the message
     message.edit({
       embeds: [embed],
       components: []
     }).catch(() => {})
+    // message.delete().catch(() => {})
     //if the messages before the last song played message, should get deleted
     if (settings.deleteMessagesBeforeTheLastSongPlayedMessages) {
       if (!player.get("beforemessage")) {
@@ -119,10 +126,19 @@ module.exports = client => {
       //get the actual beforemessage
       let beforemessage = channel.messages.cache.get(player.get("beforemessage"))
       if (!beforemessage) message = await channel.messages.fetch(player.get("beforemessage")).catch(() => {}) || false;
-      if (!beforemessage) return client.logger("Editing the Last Message - Before - Message not found!")
+      if (!beforemessage) {
+        client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Before - Message not found!")
+        return player.set("beforemessage", message.id);
+      }
       //if not able to 
-      if (!beforemessage) return client.logger("Editing the Last Message - Before - Message already deleted");
-      if (!beforemessage.deletable) return client.logger("Editing the Last Message - Before - Message not delete able");
+      if (!beforemessage) {
+        client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Before - Message already deleted");
+        return player.set("beforemessage", message.id);
+      }
+      if (!beforemessage.deletable) {
+        client.logger(`Pruning System`.brightCyan + " - Editing the Last Message - Before - Message not delete able");
+        return player.set("beforemessage", message.id);
+      }
       //delete the message
       beforemessage.delete().catch(() => {})
       //set the new before message

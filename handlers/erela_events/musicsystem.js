@@ -34,6 +34,7 @@ module.exports = client => {
       member,
       user
     } = interaction;
+    if (!guild) return;
     const ss = await client.Settings.findOne({
       GuildId: guild.id
     })

@@ -30,6 +30,10 @@
         "variable1": "`\\`\\`\\`yml\\nNama: ${client.user.tag} [${client.user.id}]\\nLatensi Bot: ${Math.round(Date.now() - message.createdTimestamp)}ms\\nApi Latensi: ${Math.round(client.ws.ping)}ms\\nWaktu tayang: ${duration(client.uptime).join(`︲`)}\\nPerintah Aktif: ${client.commands.map(a=>a).length}\\`\\`\\``",
         "variable2": "``"
       },
+      "command": {
+        "var1": "`Klik di sini untuk melihat semua perintah yang saya punya.`",
+        "var2": "`\\`\\`\\`yml\\nKategori: ${categoryresult.length}\\nPerintah: ${client.commands.size}\\`\\`\\` \n\\`\\`\\`yml\\nPerintah Global yang digunakan: ${statsGlobal.Commands}\\nPerintah Guild yang digunakan: ${statsGuild.Commands}\\`\\`\\``"
+      },
       "commandcount": {
         "tempmsg": "MENDAPATKAN DATA INFORMASI BOT",
         "title": ":gear: **[`{cmdcount}`] Perintah**",
@@ -127,7 +131,7 @@
           "title": "`Informasi Tentang __${client.user.username}__`",
           "field": {
             "title": "`:new: **__Semua Fitur Baru__**`",
-            "value": "`>>> :headphones: Sistem Musik canggih <:K_spotify:917296620901658655> dengan Penyaringan Audio Sistem :level_slider: Permintaan Musik yang unik dan masih banyak lagi!`"
+            "value": "`>>> :headphones: Sistem Musik canggih <:K_spotify:932951936016207872> dengan Penyaringan Audio Sistem :level_slider: Permintaan Musik yang unik dan masih banyak lagi!`"
           },
           "field2": {
             "title": "`:question: **__Bagai mana cara menggunakan saya?__**`",
@@ -505,10 +509,15 @@
       },
       "join": {
         "title": "👍 **Bergabung ke Voice Channel!**",
+        "title2": "`${emoji.msg.ERROR} Aku sudah ada di dalam saluran suara!`",
         "variable1": "`Channel: <#${player.voiceChannel}>`",
         "variable2": "`Channel: <#${player.voiceChannel}>`",
         "variable3": "`Channel: <#${player.voiceChannel}>`",
         "variable4": "``"
+      },
+      "joinme": {
+        "var1": "`Tunggu sebentar...`",
+        "var2": "`${emoji.msg.ERROR} Aku tidak dialam saluran suara manapun coba gunakan perintah: \\`${prefix}join\\``"
       },
       "leave": {
         "var1": "`${emoji.react.stop} Musik telah berhenti dan antrean dibersihkan! meninggalkan saluran suara!`",

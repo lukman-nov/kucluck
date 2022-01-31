@@ -112,18 +112,6 @@ module.exports = client => {
       callback: config.websiteSettings.callback,
     })
   })
-
-  app.get("/welcome", (req, res) => {
-    res.render("welcome", {
-      req: req,
-      user: req.isAuthenticated() ? req.user : null,
-      bot: client,
-      Permissions: Discord.Permissions,
-      botconfig: botsettings,
-      callback: botsettings.callback,
-    })
-  })
-
   Array("premium", "dashboard", "commands", "payment", "terms", "error", "docs", "music-player").forEach(handler => {
     try {
       require(`./structure/${handler}`)(client, app, checkAuth);

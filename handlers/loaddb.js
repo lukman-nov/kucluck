@@ -13,6 +13,7 @@ const settings = require("../databases/settings");
 const stats = require("../databases/stats");
 const statsGlobal = require("../databases/statsGlobal");
 const leaveMessage = require('../databases/leaveMessage');
+const ownerhelp = require("../databases/ownerhelp");
 module.exports = client => {
   client.points = new Enmap({
     name: "points",
@@ -38,4 +39,5 @@ module.exports = client => {
   client.leveling = levelingSystem;
   client.autoresume = autoresume;
   client.leaveMessage = leaveMessage;
+  client.ownerhelp = ownerhelp;
 }

@@ -13,8 +13,9 @@ module.exports = {
   },
   type: "song",
   run: async (client, message, args, cmduser, text, prefix, player, es, ls) => {
-    if(player) player.destroy();
-    // message.reply(eval(client.la[ls]["cmds"]["music"]["leave"]["var1"]))
-    return message.react(emoji.react.SUCCESS).catch((e) => {})
+    if(player) {
+      await player.destroy();
+      return message.react(emoji.react.SUCCESS).catch((e) => {})
+    }
   }
 };

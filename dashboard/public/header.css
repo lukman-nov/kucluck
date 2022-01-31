@@ -12,14 +12,11 @@ nav {
 }
 .header .navbar-brand {
   color: rgb(144, 205, 255);
-  font-size: 30px;
-  font-weight: bold;
   transition: 0.2s;
 }
 .header .navbar-brand:hover {
   transform: scale(105%);
   color: rgb(144, 205, 255);
-  font-size: 30px;
   font-weight: bold;
   margin-right: 25px;
 }

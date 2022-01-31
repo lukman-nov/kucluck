@@ -12,7 +12,8 @@
 </head>
 <%- include('../element/header'); -%>
 
-<body>
+<body class="bg-dark">
+  <% let player = bot.manager.players.get(guild.id) %>
   <section>
     <side class="navbar navbar-expand-md" style="max-width: 100px;">
       <div class="container" id="side-bar-container">
@@ -98,204 +99,342 @@
         </div>
       </div>
     </side>
-    <main class="container-fluid justify-content-center" id="player">
-      <div class="row bg-dark p-3">
-        <%if (player && player.queue && player.queue.length > 5) { %>
-        <div class="row justify-content-center m-auto" id="playercurent">
-          <div class="col-md-8">
-            <div class="d-block justify-content-start" data-live-search="true" id="nowplaying">
-              <div class="col-md">
+    <div id="mainplayer">
+      <% if (!player || !player.queue || !player.queue.current) { %>
+      <main class="container-fluid justify-content-center">
+        <div class="row bg-dark p-3">
+          <div class="col-md text-white">
+            <h3><i class="bi bi-boombox"></i> Music Player</h3>
+          </div>
+        </div>
+        <div class="row bg-dark p-3">
+          <div class="col-md-12 text-white">
+            <div class="img mt-3 mb-2 "><img
+                src="https://media.discordapp.net/attachments/901446802711142460/937365651457208410/kucluck_zzz.png"
+                alt="music-system" width="30%" class="rounded mx-auto d-block">
+            </div>
+            <% if(player) { %>
+            <h5 style="text-align: center;">Kucluck connected at
+              "<%= guild.channels.cache.get(player.voiceChannel).name%>" <br> not playing a song at the moment...
+            </h5>
+            <% } else { %>
+            <h5 style="text-align: center; padding-top: 20px;">Kucluck not connected to any voice channel
+            </h5>
+            <% } %>
+          </div>
+        </div>
+      </main>
+      <main class="container-fluid justify-content-center fixed-bottom">
+        <div class="row bg-dark p-3">
+          <div class="col-md-12 text-white">
+            <div class="ms-auto pt-3" id="progressbar">
+              <div class="progress" style="height: 5px;">
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                </div>
+              </div>
+              <b class="text-muted">0:00</b><b class="text-muted" style="float:right;">0:00</b>
+            </div>
+          </div>
+        </div>
+        <div class="row bg-dark ps-3 pe-3" id="footer-control">
+          <div class="col-md-4 text-white" id="button-start">
+            <div class="d-flex mb-3 p-0 justify-content-start">
+              <button class="btn text-white" disabled>Noting playing a songs</button>
+            </div>
+          </div>
+          <div class="col-md-4 text-white" id="button-center">
+            <form method="post" class="d-flex mb-3 p-0 justify-content-evenly"
+              action="/dashboard/<%=guild.id%>/musicsystempost">
+              <div id="btn-control">
+                <!-- PREVIOUS -->
+                <input type="checkbox" class="btn-check" id="btn-previous" autocomplete="off" name="previous"
+                  title="Previous" disabled>
+                <label class="btn text-white" for="btn-previous" data-bs-toggle="previous" data-bs-trigger="hover"
+                  data-bs-content="Previous the last song" data-bs-placement="top"><i class="fas fa-step-backward"></i>
+                </label>
+                <!-- PAUSE & RESUME BTN -->
+                <input type="checkbox" class="btn-check" id="btn-resume" autocomplete="off" name="pause" title="resume"
+                  disabled>
+                <label class="btn text-white" for="btn-resume" data-bs-toggle="resume" data-bs-trigger="hover"
+                  data-bs-content="Pause the current song" data-bs-placement="top"><i class="fas fa-pause"></i>
+                </label>
+                <!-- SKIP -->
+                <input type="checkbox" class="btn-check" id="btn-skip" autocomplete="off" name="skip" title="Skip"
+                  disabled>
+                <label class="btn text-white" for="btn-skip" data-bs-toggle="skip" data-bs-trigger="hover"
+                  data-bs-content="Skip the current song" data-bs-placement="top"><i class="fas fa-step-forward"></i>
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4 text-white" id="button-end">
+            <form method="post" class="d-flex mb-3 p-0 justify-content-end"
+              action="/dashboard/<%=guild.id%>/musicsystempost">
+              <div id="btn-control">
+                <!-- SHUFFLE -->
+                <input type="checkbox" class="btn-check" id="btn-previous" autocomplete="off" name="previous"
+                  title="Previous" disabled>
+                <label class="btn text-white" for="btn-previous" data-bs-toggle="previous" data-bs-trigger="hover"
+                  data-bs-content="Previous the last song" data-bs-placement="top"><i class="fas fa-random"></i>
+                </label>
+                <!-- STOP -->
+                <input type="checkbox" class="btn-check" id="btn-resume" autocomplete="off" name="pause" title="resume"
+                  disabled>
+                <label class="btn text-white" for="btn-resume" data-bs-toggle="resume" data-bs-trigger="hover"
+                  data-bs-content="Pause the current song" data-bs-placement="top"><i class="fas fa-stop"></i>
+                </label>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+      <% } else { %>
+      <main class="container-fluid justify-content-center">
+        <div class="row bg-dark p-3">
+          <div class="col-md text-white text-center">
+            <h3><i class="bi bi-boombox"></i> Music Player</h3>
+          </div>
+        </div>
+        <div class="row bg-dark p-3" id="player">
+          <!-- NOW PLAYING -->
+          <div class="col-md-7 text-white">
+            <div class="d-flex align-items-start flex-column bd-highlight mb-3" style="height: 600px;" id="now-playing">
+              <div class="d-flex p-2 bd-highlight">
+                <div class="me-3">
+                  <img src="https://static.wikia.nocookie.net/4732c141-9dbe-4d7b-9dd0-9af4e61c4c1f" alt="disk"
+                    width="50px" height="50px">
+                </div>
                 <h5 style="margin-bottom: 0.5rem; margin-top: 10px;color:#828cff">
-                  <img src="https://cdn.discordapp.com/emojis/927445485843791882.gif?size=96" style="max-width: 50px;"
-                    alt="disk">
                   <a href="<%= player.queue.current.uri%>" target="_blank"
-                    style="color:#828cff"><%= player.queue.current.title %></a>
+                    style="color:#828cff"><%= player.queue.current.title %>
+                  </a>
                 </h5>
               </div>
-              <div class="col-md img mb-4" id="nowplayingimg">
-                <img src="https://img.youtube.com/vi/<%= player.queue.current.identifier%>/mqdefault.jpg"
-                  class="rounded-3 shadow-sm" style="width: 40%; margin-top: 20px; border-radius: 5px;"
-                  alt="player-thumbnail">
-                <div class="d-flex mb-3 mt-3 text-white" id="infoplaying">
+              <div class="d-flex m-auto bd-highlight mx-auto">
+                <div class="img-border-start">
+                  <div class="img-border-end">
+                    <img src="https://img.youtube.com/vi/<%= player.queue.current.identifier%>/mqdefault.jpg"
+                      class="rounded-3 shadow-sm" alt="player-thumbnail" width="600px">
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-evenly mt-auto mx-auto p-2 bd-highlight">
+                <div class="ms-4 me-4">
                   <h6><i class="fas fa-hourglass-start"></i> Song Duration: <br>
                     <span style="color: #828cff;"><%= format(player.position)%> /
                       <%= format(player.queue.current.duration) %></span>
                   </h6>
+                </div>
+                <div class="ms-4 me-4">
                   <h6><i class="fas fa-user-edit"></i> Song by: <br>
                     <span style="color: #828cff;"><%= player.queue.current.author%></span>
                   </h6>
+                </div>
+                <div class="ms-4 me-4">
                   <h6><i class="fas fa-stream"></i> Queue length: <br>
                     <span style="color: #828cff;"><%= player.queue.length%> Songs</span>
                   </h6>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <form action="" method="post" class="mt-3">
-              <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="fab fa-youtube text-danger"></i></span>
-                <input type="text" class="form-control" id="myInput" placeholder="Search songs on Youtube..."
-                  autocomplete="off">
-              </div>
-            </form>
-            <button class="btn d-flex p-3 rounded-3 bg-light">
-              <div class="col-md-3">
-                <div class="img">
-                  <img src="https://img.youtube.com/vi/<%= player.queue.current.identifier%>/mqdefault.jpg"
-                    alt="playerImage" width="100%">
+                <div class="ms-4 me-4">
+                  <h6><i class="fas fa-volume-up"></i> Volume: <br>
+                    <span style="color: #828cff;"><%= player.volume%></span>
+                  </h6>
+                </div>
+                <div class="ms-4 me-4">
+                  <h6><i class="fas fa-sliders-h"></i> Equalizer: <br>
+                    <span style="color: #828cff;"><%= player.get("eq")%></span>
+                  </h6>
+                </div>
+                <div class="ms-4 me-4">
+                  <h6><i class="fas fa-sliders-h"></i> Filter: <br>
+                    <span style="color: #828cff;"><%= player.get("filter")%></span>
+                  </h6>
                 </div>
               </div>
-              <div class="col-md">
-                <a href="<%= player.queue.current.uri%>" target="_blank"
-                  style="color:#828cff"><%= player.queue.current.title %>
-                </a>
-                <p style="color:#828cff"><%= player.queue.current.author%>
-                  <br><%= format(player.queue.current.duration) %>
-                </p>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-8 mb-3 text-white" id="requester">
-          <h6 style="margin-bottom: 0; margin-top: 10px;"><img
-              src="https://cdn.discordapp.com/avatars/<%= player.queue.current.requester.id%>/<%= player.queue.current.requester.avatar%>.png"
-              alt="User Icon" style="width:auto; max-width: 30px;"> Requested by:
-            <%= player.queue.current.requester.tag%>
-          </h6>
-        </div>
-        <hr>
-      </div>
-      <div class="container-fluid fixed-bottom">
-        <div class="row d-block pt-2 pb-2 bg-dark">
-          <div class="col-md ms-auto pt-3" id="progressbar">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar"
-                style="width: <%= player.position / player.queue.current.duration * 100 %>%"
-                aria-valuenow="<%= player.position %>" aria-valuemin="0"
-                aria-valuemax="<%= player.queue.current.duration %>">
-              </div>
             </div>
-            <b class="text-muted"><%= format(player.position) %></b><b class="text-muted"
-              style="float:right;"><%= format(player.queue.current.duration) %></b>
           </div>
-          <div class="col-md-4 mx-auto p-0" id="btn-control">
-            <form method="post" class="d-flex justify-content-evenly" action="/dashboard/<%=guild.id%>/musicsystempost">
-              <!-- PAUSE BTN -->
-              <input type="checkbox" class="btn-check" id="btn-resume" autocomplete="off" name="resume" title="resume">
-              <label class="btn btn-success" for="btn-resume" data-bs-toggle="resume" data-bs-trigger="hover"
-                data-bs-content="Resume the current song" data-bs-placement="top"><i class="fas fa-play"></i></label>
-              <!-- RESUME BTN -->
-              <input type="checkbox" class="btn-check" id="btn-pause" autocomplete="off" name="pause" title="Pause">
-              <label class="btn btn-secondary" for="btn-pause" data-bs-toggle="pause" data-bs-trigger="hover"
-                data-bs-content="Pause the current song" data-bs-placement="top"><i class="fas fa-pause"></i></label>
-              <!-- SKIP -->
-              <input type="checkbox" class="btn-check" id="btn-skip" autocomplete="off" name="skip" title="Skip">
-              <label class="btn btn-primary" for="btn-skip" data-bs-toggle="skip" data-bs-trigger="hover"
-                data-bs-content="Skip the current song" data-bs-placement="top"><i class="fas fa-forward"></i></label>
-              <!-- SHUFFLE -->
-              <input type="checkbox" class="btn-check" id="btn-shuffle" autocomplete="off" name="shuffle"
-                title="Shuffle">
-              <label class="btn btn-primary" for="btn-shuffle" data-bs-toggle="shuffle" data-bs-trigger="hover"
-                data-bs-content="Shuffle this queue" data-bs-placement="top"><i class="fas fa-random"></i></label>
-              <!-- STOP BTN -->
-              <input type="checkbox" class="btn-check" id="btn-stop" autocomplete="off" name="stop" title="Stop">
-              <label class="btn btn-danger" for="btn-stop" data-bs-toggle="stop" data-bs-trigger="hover"
-                data-bs-content="If Autoplay on Bot Destroy (Leave Voice Channel!). else Stop & Clear Queue."
-                data-bs-placement="top"><i class="fas fa-stop"></i></label>
-              <!-- LEAVE -->
-              <input type="checkbox" class="btn-check" id="btn-leave" autocomplete="off" name="leave" title="Leave">
-              <label class="btn btn-danger" for="btn-leave" data-bs-toggle="leave" data-bs-trigger="hover"
-                data-bs-content="Leave Voice Channel!" data-bs-placement="top"><i
-                  class="fas fa-sign-out-alt"></i></label>
-              <!-- BTN CONTROL -->
-              <button class="btn btn-primary" type="submit" name="pause" title="Pause" id="submit" hidden></button>
+          <!-- QUEUE -->
+          <div class="col-md-5 text-white" id="queue-control">
+            <div class="d-flex" style="margin-bottom: 0.5rem; margin-top: 10px; color:#828cff;" id="queueTitle">
+              <h3 style="margin-top: 10px;"> Queue of <%=guild.name%> - [<%= player.queue.length%> Tracks]</h3>
+            </div>
+            <form method="post" class="d-flex mb-3 p-0 ms-auto justify-content-end">
+              <div id="btn-control">
+                <!-- REMOVE QUEUE -->
+                <input type="checkbox" class="btn-check" id="btn-clearqueue" autocomplete="off" name="clearqueue"
+                  title="clearqueue" <% if(!user) { %> disabled <% } %>>
+                <label class="btn text-white" for="btn-clearqueue" data-bs-toggle="clearqueue" data-bs-trigger="hover"
+                  data-bs-content="Clear Queue" data-bs-placement="top"><i class="fas fa-trash-alt"></i>
+                </label>
+                <!-- SHUFFLE -->
+                <input type="checkbox" class="btn-check" id="btn-shuffle" autocomplete="off" name="shuffle"
+                  title="shuffle" <% if(!user) { %> disabled <% } %>>
+                <label class="btn text-white" for="btn-shuffle" data-bs-toggle="shuffle" data-bs-trigger="hover"
+                  data-bs-content="Shuffle Queue" data-bs-placement="top"><i class="fas fa-random"></i>
+                </label>
+                <!-- STOP -->
+                <input type="checkbox" class="btn-check" id="btn-stop" autocomplete="off" name="pause" title="stop"
+                  <% if(!user) { %> disabled <% } %>>
+                <label class="btn text-white" for="btn-stop" data-bs-toggle="stop" data-bs-trigger="hover"
+                  data-bs-content="Stop" data-bs-placement="top"><i class="fas fa-stop"></i>
+                </label>
+              </div>
+              <input type="text" name="guildid" value="<%=guild.id %>" hidden>
+              <button class="btn btn-primary" type="submit" id="submit-queue" hidden></button>
             </form>
             <script>
-              var resume = [].slice.call(document.querySelectorAll('[data-bs-toggle="resume"]'));
-              var popoverResume = resume.map(function (popoverTriggerResume) {
-                return new bootstrap.Popover(popoverTriggerResume)
-              })
-              var pause = [].slice.call(document.querySelectorAll('[data-bs-toggle="pause"]'));
-              var popoverPause = pause.map(function (popoverTriggerPause) {
-                return new bootstrap.Popover(popoverTriggerPause)
-              })
-              var skip = [].slice.call(document.querySelectorAll('[data-bs-toggle="skip"]'));
-              var popoverSkip = skip.map(function (popoverTriggerSkip) {
-                return new bootstrap.Popover(popoverTriggerSkip)
-              })
-              var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="shuffle"]'));
-              var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
-                return new bootstrap.Popover(popoverTriggerShuffle)
-              })
-              var stopPl = [].slice.call(document.querySelectorAll('[data-bs-toggle="stop"]'));
-              var popoverStop = stopPl.map(function (popoverTriggerStop) {
-                return new bootstrap.Popover(popoverTriggerStop)
-              })
-              var leave = [].slice.call(document.querySelectorAll('[data-bs-toggle="leave"]'));
-              var popoverLeave = leave.map(function (popoverTriggerLeave) {
-                return new bootstrap.Popover(popoverTriggerLeave)
+              $('#btn-clearqueue').click(function () {
+                $('#submit-queue').click();
               })
             </script>
-            <script>
-              $('#btn-pause').click(function () {
-                $('#submit').click();
-              })
-              $('#btn-resume').click(function () {
-                $('#submit').click();
-              })
-              $('#btn-skip').click(function () {
-                $('#submit').click();
-              })
-              $('#btn-stop').click(function () {
-                $('#submit').click();
-              })
-              $('#btn-leave').click(function () {
-                $('#submit').click();
-              })
-              $('#btn-shuffle').click(function () {
-                $('#submit').click();
-              })
-            </script>
+            <div class="row justify-content-md-center overflow-auto" id="queue">
+              <div class="d-flex align-items-start flex-column mb-3 card-queue">
+                <div class="p-2">
+                  <span class="text-white mb-0" style="font-size: 15px;">
+                    0. <%= player.queue.current.title%></span><br>
+                  <span class="text-muted mb-0" style="font-size: 15px;">Duration:
+                    <%= format(player.queue.current.author)%></span><br>
+                  <span class="text-muted mb-0" style="font-size: 15px;">Req by:
+                    <%= player.queue.current.requester.tag%></span><br>
+                </div>
+              </div>
+              <% player.queue.map((song, i) => {%>
+              <div class="d-flex align-items-start flex-column bd-highlight mb-3 card-queue">
+                <div class="p-2 bd-highlight">
+                  <span class="text-white mb-0" style="font-size: 15px;"><%= ++i %>. <%= song.author%> -
+                    <%= song.title%></span><br>
+                  <span class="text-muted mb-0" style="font-size: 15px;">Duration:
+                    <%= format(song.duration)%></span><br>
+                  <span class="text-muted mb-0" style="font-size: 15px;">Req by: <%= song.requester.tag%></span><br>
+                </div>
+              </div>
+              <% }) %>
+            </div>
           </div>
         </div>
-      </div>
-      <% } else { %>
-      <div class="row">
-        <div class="col-md">
-          <h3 class="text-white text-center">Noting Playing Right Now!</h3>
-        </div>
-        <div class="col-md-4">
-          <form action="" method="post">
-            <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1"><i class="fab fa-youtube text-danger"></i></span>
-              <input type="text" class="form-control" id="myInput" placeholder="Search songs on Youtube..."
-                autocomplete="off">
+      </main>
+      <main class="container-fluid justify-content-center fixed-bottom">
+        <div class="row bg-dark p-3">
+          <div class="col-md-12 text-white" id="progressbar">
+            <div class="ms-auto pt-3">
+              <div class="progress" style="height: 5px;">
+                <div class="progress-bar" role="progressbar"
+                  style="width: <%= player.position / player.queue.current.duration * 100 %>%"
+                  aria-valuenow="<%= player.position %>" aria-valuemin="0"
+                  aria-valuemax="<%= player.queue.current.duration %>">
+                </div>
+              </div>
+              <b class="text-muted"><%= format(player.position) %></b>
+              <b class="text-muted" style="float:right;"><%= format(player.queue.current.duration) %></b>
             </div>
-          </form>
+          </div>
         </div>
-      </div>
-      <% } %>
-      </div>
-    </main>
+        <div class="row bg-dark ps-3 pe-3" id="footer-control">
+          <div class="col-md-4 text-white" id="button-start">
+            <div class="d-flex mb-3 p-0 justify-content-start">
+              <button class="btn text-white fs-6 fw-lighter" disabled><img
+                  src="https://cdn.discordapp.com/avatars/<%= player.queue.current.requester.id%>/<%= player.queue.current.requester.avatar%>.png"
+                  alt="User Icon" style="width:auto; max-width: 30px;"> Requested by:
+                <%= player.queue.current.requester.tag%>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4 text-white" id="button-center">
+            <form method="post" class="d-flex mb-3 p-0 justify-content-evenly"
+              action="/dashboard/<%=guild.id%>/musicsystempost">
+              <div id="btn-control">
+                <!-- PREVIOUS -->
+                <input type="checkbox" class="btn-check" id="btn-previous" autocomplete="off" name="previous"
+                  title="Previous" disabled>
+                <label class="btn text-white" for="btn-previous" data-bs-toggle="previous" data-bs-trigger="hover"
+                  data-bs-content="Previous the last song" data-bs-placement="top"><i class="fas fa-step-backward"></i>
+                </label>
+                <!-- PAUSE & RESUME BTN -->
+                <input type="checkbox" class="btn-check" id="btn-resume" autocomplete="off" name="pause" title="resume"
+                  disabled>
+                <label class="btn text-white" for="btn-resume" data-bs-toggle="resume" data-bs-trigger="hover"
+                  data-bs-content="Pause the current song" data-bs-placement="top"><i class="fas fa-pause"></i>
+                </label>
+                <!-- SKIP -->
+                <input type="checkbox" class="btn-check" id="btn-skip" autocomplete="off" name="skip" title="Skip"
+                  disabled>
+                <label class="btn text-white" for="btn-skip" data-bs-toggle="skip" data-bs-trigger="hover"
+                  data-bs-content="Skip the current song" data-bs-placement="top"><i class="fas fa-step-forward"></i>
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-4 text-white" id="button-end">
+          </div>
+        </div>
+      </main>
+    </div>
+    <% } %>
   </section>
-  <script>
-    var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-music-player"]'));
-    var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
-      return new bootstrap.Popover(popoverTriggerShuffle)
-    })
-    var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="guild-pop"]'));
-    var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
-      return new bootstrap.Popover(popoverTriggerShuffle)
-    })
-    var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-queue"]'));
-    var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
-      return new bootstrap.Popover(popoverTriggerShuffle)
-    })
-    var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-switch-server"]'));
-    var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
-      return new bootstrap.Popover(popoverTriggerShuffle)
-    })
-  </script>
 </body>
+<script>
+  var clearqueue = [].slice.call(document.querySelectorAll('[data-bs-toggle="clearqueue"]'));
+  clearqueue.map(function (x) {
+    return new bootstrap.Popover(x)
+  })
+  var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="shuffle"]'));
+  shuffle.map(function (x) {
+    return new bootstrap.Popover(x)
+  })
+  var stop = [].slice.call(document.querySelectorAll('[data-bs-toggle="stop"]'));
+  stop.map(function (x) {
+    return new bootstrap.Popover(x)
+  })
+  var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-music-player"]'));
+  var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
+    return new bootstrap.Popover(popoverTriggerShuffle)
+  })
+  var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="guild-pop"]'));
+  var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
+    return new bootstrap.Popover(popoverTriggerShuffle)
+  })
+  var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-queue"]'));
+  var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
+    return new bootstrap.Popover(popoverTriggerShuffle)
+  })
+  var shuffle = [].slice.call(document.querySelectorAll('[data-bs-toggle="nav-switch-server"]'));
+  var popoverShuffle = shuffle.map(function (popoverTriggerShuffle) {
+    return new bootstrap.Popover(popoverTriggerShuffle)
+  })
+</script>
+<script type="text/javascript">
+  window.onload = startInterval
+  function startInterval() {
+    setInterval(() => {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          try {
+            // if it worked, parse that string, make it back into an object
+            var data = this.responseText
+            parser = new DOMParser();
+            var doc = parser.parseFromString(data, "text/html");
+            data = doc.querySelector("#queueTitle").innerHTML;
+            document.getElementById("queueTitle").innerHTML = data;
+            data = doc.querySelector("#queue").innerHTML;
+            document.getElementById("queue").innerHTML = data;
+            data = doc.querySelector("#progressbar").innerHTML;
+            document.getElementById("progressbar").innerHTML = data;
+            data = doc.querySelector("#button-start").innerHTML;
+            document.getElementById("button-start").innerHTML = data;
+            data = doc.querySelector("#now-playing").innerHTML;
+            document.getElementById("now-playing").innerHTML = data;
+          } catch (e) {
+            data = doc.querySelector("#mainplayer").innerHTML;
+            document.getElementById("mainplayer").innerHTML = data;
+            console.log(e)
+          }
+        }
+      };
+      xmlhttp.open("GET", "/musicplayer/<%= guild.id %>", true);
+      xmlhttp.send();
+    }, 1000);
+  }
+</script>
 
 </html>

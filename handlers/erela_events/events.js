@@ -17,7 +17,8 @@ var {
     check_if_dj,
     databasing,
     autoplay,
-    delay
+    delay,
+    swap_pages2_interaction_DM
   } = require(`${process.cwd()}/handlers/functions`),
   playermanager = require(`${process.cwd()}/handlers/playermanager`),
   musicsettings = require("../../databases/musicsettings"),
@@ -908,13 +909,16 @@ module.exports = (client) => {
                 let em = new MessageEmbed()
                   .setTitle(`${emoji.msg.lyrics} Lyrics for: ${SongTitle}`)
                   .setColor(es.color)
-                  .setDescription(ly.join("\n"));
-                em.setThumbnail(player.queue.current.displayThumbnail());
-                return i.reply({
-                  embeds: [em],
-                  ephemeral: true
-                }).catch(() => {});
+                  .setDescription(ly.join("\n"))
+                  .setThumbnail(player.queue.current.displayThumbnail())
+
+                return em;
               })
+              if (!Pages.length || Pages.length === 1)
+              return i.reply({
+                embeds: [Pages[0]]
+              });
+              else return swap_pages2_interaction_DM(client, i, Pages);
             }
           });
         }
@@ -1018,9 +1022,23 @@ function generateQueueEmbed(client, player, track) {
     .setColor(ee.color)
   embed.setAuthor(client.getAuthor(`${track.title}`, `https://images-ext-1.discordapp.net/external/DkPCBVBHBDJC8xHHCF2G7-rJXnTwj_qs78udThL8Cy0/%3Fv%3D1/https/cdn.discordapp.com/emojis/859459305152708630.gif`, track.uri))
   embed.setThumbnail(`https://img.youtube.com/vi/${track.identifier}/mqdefault.jpg`)
-  embed.addField(`${emoji.msg.time} Duration: `, `\`${format(player.queue.current.duration).split(" | ")[0]}\` | \`${format(player.queue.current.duration).split(" | ")[1]}\``, true)
-  embed.addField(`${emoji.msg.song_by} Song By: `, `\`${player.queue.current.author}\``, true)
-  embed.addField(`${emoji.msg.repeat_mode} Queue length: `, `\`${player.queue.length} Songs\``, true)
+  embed.addFields(
+    {
+      name: `${emoji.msg.time} Duration:`,
+      value: `\`${format(player.queue.current.duration).split(" | ")[0]}\` | \`${format(player.queue.current.duration).split(" | ")[1]}\``,
+      inline: true
+    },
+    {
+      name: `${emoji.msg.song_by} Song By:`,
+      value: `\`${player.queue.current.author}\``,
+      inline: true
+    },
+    {
+      name: `${emoji.msg.repeat_mode} Queue length:`,
+      value: `\`${player.queue.length} Songs\``,
+      inline: true
+    }
+  )
   embed.setFooter(client.getFooter(`Requested by: ${track.requester.tag}`, track.requester.displayAvatarURL({
     dynamic: true
   })))

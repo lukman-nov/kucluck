@@ -30,6 +30,10 @@
         "variable1": "`\\`\\`\\`yml\\nName: ${client.user.tag} [${client.user.id}]\\nBot Latency: ${Math.round(Date.now() - message.createdTimestamp)}ms\\nApi Latency: ${Math.round(client.ws.ping)}ms\\nRuntime: ${duration(client.uptime).join(`︲`)}\\nActive Commands: ${client.commands.map(a=>a).length}\\`\\`\\``",
         "variable2": "``"
       },
+      "command": {
+        "var1": "`Click here to see all the commands I have.`",
+        "var2": "`\\`\\`\\`yml\\nCategories: ${categoryresult.length}\\nCommands: ${client.commands.size}\\`\\`\\` \n\\`\\`\\`yml\\nGlobal Commands Used: ${statsGlobal.Commands}\\nGuild Commands Used: ${statsGuild.Commands}\\`\\`\\``"
+      },
       "commandcount": {
         "tempmsg": "GETTING BOT INFORMATION DATA",
         "title": ":gear: **[`{cmdcount}`] Commands**",
@@ -505,10 +509,15 @@
       },
       "join": {
         "title": "👍 **Joined and connected to your Talk!**",
+        "title2": "`${emoji.msg.ERROR} I'm already in the Voice Channel`",
         "variable1": "`Channel: <#${player.voiceChannel}>`",
         "variable2": "`Channel: <#${player.voiceChannel}>`",
         "variable3": "`Channel: <#${player.voiceChannel}>`",
         "variable4": "``"
+      },
+      "joinme": {
+        "var1": "`Please wait...`",
+        "var2": "`${emoji.msg.ERROR} I'm not in Voice Channel anywhere, try use the \\`${prefix}join\\` command!`"
       },
       "leave": {
         "var1": "`${emoji.react.stop} The music has stopped and the queue is cleared! leaving voice channels!`",

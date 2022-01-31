@@ -35,6 +35,7 @@ module.exports.format = format;
 module.exports.stations = stations;
 module.exports.swap_pages2 = swap_pages2;
 module.exports.swap_pages2_interaction = swap_pages2_interaction;
+module.exports.swap_pages2_interaction_DM = swap_pages2_interaction_DM;
 module.exports.swap_pages = swap_pages;
 module.exports.escapeRegex = escapeRegex;
 module.exports.autoplay = autoplay;
@@ -107,7 +108,6 @@ function shuffle(a) {
     console.log(String(e.stack).grey.bgRed)
   }
 }
-
 
 function duration(duration, useMilli = false) {
   let remain = duration;
@@ -223,7 +223,6 @@ function createBar(player) {
   }
 }
 
-
 function format(millis) {
   try {
     var h = Math.floor(millis / 3600000),
@@ -235,7 +234,6 @@ function format(millis) {
     console.log(String(e.stack).grey.bgRed)
   }
 }
-
 
 function formatNonSeconds(millis) {
   try {
@@ -663,6 +661,280 @@ async function swap_pages(client, message, description, TITLE) {
     }
   });
 }
+
+async function swap_pages2(client, message, embeds) {
+  let currentPage = 0;
+  let cmduser = message.author;
+  if (embeds.length === 1) return message.channel.send({
+    embeds: [embeds[0]]
+  }).catch(e => console.log("THIS IS TO PREVENT A CRASH"))
+  let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji("833802907509719130").setLabel("Back")
+  let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
+  let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
+  const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
+  let ss = await SettingsSchema.findOne({
+    GuildId: message.guild.id
+  });
+  let prefix = ss.Prefix;
+  //Send message with buttons
+  let swapmsg = await message.channel.send({
+    content: `***Click on the __Buttons__ to swap the Pages***`,
+    embeds: [embeds[0]],
+    components: allbuttons
+  });
+  //create a collector for the thinggy
+  const collector = swapmsg.createMessageComponentCollector({
+    filter: (i) => i.isButton() && i.user && i.user.id == cmduser.id && i.message.author.id == client.user.id,
+    time: 180e3
+  }); //collector for 5 seconds
+  //array of all embeds, here simplified just 10 embeds with numbers 0 - 9
+  collector.on('collect', async b => {
+    if (b.user.id !== message.author.id)
+      return b.reply({
+        content: `❌ **Only the one who typed ${prefix}help is allowed to react!**`,
+        ephemeral: true
+      })
+    //page forward
+    if (b.customId == "1") {
+      //b.reply("***Swapping a PAGE FORWARD***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage !== 0) {
+        currentPage -= 1
+        await swapmsg.edit({
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = embeds.length - 1
+        await swapmsg.edit({
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+    }
+    //go home
+    else if (b.customId == "2") {
+      //b.reply("***Going Back home***, *please wait 2 Seconds for the next Input*", true)
+      currentPage = 0;
+      await swapmsg.edit({
+        embeds: [embeds[currentPage]],
+        components: allbuttons
+      });
+      await b.deferUpdate();
+    }
+    //go forward
+    else if (b.customId == "3") {
+      //b.reply("***Swapping a PAGE BACK***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage < embeds.length - 1) {
+        currentPage++;
+        await swapmsg.edit({
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = 0
+        await swapmsg.edit({
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+
+    }
+  });
+
+}
+
+async function swap_pages2_interaction(client, interaction, embeds) {
+  let currentPage = 0;
+  let cmduser = interaction.member.user;
+  if (embeds.length === 1) return interaction.reply({
+    ephemeral: true,
+    embeds: [embeds[0]]
+  }).catch(e => console.log("THIS IS TO PREVENT A CRASH"))
+  let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji("833802907509719130").setLabel("Back")
+  let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
+  let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
+  const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
+  let ss = await client.Settings.findOne({
+    GuildId: interaction.member.guild.id
+  });
+  let prefix = ss.Prefix;
+  //Send message with buttons
+  let swapmsg = await interaction.reply({
+    content: `***Click on the __Buttons__ to swap the Pages***`,
+    embeds: [embeds[0]],
+    components: allbuttons
+  });
+  //create a collector for the thinggy
+  const collector = swapmsg.createMessageComponentCollector({
+    filter: (i) => i.isButton() && i.user && i.user.id == cmduser.id && i.message.author.id == client.user.id,
+    time: 180e3
+  }); //collector for 5 seconds
+  //array of all embeds, here simplified just 10 embeds with numbers 0 - 9
+  collector.on('collect', async b => {
+    if (b.user.id !== cmduser.id)
+      return b.reply({
+        content: `❌ **Only the one who typed ${prefix}help is allowed to react!**`,
+        ephemeral: true
+      })
+    //page forward
+    if (b.customId == "1") {
+      //b.reply("***Swapping a PAGE FORWARD***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage !== 0) {
+        currentPage -= 1
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = embeds.length - 1
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+    }
+    //go home
+    else if (b.customId == "2") {
+      //b.reply("***Going Back home***, *please wait 2 Seconds for the next Input*", true)
+      currentPage = 0;
+      await swapmsg.edit({
+        ephemeral: true,
+        embeds: [embeds[currentPage]],
+        components: allbuttons
+      });
+      await b.deferUpdate();
+    }
+    //go forward
+    else if (b.customId == "3") {
+      //b.reply("***Swapping a PAGE BACK***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage < embeds.length - 1) {
+        currentPage++;
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = 0
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+
+    }
+  });
+}
+
+async function swap_pages2_interaction_DM(client, interaction, embeds) {
+  let currentPage = 0;
+  let cmduser = interaction.member.user;
+  if (embeds.length === 1) return interaction.reply({
+    ephemeral: true,
+    embeds: [embeds[0]]
+  }).catch(e => console.log("THIS IS TO PREVENT A CRASH"))
+  let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji("833802907509719130").setLabel("Back")
+  let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
+  let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
+  const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
+  let ss = await client.Settings.findOne({
+    GuildId: interaction.member.guild.id
+  });
+  let prefix = ss.Prefix;
+  //Send message with buttons
+  
+  interaction.reply({
+    embeds: [new MessageEmbed()
+      .setColor('RANDOM')
+      .setTitle(`${emoji.msg.SUCCESS} Check your DM`)
+    ],
+    ephemeral: true
+  })
+  let swapmsg = await cmduser.send({
+    content: "***Click on the __Buttons__ to swap the Pages***",
+    embeds: [embeds[0]],
+    components: allbuttons
+  });
+  //create a collector for the thinggy
+  const collector = swapmsg.createMessageComponentCollector({
+    filter: (i) => i.isButton() && i.user && i.user.id == cmduser.id && i.message.author.id == client.user.id,
+    time: 180e3
+  }); //collector for 5 seconds
+  //array of all embeds, here simplified just 10 embeds with numbers 0 - 9
+  collector.on('collect', async b => {
+    if (b.user.id !== cmduser.id)
+      return b.reply({
+        content: `❌ **Only the one who typed ${prefix}help is allowed to react!**`,
+        ephemeral: true
+      })
+    //page forward
+    if (b.customId == "1") {
+      //b.reply("***Swapping a PAGE FORWARD***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage !== 0) {
+        currentPage -= 1
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = embeds.length - 1
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+    }
+    //go home
+    else if (b.customId == "2") {
+      //b.reply("***Going Back home***, *please wait 2 Seconds for the next Input*", true)
+      currentPage = 0;
+      await swapmsg.edit({
+        ephemeral: true,
+        embeds: [embeds[currentPage]],
+        components: allbuttons
+      });
+      await b.deferUpdate();
+    }
+    //go forward
+    else if (b.customId == "3") {
+      //b.reply("***Swapping a PAGE BACK***, *please wait 2 Seconds for the next Input*", true)
+      if (currentPage < embeds.length - 1) {
+        currentPage++;
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      } else {
+        currentPage = 0
+        await swapmsg.edit({
+          ephemeral: true,
+          embeds: [embeds[currentPage]],
+          components: allbuttons
+        });
+        await b.deferUpdate();
+      }
+
+    }
+  });
+}
+
 async function musicSystem(client, guildid, channelid) {
   let ss = await SettingsSchema.findOne({
     GuildId: guildid
@@ -764,180 +1036,6 @@ async function musicSystem(client, guildid, channelid) {
     data.channelId = channel.id;
     data.messageId = msg.id;
     data.save();
-  });
-}
-async function swap_pages2(client, message, embeds) {
-  let currentPage = 0;
-  let cmduser = message.author;
-  if (embeds.length === 1) return message.channel.send({
-    embeds: [embeds[0]]
-  }).catch(e => console.log("THIS IS TO PREVENT A CRASH"))
-  let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji("833802907509719130").setLabel("Back")
-  let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
-  let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
-  const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
-  let ss = await SettingsSchema.findOne({
-    GuildId: message.guild.id
-  });
-  let prefix = ss.Prefix;
-  //Send message with buttons
-  let swapmsg = await message.channel.send({
-    content: `***Click on the __Buttons__ to swap the Pages***`,
-    embeds: [embeds[0]],
-    components: allbuttons
-  });
-  //create a collector for the thinggy
-  const collector = swapmsg.createMessageComponentCollector({
-    filter: (i) => i.isButton() && i.user && i.user.id == cmduser.id && i.message.author.id == client.user.id,
-    time: 180e3
-  }); //collector for 5 seconds
-  //array of all embeds, here simplified just 10 embeds with numbers 0 - 9
-  collector.on('collect', async b => {
-    if (b.user.id !== message.author.id)
-      return b.reply({
-        content: `❌ **Only the one who typed ${prefix}help is allowed to react!**`,
-        ephemeral: true
-      })
-    //page forward
-    if (b.customId == "1") {
-      //b.reply("***Swapping a PAGE FORWARD***, *please wait 2 Seconds for the next Input*", true)
-      if (currentPage !== 0) {
-        currentPage -= 1
-        await swapmsg.edit({
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      } else {
-        currentPage = embeds.length - 1
-        await swapmsg.edit({
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      }
-    }
-    //go home
-    else if (b.customId == "2") {
-      //b.reply("***Going Back home***, *please wait 2 Seconds for the next Input*", true)
-      currentPage = 0;
-      await swapmsg.edit({
-        embeds: [embeds[currentPage]],
-        components: allbuttons
-      });
-      await b.deferUpdate();
-    }
-    //go forward
-    else if (b.customId == "3") {
-      //b.reply("***Swapping a PAGE BACK***, *please wait 2 Seconds for the next Input*", true)
-      if (currentPage < embeds.length - 1) {
-        currentPage++;
-        await swapmsg.edit({
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      } else {
-        currentPage = 0
-        await swapmsg.edit({
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      }
-
-    }
-  });
-
-}
-async function swap_pages2_interaction(client, interaction, embeds) {
-  let currentPage = 0;
-  let cmduser = interaction.member.user;
-  if (embeds.length === 1) return interaction.reply({
-    ephemeral: true,
-    embeds: [embeds[0]]
-  }).catch(e => console.log("THIS IS TO PREVENT A CRASH"))
-  let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji("833802907509719130").setLabel("Back")
-  let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
-  let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji('832598861813776394').setLabel("Forward")
-  const allbuttons = [new MessageActionRow().addComponents([button_back, button_home, button_forward])]
-  let ss = await client.Settings.findOne({
-    GuildId: interaction.member.guild.id
-  });
-  let prefix = ss.Prefix;
-  //Send message with buttons
-  let swapmsg = await interaction.reply({
-    content: `***Click on the __Buttons__ to swap the Pages***`,
-    embeds: [embeds[0]],
-    components: allbuttons,
-    ephemeral: true
-  });
-  //create a collector for the thinggy
-  const collector = swapmsg.createMessageComponentCollector({
-    filter: (i) => i.isButton() && i.user && i.user.id == cmduser.id && i.message.author.id == client.user.id,
-    time: 180e3
-  }); //collector for 5 seconds
-  //array of all embeds, here simplified just 10 embeds with numbers 0 - 9
-  collector.on('collect', async b => {
-    if (b.user.id !== cmduser.id)
-      return b.reply({
-        content: `❌ **Only the one who typed ${prefix}help is allowed to react!**`,
-        ephemeral: true
-      })
-    //page forward
-    if (b.customId == "1") {
-      //b.reply("***Swapping a PAGE FORWARD***, *please wait 2 Seconds for the next Input*", true)
-      if (currentPage !== 0) {
-        currentPage -= 1
-        await swapmsg.edit({
-          ephemeral: true,
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      } else {
-        currentPage = embeds.length - 1
-        await swapmsg.edit({
-          ephemeral: true,
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      }
-    }
-    //go home
-    else if (b.customId == "2") {
-      //b.reply("***Going Back home***, *please wait 2 Seconds for the next Input*", true)
-      currentPage = 0;
-      await swapmsg.edit({
-        ephemeral: true,
-        embeds: [embeds[currentPage]],
-        components: allbuttons
-      });
-      await b.deferUpdate();
-    }
-    //go forward
-    else if (b.customId == "3") {
-      //b.reply("***Swapping a PAGE BACK***, *please wait 2 Seconds for the next Input*", true)
-      if (currentPage < embeds.length - 1) {
-        currentPage++;
-        await swapmsg.edit({
-          ephemeral: true,
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      } else {
-        currentPage = 0
-        await swapmsg.edit({
-          ephemeral: true,
-          embeds: [embeds[currentPage]],
-          components: allbuttons
-        });
-        await b.deferUpdate();
-      }
-
-    }
   });
 }
 
