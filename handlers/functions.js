@@ -853,7 +853,7 @@ async function swap_pages2_interaction_DM(client, interaction, embeds) {
   });
   let prefix = ss.Prefix;
   //Send message with buttons
-  
+
   interaction.reply({
     embeds: [new MessageEmbed()
       .setColor('RANDOM')
@@ -1228,15 +1228,9 @@ function leveling(client, message, guildid, userid) {
         points: data.user[0][key].point,
         level: data.user[0][key].level,
       });
-      var msgl = message.content.length / (Math.floor(Math.random() * (message.content.length - message.content.length / 100 + 1) + 10));
-      if (msgl < 10) {
-        var randomnum = Math.floor((Math.random() * 0.5) * 100) / 100
-        data.user[0][key].point += randomnum;
-        await levelingSystem.findOneAndUpdate({
-          GuildId: guildid
-        }, data);
-      } else {
-        var randomnum = 1 + Math.floor(msgl * 100) / 100
+      var msgl = message.content.length || (Math.floor(Math.random() * (message.content.length - message.content.length / 100 + 1) + 10));
+      if (msgl) {
+        var randomnum = Math.floor(msgl * 20) / 100
         data.user[0][key].point += randomnum;
         await levelingSystem.findOneAndUpdate({
           GuildId: guildid

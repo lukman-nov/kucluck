@@ -136,6 +136,8 @@ code {
     content: "Kulcuck";
     display: block;
     color: #f0a3ff;
+    font-size: 25px;
+    font-weight: bold;
   }
   .header .navbar-toggler-icon {
     background-image: url("https://media.discordapp.net/attachments/901446802711142460/931121712446181416/pngwing.com.png?width=480&height=480");
@@ -177,6 +179,10 @@ code {
   a.nav-item {
     color: #eee;
     text-decoration: none;
+  }
+  .header-link {
+    margin: 5px 0px;
+    font-size: 15px !important;
   }
   a.nav-item:hover {
     color: rgb(194, 194, 194);

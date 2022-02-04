@@ -61,7 +61,12 @@ module.exports = async (client, oS, nS) => {
                     ]
                   });
                   var data = generateQueueEmbed(client, player.guild, es, ls, dj, false)
-                  return message.edit(data).catch((e) => {})
+                  if (player.playing) {
+                    return message.edit(data).catch((e) => {})
+                  } else {
+                    return;
+                  }
+                  return;
                 }
                 player.destroy();
                 await autoresumeSchema.findOneAndDelete({
