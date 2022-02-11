@@ -915,9 +915,9 @@ module.exports = (client) => {
                 return em;
               })
               if (!Pages.length || Pages.length === 1)
-              return i.reply({
-                embeds: [Pages[0]]
-              });
+                return i.reply({
+                  embeds: [Pages[0]]
+                });
               else return swap_pages2_interaction_DM(client, i, Pages);
             }
           });
@@ -962,13 +962,10 @@ module.exports = (client) => {
         if (!player.queue || !player.queue.current) {
           //Update the Music System Message - Embed
           client.updateMusicSystem(player, true);
-
           //Delete autoresume
           await autoresumeSchema.findOneAndDelete({
             guild: player.guild
           });
-          // client.logger(`Queue went empty in ${String(client.guilds.cache.get(player.guild) ? client.guilds.cache.get(player.guild).name : player.guild).brightBlue} deleted the database entry`)
-
           //if afk is enbaled return and not destroy the PLAYER
           const premium = await premiumSchema.findOne({
             GuildId: player.guild
@@ -1022,23 +1019,19 @@ function generateQueueEmbed(client, player, track) {
     .setColor(ee.color)
   embed.setAuthor(client.getAuthor(`${track.title}`, `https://images-ext-1.discordapp.net/external/DkPCBVBHBDJC8xHHCF2G7-rJXnTwj_qs78udThL8Cy0/%3Fv%3D1/https/cdn.discordapp.com/emojis/859459305152708630.gif`, track.uri))
   embed.setThumbnail(`https://img.youtube.com/vi/${track.identifier}/mqdefault.jpg`)
-  embed.addFields(
-    {
-      name: `${emoji.msg.time} Duration:`,
-      value: `\`${format(player.queue.current.duration).split(" | ")[0]}\` | \`${format(player.queue.current.duration).split(" | ")[1]}\``,
-      inline: true
-    },
-    {
-      name: `${emoji.msg.song_by} Song By:`,
-      value: `\`${player.queue.current.author}\``,
-      inline: true
-    },
-    {
-      name: `${emoji.msg.repeat_mode} Queue length:`,
-      value: `\`${player.queue.length} Songs\``,
-      inline: true
-    }
-  )
+  embed.addFields({
+    name: `${emoji.msg.time} Duration:`,
+    value: `\`${format(player.queue.current.duration).split(" | ")[0]}\` | \`${format(player.queue.current.duration).split(" | ")[1]}\``,
+    inline: true
+  }, {
+    name: `${emoji.msg.song_by} Song By:`,
+    value: `\`${player.queue.current.author}\``,
+    inline: true
+  }, {
+    name: `${emoji.msg.repeat_mode} Queue length:`,
+    value: `\`${player.queue.length} Songs\``,
+    inline: true
+  })
   embed.setFooter(client.getFooter(`Requested by: ${track.requester.tag}`, track.requester.displayAvatarURL({
     dynamic: true
   })))

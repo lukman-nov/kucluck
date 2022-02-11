@@ -2,12 +2,12 @@
 const config = require(`${process.cwd()}/botconfig/config.json`);
 const Discord = require("discord.js")
 const moment = require("moment")
-const ms = require('ms')
 const MCSchema = require('../../databases/memberCount');
+const messageTimer = require('../../databases/messageTimer');
 module.exports = client => {
   setInterval(() => {
     MCSchema.find().then((data) => {
-      if(!data && !data.length) return;
+      if (!data && !data.length) return;
 
       data.forEach((value) => {
         const guild = client.guilds.cache.get(value.GuildId);
@@ -22,7 +22,7 @@ module.exports = client => {
         }
       });
     });
-  }, ms("5 seconds"));
+  }, 5000);
   try {
     client.logger(
       `Bot User: `.brightBlue + `${client.user.tag}`.blue + `\n` +
@@ -45,6 +45,45 @@ module.exports = client => {
   } catch (e) {
     console.log(String(e.stack).grey.bgRed)
   }
+  // messageTimer.find({}, async (err, data) => {
+  //   data.forEach(async (value) => {
+  //     let guilds = client.guilds.cache.get(value.GuildId)
+  //     if (!guilds || guilds.length == 0) return;
+  //     try {
+  //       let guild = client.guilds.cache.get(guilds.id);
+  //       if (!guild) return client.logger(`Message Timer`.brightCyan + ' - Guild Not Found!')
+  //       if (value.Status) {
+  //         let channel = guild.channels.cache.get(value.ChannelId);
+  //         if (!channel) {
+  //           await messageTimer.findOneAndDelete({
+  //             GuildId: guild.id
+  //           })
+  //           return client.logger(`Message Timer`.brightCyan + ` - Channel not found in ${String(guild.name).brightBlue} remove a data from databases!`)
+  //         }
+  //         if (!value.Timer) {
+  //           await messageTimer.findOneAndDelete({
+  //             GuildId: guild.id
+  //           })
+  //           return client.logger(`Message Timer`.brightCyan + ` - Timer not found in ${String(guild.name).brightBlue} remove a data from databases!`)
+  //         }
+  //         if (!value.Message) {
+  //           await messageTimer.findOneAndDelete({
+  //             GuildId: guild.id
+  //           })
+  //           return client.logger(`Message Timer`.brightCyan + ` - Message not found in ${String(guild.name).brightBlue} remove a data from databases!`)
+  //         }
+  //         setInterval(() => {
+  //           channel.send(value.Message)
+  //           return client.logger(`Message Timer`.brightCyan + ` - Sending in ${String(guild.name).brightBlue} to ${String(channel.name).brightBlue}`)
+  //         }, value.Timer);
+  //       } else {
+  //         if (value.ChannelId.length > 10) client.logger(`Message Timer`.brightCyan + ` - Status off in ${String(guild.name).brightBlue} Not Sending Message Timer`)
+  //       }
+  //     } catch (e) {
+  //       console.log(String(e.stack).grey)
+  //     }
+  //   })
+  // }).clone();
 }
 var state = false;
 
@@ -60,7 +99,7 @@ function change_status(client) {
       .replace("{name}", client.user.username)
       .replace("{tag}", client.user.tag)
       .replace("{commands}", client.commands.size)
-      );
+    );
   } else {
     client.user.setActivity(`${config.status.text2}`
       .replace("{prefix}", config.prefix)
@@ -71,6 +110,6 @@ function change_status(client) {
       .replace("{name}", client.user.username)
       .replace("{tag}", client.user.tag)
       .replace("{commands}", client.commands.size)
-      );
+    );
   }
 }

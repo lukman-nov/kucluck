@@ -23,6 +23,7 @@ const greetingmsg = require("../databases/greetingmsg");
 const autorole = require('../databases/autorole');
 const url = require('../botconfig/url.json');
 const leaveMessage = require('../databases/leaveMessage');
+const messageTimer = require("../databases/messageTimer");
 
 module.exports.handlemsg = handlemsg;
 module.exports.nFormatter = nFormatter;
@@ -1048,6 +1049,19 @@ function databasing(client, guildid, userid) {
         "TEMPLATEQUEUEINFORMATION": ["queue", "sadasd"]
       });
     }
+    messageTimer.findOne({
+      GuildId: guildid,
+    }, async (err, data) => {
+      if (!data) {
+        new messageTimer({
+          GuildId: guildid,
+          ChannelId: "",
+          Timer: 0,
+          Message: "",
+          Status: false,
+        }).save();
+      }
+    })
     MusicSchema.findOne({
       guildId: guildid
     }, async (err, data) => {

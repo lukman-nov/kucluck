@@ -224,7 +224,7 @@ module.exports = {
             .setColor(es.wrongcolor)
             .setTitle(eval(client.la[ls]["cmds"]["settings"]["reset"]["var7"]))
             .setDescription(eval(client.la[ls]["cmds"]["settings"]["reset"]["var8"]))
-            .setFooter(client.getFooter(eval(client.la[ls]["cmds"]["settings"]["reset"]["var9"])), client.user.displayAvatarURL())
+            .setFooter(client.getFooter(eval(client.la[ls]["cmds"]["settings"]["reset"]["var9"]), client.user.displayAvatarURL()))
             // .setFooter(eval(client.la[ls]["cmds"]["settings"]["reset"]["var9"]), es.footericon)
 
           ]

@@ -1,6 +1,6 @@
 {
   "name": "new-kucluck-bot",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "description": "\"# kucluck-new\"",
   "main": "index.js",
   "scripts": {

@@ -14,6 +14,7 @@ const stats = require("../databases/stats");
 const statsGlobal = require("../databases/statsGlobal");
 const leaveMessage = require('../databases/leaveMessage');
 const ownerhelp = require("../databases/ownerhelp");
+const messageTimer = require("../databases/messageTimer");
 module.exports = client => {
   client.points = new Enmap({
     name: "points",
@@ -40,4 +41,5 @@ module.exports = client => {
   client.autoresume = autoresume;
   client.leaveMessage = leaveMessage;
   client.ownerhelp = ownerhelp;
+  client.messageTimer = messageTimer;
 }
