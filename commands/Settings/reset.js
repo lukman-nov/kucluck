@@ -91,6 +91,11 @@ module.exports = {
         description: client.la[ls]["cmds"]["settings"]["reset"]["menuoptions"]["var13"],
         emoji: emoji.kucluck.number.duabelas
       },
+      {
+        value: 'Reaction Roles2',
+        description: client.la[ls]["cmds"]["settings"]["reset"]["menuoptions"]["var11"],
+        emoji: emoji.kucluck.number.tigabelas
+      },
       // {
       //     value: 'Leveling System',
       //     description: client.la[ls]["cmds"]["settings"]["reset"]["menuoptions"]["var13"],
@@ -190,6 +195,9 @@ module.exports = {
       var reactionrole = await client.reactrole.findOne({
         GuildId: message.guild.id
       });
+      var reactionrole2 = await client.reactrole2.findOne({
+        GuildId: message.guild.id
+      });
       var dbsettings = await client.Settings.findOne({
         GuildId: message.guild.id
       });
@@ -267,6 +275,7 @@ module.exports = {
                       await premium.save();
                     }
                     if (reactionrole) await reactionrole.delete();
+                    if (reactionrole2) await reactionrole2.delete();
                     if (dbsettings) await dbsettings.delete();
                     if (stats) await stats.delete();
                     if (musicsettings.channelId.length > 5) {
@@ -666,6 +675,37 @@ module.exports = {
                 .setThumbnail(es.thumb ? es.footericon : null)
                 .setTitle(`${emoji.msg.SUCCESS} Greeting Message in this server has been reset!`)
                 .setDescription(`If you want to change it, run the command \`${prefix}setup-leavemessage\``)
+              ],
+              ephemeral: true
+            }).then((msg) => {
+              setTimeout(() => {
+                msg.delete();
+              }, 6000);
+            });
+          } else {
+            return menumsg.reply({
+              embeds: [new MessageEmbed()
+                .setColor(es.wrongcolor)
+                .setTitle(eval(client.la[ls]["cmds"]["settings"]["reset"]["noset"]))
+              ],
+            }).then((msg) => {
+              setTimeout(() => {
+                msg.delete();
+              }, 6000);
+            });
+          }
+        }
+        // Reaction Role2
+        case 13: {
+          if (reactionrole2) {
+            await reactionrole2.delete();
+            return menumsg.reply({
+              embeds: [new MessageEmbed()
+                .setColor(es.succescolor)
+                .setFooter(client.getFooter(es))
+                .setThumbnail(es.thumb ? es.footericon : null)
+                .setTitle(eval(client.la[ls]["cmds"]["settings"]["reset"]["var34"]))
+                .setDescription(eval(client.la[ls]["cmds"]["settings"]["reset"]["var35"]))
               ],
               ephemeral: true
             }).then((msg) => {

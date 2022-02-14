@@ -12,7 +12,9 @@ var SettingsSchema = require('../../databases/settings');
 
 //function for playing playlists
 async function playlist(client, message, args, type, slashCommand = false) {
-  let ss = await SettingsSchema.findOne({ GuildId : message.guild.id }).clone();
+  let ss = await SettingsSchema.findOne({
+    GuildId: message.guild.id
+  }).clone();
   let ls = ss.Language;
   let es = ss.Embed;
   var search = args.join(" ");
@@ -123,13 +125,16 @@ async function playlist(client, message, args, type, slashCommand = false) {
       .addField("⌛ Duration: ", `\`${format(res.playlist.duration)}\``, true)
       .addField("🔂 Queue length: ", `\`${player.queue.length} Songs\``, true)
 
-    if (slashCommand && slashCommand.isCommand()) slashCommand.reply({
-      ephemeral: true,
-      embeds: [playlistembed]
-    }).catch(() => {});
-    else message.channel.send({
+    if (slashCommand && slashCommand.isCommand())
+      slashCommand.reply({
+        ephemeral: true,
+        embeds: [playlistembed]
+      }).catch(() => {});
+    else
+    message.channel.send({
       embeds: [playlistembed]
     }).catch(() => {})
+
     //Update the Music System Message - Embed
     client.updateMusicSystem(player);
   } catch (e) {

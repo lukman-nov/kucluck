@@ -9,13 +9,15 @@ var {
   arrayMove,
   isValidURL
 } = require("../functions")
-var ss = require ('../../databases/settings')
+var ss = require('../../databases/settings')
 var SettingsSchema = require('../../databases/settings');
 
 //function for playling song
 async function song(client, message, args, type, slashCommand, extras) {
 
-  let ss = await SettingsSchema.findOne({ GuildId : message.guild.id }).clone();
+  let ss = await SettingsSchema.findOne({
+    GuildId: message.guild.id
+  }).clone();
   let ls = ss.Language;
   let es = ss.Embed;
   var search = args.join(" ");

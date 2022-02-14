@@ -601,11 +601,11 @@ module.exports = client => {
       let link = "https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF?si=f762f2da726d4b4d";
       if (interaction.values[0]) {
         //global hits
-        if (interaction.values[0].toLowerCase().startsWith("glo")) link = "https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF?si=e54359b559c844d3";
+        if (interaction.values[0].toLowerCase().startsWith("glo")) link = "https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF?si=de6d77cef2164abf";
         //indonesia hits
-        if (interaction.values[0].toLowerCase().startsWith("ind")) link = "https://open.spotify.com/playlist/37i9dQZEVXbObFQZ3JLcXt?si=0942539d9ebf4468";
+        if (interaction.values[0].toLowerCase().startsWith("ind")) link = "https://open.spotify.com/playlist/37i9dQZF1DXa2EiKmMLhFD?si=76fb0dd1f9cc4d36";
         //Pop hits indonesia
-        if (interaction.values[0].toLowerCase().startsWith("hi")) link = "https://open.spotify.com/playlist/1OSkC3ByYxFpZvKZztth84?si=085dda9be8d44c6d";
+        if (interaction.values[0].toLowerCase().startsWith("hi")) link = "https://open.spotify.com/playlist/37i9dQZEVXbObFQZ3JLcXt?si=437ba6546b3145cd";
         //Kpop hits
         if (interaction.values[0].toLowerCase().startsWith("k-p")) link = "https://open.spotify.com/playlist/37i9dQZF1DX9tPFwDMOaN1?si=eb1ec325027a47d0";
         //Kpop 2020 hits
@@ -637,7 +637,7 @@ module.exports = client => {
         //strange-fruits
         if (interaction.values[0].toLowerCase().startsWith("s")) link = "https://open.spotify.com/playlist/6xGLprv9fmlMgeAMpW0x51?si=873d6f3102564e0b";
         //metal
-        if (interaction.values[0].toLowerCase().startsWith("me")) link = "https://open.spotify.com/playlist/79QHayucQm6M4wUlUbhQNQ?si=6867122e0fde4325";
+        if (interaction.values[0].toLowerCase().startsWith("me")) link = "https://open.spotify.com/playlist/79QHayucQm6M4wUlUbhQNQ?si=7103fb8a5a4b4f53";
       }
       interaction.reply({
         embeds: [new MessageEmbed()

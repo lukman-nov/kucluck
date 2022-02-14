@@ -22,6 +22,7 @@ module.exports = {
                 .setFooter(client.getFooter(es))
                 .setThumbnail(es.thumb ? url.img.ERROR : null)
                 .setTitle(eval(client.la[ls]["cmds"]["settings"]["setup-reactionrole"]["var1"]))
+                    .setDescription(eval(client.la[ls]["cmds"]["settings"]["setup-reactionrole"]["var9"]))
             ],
         });
 

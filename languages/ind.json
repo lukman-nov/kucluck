@@ -1399,7 +1399,7 @@
         "var17": "`🔉 **Volume global disetel ke \\`${player.volume} %\\`**`",
         "var18": "`🚪 **Keluar dari saluran suara!**`",
         "var19": "`<:K_logo:917295875619962880> Tidak ada lagu dalam antrian __${guild.name}__ <:K_logo:917295875619962880>`",
-        "var20": "Pilihan daftar putar pembaruan terakhir: 18-01-2022",
+        "var20": "Pilihan daftar putar pembaruan terakhir: 14-02-2022",
         "var21": "`Mulailah Mendengarkan Musik, dengan menyambungkan ke Saluran Suara dan mengirimkan **LINK LAGU** atau **NAMA LAGU** di Saluran ini!`",
         "premium": "`${emoji.msg.ERROR} Guild Anda bukan Premium`"
       }

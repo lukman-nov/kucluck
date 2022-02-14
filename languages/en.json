@@ -1400,7 +1400,7 @@
         "var17": "`🔉 **Global volume set to \\`${player.volume} %\\`**`",
         "var18": "`🚪 **Leaving voice channel!**`",
         "var19": "`<:K_logo:917295875619962880> No songs in queue of __${guild.name}__ <:K_logo:917295875619962880>`",
-        "var20": "Last update playlist selection: 18-01-2022",
+        "var20": "Last update playlist selection: 14-02-2022",
         "var21": "`Start Listening to Music, by connecting to a Voice Channel and sending either the **SONG LINK** or **SONG NAME** in this Channel!`",
         "premium": "`${emoji.msg.ERROR} Your Guild not Premium`"
       }

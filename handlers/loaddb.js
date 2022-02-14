@@ -9,6 +9,7 @@ const musicsettings = require("../databases/musicsettings");
 const mutemember = require("../databases/mutemember");
 const premium = require("../databases/premium");
 const reactionRoles = require("../databases/reaction-roles");
+const reactionRoles2 = require("../databases/reaction-roles2");
 const settings = require("../databases/settings");
 const stats = require("../databases/stats");
 const statsGlobal = require("../databases/statsGlobal");
@@ -42,4 +43,5 @@ module.exports = client => {
   client.leaveMessage = leaveMessage;
   client.ownerhelp = ownerhelp;
   client.messageTimer = messageTimer;
+  client.reactrole2 = reactionRoles2;
 }
