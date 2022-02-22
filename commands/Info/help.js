@@ -390,7 +390,7 @@ module.exports = {
       //Nsfw
       var embed8 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Nsfw").size}\`] 🔞 Nsfw Commands 🔞`)
-        .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Fun").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
+        .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Nsfw").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
       embeds.push(embed8)
 
       return embeds.map((embed, index) => {
