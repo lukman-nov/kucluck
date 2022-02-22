@@ -40,9 +40,9 @@
   "clientsettings": {
     "nodes": [
       {
-        "host": "losingtime.dpaste.org",
-        "port": 2124,
-        "password": "SleepingOnTrains"
+        "host": "lava.link",
+        "port": 80,
+        "password": "anything as password"
       }
     ]
   },

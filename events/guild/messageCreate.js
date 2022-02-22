@@ -46,7 +46,7 @@ module.exports = async (client, message) => {
         if (message.author.bot) return;
         let es = await ss.Embed;
         let ls = await ss.Language;
-        let unkowncmdmessage = await ss.Unkowncmdmessage;
+        let unkowncmdmessage = false;
         let botchannels = await ss.BotChannel;
         let prefix = await ss.Prefix;
 
