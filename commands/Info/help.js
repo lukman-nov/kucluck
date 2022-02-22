@@ -289,6 +289,9 @@ module.exports = {
                 case "fun":
                   index = 8;
                   break;
+                case "nsfw":
+                  index = 9;
+                  break;
               }
               vembeds.push(theembeds[index])
             }
@@ -331,61 +334,63 @@ module.exports = {
       embeds.push(embed0)
 
       //MUSIC COMMANDS type: song, queue, queuesong, bot
-      var embed3 = new MessageEmbed()
+      var embed1 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Music").size}\`] 🎶 Music Commands 🎶`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Music").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
         .addField("📑 **Queue Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("queue")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
         .addField("<a:disk_play:927445485843791882> **Song Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("song")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
         .addField("<:bot_flag:917305290972622848> **Bot Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Music" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      embeds.push(embed3)
+      embeds.push(embed1)
 
       //FILTER COMMANDS
-      var embed4 = new MessageEmbed()
+      var embed2 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Filter").size}\`] 👀 Filter Commands 👀`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Filter").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
-      embeds.push(embed4)
+      embeds.push(embed2)
 
       //CUSTOM QUEUE COMMANDS
-      var embed5 = new MessageEmbed()
+      var embed3 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Premium").size}\`] <:K_coin:916166348890079252> Premium Commands <:K_coin:916166348890079252>`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Premium").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
         .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
         .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      embeds.push(embed5)
+      embeds.push(embed3)
 
       //Settings
-      var embed8 = new MessageEmbed()
+      var embed4 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Settings").size}\`] ⚙️ Settings Commands ⚙️`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Settings").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
         .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
         .addField("🎶 **Music Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Settings" && cmd.type.includes("music")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      embeds.push(embed8)
+      embeds.push(embed4)
 
       //Misc
-      var embed9 = new MessageEmbed()
+      var embed5 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Mics").size}\`] ⁉️ Mics Commands ⁉️`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Mics").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
-        .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Mics" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      embeds.push(embed9)
+      embeds.push(embed5)
 
       //Admin
-      var embed10 = new MessageEmbed()
+      var embed6 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Admin").size}\`] 🔑 Admin Commands 🔑`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Admin").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
         .addField("\u200b", "__**Sub-Categorized Commands:**__")
         .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Admin" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
-      embeds.push(embed10)
+      embeds.push(embed6)
 
       //Fun
-      var embed8 = new MessageEmbed()
+      var embed7 = new MessageEmbed()
         .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Fun").size}\`] 🎉 Fun Commands 🎉`)
         .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Fun").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
-        .addField("\u200b", "__**Sub-Categorized Commands:**__")
-        .addField("<:bot_flag:917305290972622848> **Bot Related Commands**", "> " + client.commands.filter((cmd) => cmd.category === "Fun" && cmd.type.includes("bot")).sort((a, b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲"))
+      embeds.push(embed7)
+
+      //Nsfw
+      var embed8 = new MessageEmbed()
+        .setTitle(`[\`${client.commands.filter((cmd) => cmd.category === "Nsfw").size}\`] 🔞 Nsfw Commands 🔞`)
+        .setDescription(`> *${client.commands.filter((cmd) => cmd.category === "Fun").sort((a,b) => a.name.localeCompare(b.name)).map((cmd) => `\`${cmd.name}\``).join("︲")}*`)
       embeds.push(embed8)
 
       return embeds.map((embed, index) => {
