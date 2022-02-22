@@ -13,7 +13,7 @@ module.exports = {
   usage: "erokemo",
   type: "bot",
   cooldown: 5,
-  async run(client, message, args, cmduser, text, prefix, es, ls) {
+  run: async (client, message, args, cmduser, text, prefix, player, es, ls) => {
     let tempmsg = await message.channel.send({
       embeds: [new MessageEmbed()
         .setAuthor(client.getAuthor(`Loading...`, `https://c.tenor.com/I6kN-6X7nhAAAAAj/loading-buffering.gif`))
