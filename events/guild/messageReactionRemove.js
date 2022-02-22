@@ -16,7 +16,7 @@ module.exports = async (client, reaction, user) => {
   let es = ss.Embed;
   let ls = ss.Language;
 
-  if (reaction.message.partial) await reaction.message.fetch();
+  if (reaction.message?.partial) await reaction.message.fetch();
   if (reaction.partial) await reaction.fetch();
   if (user.bot) return;
 
@@ -51,40 +51,41 @@ module.exports = async (client, reaction, user) => {
   } catch (error) {
     console.log(error)
   }
-  if (premium) {
+  
     try {
       Schema2.findOne({
         Message: reaction.message.id
       }, async (err, data) => {
         if (!data) return;
         if (!Object.keys(data.RolesId).includes(reaction.emoji.name)) return;
-
-        const [roleid] = data.RolesId[reaction.emoji.name];
-        try {
-          await member.roles.remove(roleid)
-        } catch {
-          return channel.send(`${user} You don't have that role!`)
-        }
-        return channel.send({
-          embeds: [new MessageEmbed()
-            .setColor(es.wrongcolor)
-            .setFooter(client.getFooter(es))
-            .setDescription(`${user} <@&${roleid}> role has been deleted!`)
-          ]
-        }).then((msg) => {
+        if (premium) {
+          const [roleid] = data.RolesId[reaction.emoji.name];
           try {
-            setTimeout(() => {
-              msg.delete().catch(() => {});
-            }, 6000);
-          } catch (error) {
-            console.log(error)
+            await member.roles.remove(roleid)
+          } catch {
+            return channel.send(`${user} You don't have that role!`)
           }
-        })
+          return channel.send({
+            embeds: [new MessageEmbed()
+              .setColor(es.wrongcolor)
+              .setFooter(client.getFooter(es))
+              .setDescription(`${user} <@&${roleid}> role has been deleted!`)
+            ]
+          }).then((msg) => {
+            try {
+              setTimeout(() => {
+                msg.delete().catch(() => {});
+              }, 6000);
+            } catch (error) {
+              console.log(error)
+            }
+          })
+        } else {
+          channel.send(`Your guild is **not premium now**, please upgrade to premium so you can activate Reaction Roles again`)
+        }
       });
     } catch (error) {
       console.log(error)
     }
-  } else {
-    channel.send(`Your guild is **not premium now**, please upgrade to premium so you can activate Reaction Roles again`)
-  }
+  
 }
