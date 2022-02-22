@@ -11,7 +11,6 @@ module.exports = {
   category: "Nsfw",
   description: "nsfw cmd.",
   usage: "thigh",
-  memberpermissions: [`ADMINISTRATOR`],
   type: "bot",
   cooldown: 5,
   async run(client, message, args, cmduser, text, prefix, es, ls) {
