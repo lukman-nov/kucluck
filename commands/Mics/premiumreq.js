@@ -10,15 +10,17 @@ const emoji = require(`${process.cwd()}/botconfig/emojis.json`);
 const PremiumSchema = require(`../../databases/premium`);
 const day = require("dayjs");
 module.exports = {
-  name: `premium`,
+  name: `premiumreq`,
   category: `Mics`,
   description: `Requests Premium for your Server`,
   usage: `premium`,
   memberpermissions: [`ADMINISTRATOR`],
   type: "bot",
   run: async (client, message, args, cmduser, text, prefix, player, es, ls) => {
-    PremiumSchema.findOne({GuildId : message.guild.id }, async (err, data) => {
-      if(data){
+    PremiumSchema.findOne({
+      GuildId: message.guild.id
+    }, async (err, data) => {
+      if (data) {
         let n = await data.DateExp;
         return message.reply({
           embeds: [new MessageEmbed()
@@ -35,7 +37,7 @@ module.exports = {
         }) => {
           theowner = user;
         }).catch(() => {})
-        
+
         let embed = new MessageEmbed()
           .setColor("GREEN")
           .setTitle(`✅ A new Server requests **PREMIUM**`)
@@ -49,7 +51,7 @@ module.exports = {
           .setFooter(client.setFooter(`${message.author.id}-${message.guild.id}`, message.author.displayAvatarURL({
             dynamic: true
           })))
-      
+
         for (const owner of config.ownerIDS) {
           client.users.fetch(owner).then(user => {
             user.send({
@@ -63,13 +65,13 @@ module.exports = {
             }).catch(() => {});
           }).catch(() => {});
         }
-      return message.reply({
-        embeds: [new MessageEmbed()
-          .setColor(es.color)
-          .setTitle(eval(client.la[ls]["cmds"]["misc"]["premium"]["var3"]))
-          .setDescription(eval(client.la[ls]["cmds"]["misc"]["premium"]["var2"]))
-        ]
-      })
+        return message.reply({
+          embeds: [new MessageEmbed()
+            .setColor(es.color)
+            .setTitle(eval(client.la[ls]["cmds"]["misc"]["premium"]["var3"]))
+            .setDescription(eval(client.la[ls]["cmds"]["misc"]["premium"]["var2"]))
+          ]
+        })
       }
     })
   }

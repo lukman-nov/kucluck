@@ -16,7 +16,7 @@ const StatsGSchema = require('../../databases/statsGlobal');
 const StatsSchema = require('../../databases/stats');
 module.exports = {
   name: "botinfo",
-  aliases: ["info", "about", "stats"],
+  aliases: ["about", "stats"],
   category: "Info",
   description: "Sends detailed info about the client",
   usage: "botinfo",

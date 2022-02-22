@@ -1,10 +1,10 @@
 {
-  "token": "",
+  "token": "OTQ1NTM4ODIwOTE1NDY2MjYx.YhRnpg.aKywxtC9EGquUM44GcR0W_zRYjo",
   "TOKEN": {
     "MAIN": "",
     "TEST": ""
   },
-  "prefix": "!",
+  "prefix": "!k",
   "ownerIDS": ["377636455016824834"],
   "channel": {
     "Logs": "913487463031382126",
@@ -14,11 +14,11 @@
 
   "websiteSettings": {
     "support": "https://discord.gg/BuACxn4XUw",
-    "domain": "https://kucluck.lukman-nov.repl.co/",
-    "port": 80,
-    "callback": "https://kucluck.lukman-nov.repl.co/callback",
-    "clientID": "898991673068113971",
-    "secret": ""
+    "domain": "http://localhost:9000/",
+    "port": 9000,
+    "callback": "http://localhost:9000/callback",
+    "clientID": "945538820915466261",
+    "secret": "rvcJ3WXykTIcIWmaMRd6MPusujyHW3fz"
   },
   "status": {
     "text": "kucluck.com | {prefix}help",
@@ -55,6 +55,6 @@
   },
   "mongodb": {
     "data": "novbot/Data",
-    "connect": ""
+    "connect": "mongodb://localhost:27017/Data"
   }
 }

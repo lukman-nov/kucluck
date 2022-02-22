@@ -119,7 +119,13 @@
           "label9": "Settings",
           "value9": "Settings",
           "emoji9": "⚙️",
-          "description9": "Commands to change Server Settings"
+          "description9": "Commands to change Server Settings",
+
+          
+          "label10": "Nsfw",
+          "value10": "Nsfw",
+          "emoji10": "⚙️",
+          "description10": "Commands to Nsfw"
         },
 
         "menuSelection": {
